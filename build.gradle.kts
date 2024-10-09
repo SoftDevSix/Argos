@@ -1,5 +1,4 @@
 plugins {
-	java
 	application
 	id("org.springframework.boot") version "3.3.4"
 	id("io.spring.dependency-management") version "1.1.6"
@@ -7,12 +6,6 @@ plugins {
 
 group = "com.softdevsix"
 version = "0.0.1-SNAPSHOT"
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
 
 repositories {
 	mavenCentral()

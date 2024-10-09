@@ -1,13 +1,15 @@
-FROM gradle:8.10.2-jdk17 as build
-
+FROM gradle:jdk17 AS build
 WORKDIR /app
 
-COPY . .
-RUN chmod +x ./gradlew
+COPY --chown=gradle:gradle . .
 
-RUN ./gradlew bootJar
+RUN gradle --no-daemon build -x test
 
-FROM openjdk:17 as runtime
+FROM openjdk:17-jdk-slim AS runtime
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar .
-ENTRYPOINT ["java", "-jar", "*.jar"]
+
+EXPOSE 8080
+
+COPY --from=build /app/build/libs/*.jar ./
+
+ENTRYPOINT ["sh", "-c", "java -jar /app/*.jar"]

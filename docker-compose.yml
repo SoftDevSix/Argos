@@ -1,5 +1,6 @@
 services:
-  argos-app:
+  app:
+    image: argos-app
     build:
       context: .
       dockerfile: Dockerfile

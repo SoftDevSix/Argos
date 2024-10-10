@@ -1,15 +1,11 @@
-FROM gradle:jdk17 AS build
+FROM gradle:8.10.2-jdk17-alpine AS build
 WORKDIR /app
 
-COPY --chown=gradle:gradle . .
-
+COPY . .
 RUN gradle --no-daemon build -x test
 
-FROM openjdk:17-jdk-slim AS runtime
+FROM eclipse-temurin:17-alpine AS runtime
 WORKDIR /app
-
 EXPOSE 8080
-
-COPY --from=build /app/build/libs/*.jar ./
-
-ENTRYPOINT ["sh", "-c", "java -jar /app/*.jar"]
+COPY --from=build /app/build/libs/argos-0.0.1-SNAPSHOT.jar ./
+ENTRYPOINT ["java", "-jar", "/app/argos-0.0.1-SNAPSHOT.jar"]

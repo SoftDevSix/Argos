@@ -19,3 +19,8 @@ out/
 .git/
 .gitignore
 .github/
+
+# Ignore docker files
+Dockerfile
+.dockerignore
+docker-compose.yml

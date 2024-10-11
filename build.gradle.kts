@@ -11,6 +11,10 @@ repositories {
 	mavenCentral()
 }
 
+java {
+	toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
@@ -20,7 +24,7 @@ dependencies {
 }
 
 application {
-	mainClass.set("com.softdevsix.argos.DemoApplication")
+	mainClass.set("com.softdevsix.argos.ArgosApplication")
 }
 
 tasks.withType<Test> {

@@ -3,7 +3,10 @@ name: CI_Push_Workflow
 on:
   push:
     branches:
-      - [main, develop, release, test]
+      - main
+      - release
+      - develop
+      - test
 
 jobs:
   build:

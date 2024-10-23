@@ -37,7 +37,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Run Tests using Maven
+      - name: Run Tests with Gradle
         run: ./gradlew test --no-daemon
 
   semantic_pull_request:

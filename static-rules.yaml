@@ -1,0 +1,19 @@
+bestPractices:
+  finalizeVariables: true             
+  noHardcodedValues: true             
+  singleResponsibilityPrinciple: true 
+
+codeSmells:
+  noDuplicatedCode: true              
+  methodTooLong: true                 
+  classTooComplex: true               
+  excessiveParameters: true          
+  magicNumbers: true                  
+
+codeComplexity:
+  cyclomaticComplexityLimit: true     
+  nestingDepthLimit: true             
+  maxMethodCountInClass: true         
+  maxClassFields: true                
+  maxInheritanceDepth: true
+

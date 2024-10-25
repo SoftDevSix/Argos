@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -51,5 +52,23 @@ class SourceTreeAnalyzerTest {
         List<Path> javaFiles = analyzer.getJavaFiles(tempDir);
 
         assertEquals(0, javaFiles.size());
+    }
+
+    @Test
+    void testGetJavaFilesInNonExistentDirectory() {
+        Path nonExistentPath = tempDir.resolve("nonexistentDir");
+
+        assertThrows(NoSuchFileException.class, () -> {
+            analyzer.getJavaFiles(nonExistentPath);
+        });
+    }
+
+    @Test
+    void testGetJavaFilesInNonDirectory() throws IOException {
+        Path file = Files.createFile(tempDir.resolve("NotADirectory.java"));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            analyzer.getJavaFiles(file);
+        });
     }
 }

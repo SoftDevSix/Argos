@@ -17,3 +17,16 @@ codeComplexity:
   maxClassFields: true                
   maxInheritanceDepth: true
 
+codeQuality:
+  maxLineLength: true 
+  noUnusedImports: true
+
+codingStandards:
+  camelCaseNaming: true
+  pascalCaseForClasses: true
+  bracesOnSameLine: false  
+
+coverage:
+  minCoveragePercentage: 80
+  rejectIfLower: true
+  coverageReviewRequired: true

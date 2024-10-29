@@ -1,8 +1,8 @@
-package com.softdevsix.argos.ast_analyzer;
+package edu.usb.argos.ASTProcessor.DirectoryAnalyzers;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,4 +30,5 @@ public class SourceTreeAnalyzer {
                     .collect(Collectors.toList());
         }
     }
+
 }

@@ -1,12 +1,14 @@
 package edu.usb.argos.ASTProcessor.DirectoryAnalyzers;
 
+import edu.usb.argos.ASTProcessor.Validators.PathValidators.DirectoryPathAnalyzer;
+import edu.usb.argos.ASTProcessor.Validators.PathValidators.IPathValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -19,21 +21,16 @@ public class SourceTreeAnalyzerTest {
 
     @BeforeEach
     void setUp() throws IOException {
+        IPathValidator pathValidator = new DirectoryPathAnalyzer();
         tempDir = Files.createTempDirectory("testDirectory");
-        analyzer = new SourceTreeAnalyzer();
+        analyzer = new SourceTreeAnalyzer(pathValidator);
     }
 
     @AfterEach
     void tearDown() throws IOException {
         Files.walk(tempDir)
                 .map(Path::toFile)
-                .forEach(file -> {
-                    if (file.isDirectory()) {
-                        file.delete();
-                    } else {
-                        file.delete();
-                    }
-                });
+                .forEach(File::delete);
     }
 
     @Test
@@ -52,23 +49,4 @@ public class SourceTreeAnalyzerTest {
 
         assertEquals(0, javaFiles.size());
     }
-
-    @Test
-    void testGetJavaFilesInNonExistentDirectory() {
-        Path nonExistentPath = tempDir.resolve("nonexistentDir");
-
-        assertThrows(NoSuchFileException.class, () -> {
-            analyzer.getJavaFiles(nonExistentPath);
-        });
-    }
-
-    @Test
-    void testGetJavaFilesInNonDirectory() throws IOException {
-        Path file = Files.createFile(tempDir.resolve("NotADirectory.java"));
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            analyzer.getJavaFiles(file);
-        });
-    }
-
 }

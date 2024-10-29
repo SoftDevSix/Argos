@@ -1,8 +1,7 @@
-package com.softdevsix.argos.ast_analyzer_tests;
+package edu.usb.argos.ASTProcessor.DirectoryAnalyzers;
 
-import com.softdevsix.argos.ast_analyzer.SourceTreeAnalyzer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SourceTreeAnalyzerTest {
+public class SourceTreeAnalyzerTest {
 
     private Path tempDir;
     private SourceTreeAnalyzer analyzer;
@@ -71,4 +70,5 @@ class SourceTreeAnalyzerTest {
             analyzer.getJavaFiles(file);
         });
     }
+
 }

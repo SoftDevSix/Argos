@@ -2,6 +2,6 @@ package edu.usb.argos.ASTProcessor.reader.interfaces;
 
 import edu.usb.argos.ASTProcessor.reader.exceptions.FileAnalyzerException;
 
-public interface IValidationStrategy<T> {
+public interface IFileValidationStrategy<T> {
     void validate(T input) throws FileAnalyzerException;
 }

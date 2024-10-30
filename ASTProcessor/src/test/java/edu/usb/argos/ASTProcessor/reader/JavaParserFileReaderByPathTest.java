@@ -2,7 +2,7 @@ package edu.usb.argos.ASTProcessor.reader;
 
 import com.github.javaparser.ast.CompilationUnit;
 import edu.usb.argos.ASTProcessor.reader.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.interfaces.IValidationStrategy;
+import edu.usb.argos.ASTProcessor.reader.interfaces.IFileValidationStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 public class JavaParserFileReaderByPathTest {
     @Mock
-    private IValidationStrategy<Path> mockValidationStrategy;
+    private IFileValidationStrategy<Path> mockValidationStrategy;
 
     private JavaParserFileReaderByPath fileReader;
 

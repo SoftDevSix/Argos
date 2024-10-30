@@ -5,20 +5,21 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
 import edu.usb.argos.ASTProcessor.reader.exceptions.FileAnalyzerException;
 import edu.usb.argos.ASTProcessor.reader.interfaces.IFileAnalyzer;
-import edu.usb.argos.ASTProcessor.reader.interfaces.IValidationStrategy;
+import edu.usb.argos.ASTProcessor.reader.interfaces.IFileValidationStrategy;
 import edu.usb.argos.ASTProcessor.reader.validations.PathValidationStrategy;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 public class JavaParserFileReaderByPath implements IFileAnalyzer<Path, CompilationUnit> {
-    private final IValidationStrategy<Path> validationStrategy;
+    private final IFileValidationStrategy<Path> validationStrategy;
+    private static final String NO_PACKAGE = "";
 
     public JavaParserFileReaderByPath() {
         this.validationStrategy = new PathValidationStrategy();
     }
 
-    public JavaParserFileReaderByPath(IValidationStrategy<Path> validationStrategy) {
+    public JavaParserFileReaderByPath(IFileValidationStrategy<Path> validationStrategy) {
         this.validationStrategy = validationStrategy;
     }
 
@@ -36,6 +37,6 @@ public class JavaParserFileReaderByPath implements IFileAnalyzer<Path, Compilati
 
     private CompilationUnit parseFile(Path codePath) throws IOException, ParseProblemException {
         SourceRoot sourceRoot = new SourceRoot(codePath.getParent());
-        return sourceRoot.parse("", codePath.getFileName().toString());
+        return sourceRoot.parse(NO_PACKAGE, codePath.getFileName().toString());
     }
 }

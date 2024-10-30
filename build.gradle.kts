@@ -21,6 +21,7 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("com.github.javaparser:javaparser-core:3.25.4")
 }
 
 application {

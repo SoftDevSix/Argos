@@ -1,6 +1,10 @@
 package edu.usb.argos.ASTProcessor;
 
 import com.github.javaparser.ast.CompilationUnit;
+
+import main.java.edu.usb.argos.ASTProcessor.FileReader.FileAnalyzerException;
+import main.java.edu.usb.argos.ASTProcessor.FileReader.FileAnalyzerValidator;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,14 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class JavaParserFileReaderByTextTest {
 
     private JavaParserFileReaderByText javaParserFileReaderByText;
+    private FileAnalyzerValidator fileAnalyzerValidator;
 
     @BeforeEach
     public void setup() {
         javaParserFileReaderByText = new JavaParserFileReaderByText();
+        fileAnalyzerValidator = new FileAnalyzerValidator();
     }
 
     @Test
-    public void testReadValidCode() {
+    public void testReadValidCode() throws Exception {
         String code = "class Test { void method() {} }";
         CompilationUnit result = javaParserFileReaderByText.read(code);
         assertNotNull(result);
@@ -30,25 +36,25 @@ public class JavaParserFileReaderByTextTest {
     }
 
     @Test
-    public void testReadEmptyCode() {
-        String emptyCode = "{}";
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+    public void testReadFileWihoutTemplate() throws Exception {
+        String emptyCode = "}{}";
+        Exception exception = assertThrows(FileAnalyzerException.class, () -> {
             javaParserFileReaderByText.read(emptyCode);
         });
         assertEquals("Error to analyze de code", exception.getMessage());
     }
 
     @Test
-    public void testReadCodeWithSyntaxError() {
+    public void testReadCodeWithSyntaxError() throws Exception {
         String invalidCode = "class { void method() {} }";
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        Exception exception = assertThrows(FileAnalyzerException.class, () -> {
             javaParserFileReaderByText.read(invalidCode);
         });
         assertEquals("Error to analyze de code", exception.getMessage());
     }
 
     @Test
-    public void testReadMinimalClassDefinition() {
+    public void testReadMinimalClassDefinition() throws Exception {
         String minimalClass = "class EmptyClass {}";
         CompilationUnit result = javaParserFileReaderByText.read(minimalClass);
         assertNotNull(result);
@@ -56,7 +62,7 @@ public class JavaParserFileReaderByTextTest {
     }
 
     @Test
-    public void testReadMultipleClasses() {
+    public void testReadMultipleClasses() throws Exception {
         String multipleClasses = "class Test1 { } class Test2 { void method() {} }";
         CompilationUnit result = javaParserFileReaderByText.read(multipleClasses);
         assertNotNull(result);
@@ -65,56 +71,56 @@ public class JavaParserFileReaderByTextTest {
     }
 
     @Test
-    public void testValidateInputWithEmptyText() {
+    public void testValidateInputWithEmptyText() throws Exception {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            javaParserFileReaderByText.validateInput("");
+            fileAnalyzerValidator.validateInput("");
         });
         assertTrue(exception.getMessage().contains("Input text cannot be null or empty."));
     }
 
     @Test
-    public void testValidateInputWithNullText() {
+    public void testValidateInputWithNullText() throws Exception {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            javaParserFileReaderByText.validateInput(null);
+            fileAnalyzerValidator.validateInput(null);
         });
         assertTrue(exception.getMessage().contains("Input text cannot be null or empty."));
     }
 
     @Test
-    public void testIsClassDeclarationWithClassPresent() {
+    public void testValidateClassDeclarationWithClassPresent() throws Exception {
         String codeWithClass = "class SampleClass {}";
         CompilationUnit compilationUnit = javaParserFileReaderByText.read(codeWithClass);
-        assertTrue(javaParserFileReaderByText.isClassDeclaration(compilationUnit));
+        assertTrue(fileAnalyzerValidator.validateClassDeclaration(compilationUnit));
     }
 
     @Test
-    public void testIsClassDeclarationWithoutClass() {
+    public void testValidateClassDeclarationWithoutClass() throws Exception {
         String codeWithoutClass = "";
         CompilationUnit compilationUnit = javaParserFileReaderByText.read(codeWithoutClass);
-        assertFalse(javaParserFileReaderByText.isClassDeclaration(compilationUnit));
+        assertFalse(fileAnalyzerValidator.validateClassDeclaration(compilationUnit));
     }
 
     @Test
-    public void testIsValidJavaCodeByHeaderWithClassKeyword() {
+    public void testValidateJavaCodeByHeaderWithClassKeyword() throws Exception {
         String text = "class MyClass {}";
-        assertTrue(javaParserFileReaderByText.isValidJavaCodeByHeader(text));
+        assertTrue(fileAnalyzerValidator.validateJavaCodeByHeader(text));
     }
 
     @Test
-    public void tesIsValidJavaCodeByHeaderWithInterfaceKeyword() {
+    public void tesValidateJavaCodeByHeaderWithInterfaceKeyword() throws Exception {
         String text = "interface Interface {}";
-        assertTrue(javaParserFileReaderByText.isValidJavaCodeByHeader(text));
+        assertTrue(fileAnalyzerValidator.validateJavaCodeByHeader(text));
     }
 
     @Test
-    public void testIsValidJavaCodeByHeaderWithEnumKeyword() {
+    public void testValidateJavaCodeByHeaderWithEnumKeyword() throws Exception {
         String code = "enum Enum {}";
-        assertTrue(javaParserFileReaderByText.isValidJavaCodeByHeader(code));
+        assertTrue(fileAnalyzerValidator.validateJavaCodeByHeader(code));
     }
 
     @Test
-    public void testIsValidJavaCodeByHeaderWithoutKeywords() {
+    public void testValidateJavaCodeByHeaderWithoutKeywords() throws Exception {
         String code = "public void someMethod() {}";
-        assertFalse(javaParserFileReaderByText.isValidJavaCodeByHeader(code));
+        assertFalse(fileAnalyzerValidator.validateJavaCodeByHeader(code));
     }
 }

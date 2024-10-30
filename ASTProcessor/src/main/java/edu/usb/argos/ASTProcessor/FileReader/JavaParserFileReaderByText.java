@@ -4,39 +4,18 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
-
+import main.java.edu.usb.argos.ASTProcessor.FileReader.FileAnalyzerException;
 
 public class JavaParserFileReaderByText implements IFileAnalyzer<CompilationUnit, String> {
     @Override
-    public CompilationUnit read(String text) {
+    public CompilationUnit read(String text) throws FileAnalyzerException {
         JavaParser javaParser = new JavaParser(new ParserConfiguration());
         ParseResult<CompilationUnit> parseResult = javaParser.parse(text);
+        CompilationUnit compilationUnit = null;
         if (parseResult.isSuccessful() && parseResult.getResult().isPresent()) {
-            CompilationUnit compilationUnit = parseResult.getResult().get();
-            return compilationUnit;
+            return compilationUnit = parseResult.getResult().get();
         } else {
-            throw new RuntimeException("Error to analyze de code");
+            throw new FileAnalyzerException("Error to analyze de code");
         }
-    }
-
-    public void validateInput(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            throw new IllegalArgumentException("Input text cannot be null or empty.");
-        }
-    }
-
-    public boolean isClassDeclaration(CompilationUnit compilationUnit) {
-        for (TypeDeclaration<?> type : compilationUnit.getTypes()) {
-            if (type instanceof ClassOrInterfaceDeclaration) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isValidJavaCodeByHeader(String text) {
-        return text.contains("class") || text.contains("interface") || text.contains("enum");
     }
 }

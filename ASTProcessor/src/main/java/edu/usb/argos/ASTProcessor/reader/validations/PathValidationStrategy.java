@@ -1,11 +1,11 @@
 package edu.usb.argos.ASTProcessor.reader.validations;
 
 import edu.usb.argos.ASTProcessor.reader.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.interfaces.IValidationStrategy;
+import edu.usb.argos.ASTProcessor.reader.interfaces.IFileValidationStrategy;
 
 import java.nio.file.Path;
 
-public class PathValidationStrategy implements IValidationStrategy<Path> {
+public class PathValidationStrategy implements IFileValidationStrategy<Path> {
     @Override
     public void validate(Path input) throws FileAnalyzerException {
         validateNullPath(input);

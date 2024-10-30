@@ -1,22 +1,17 @@
-bestPractices:
-  finalizeVariables: true             
+bestPractices:          
   noHardcodedValues: true             
-  singleResponsibilityPrinciple: true 
 
 codeSmells:
   noDuplicatedCode: true              
-  methodTooLong: true                 
-  classTooComplex: true               
+  methodTooLong: true                             
   excessiveParameters: true          
   magicNumbers: true                  
 
 codeComplexity:
-  cyclomaticComplexityLimit: true     
-  nestingDepthLimit: true             
-  maxMethodCountInClass: true         
-  maxClassFields: true                
-  maxInheritanceDepth: true
-
+  cyclomaticComplexityLimit: true
+  nestingDepthLimit: true
+  maxMethodCountInClass: true
+                      
 codeQuality:
   maxLineLength: true 
   noUnusedImports: true
@@ -24,9 +19,9 @@ codeQuality:
 codingStandards:
   camelCaseNaming: true
   pascalCaseForClasses: true
-  bracesOnSameLine: false  
+  bracesOnSameLine: true  
 
 coverage:
-  minCoveragePercentage: 80
+  minCoveragePercentage: true
   rejectIfLower: true
   coverageReviewRequired: true

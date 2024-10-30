@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ArgosApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ArgosApplication.class, args);	
+		SpringApplication.run(ArgosApplication.class, args);
 	}
 
 }

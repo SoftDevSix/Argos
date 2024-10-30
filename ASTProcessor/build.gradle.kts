@@ -1,7 +1,7 @@
 plugins {
 	application
-	id("org.springframework.boot") version "3.3.4"
-	id("io.spring.dependency-management") version "1.1.6"
+	alias(libs.plugins.springboot.web) apply true
+	alias(libs.plugins.dependency.management) apply true
 }
 
 group = "edu.usb.argos"
@@ -16,11 +16,12 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springframework.boot:spring-boot-starter")
-	implementation("com.github.javaparser:javaparser-core:3.26.2")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation(libs.springboot.starter.web)
+	implementation(libs.java.parser.core)
+	implementation(libs.springdoc.openapi)
+	developmentOnly(libs.springboot.devtools)
+	testImplementation(libs.springboot.starter.test)
+	testRuntimeOnly(libs.junit.launcher)
 }
 
 tasks.withType<Test> {

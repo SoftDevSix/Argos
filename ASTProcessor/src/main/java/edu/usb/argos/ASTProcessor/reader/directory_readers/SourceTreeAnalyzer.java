@@ -1,6 +1,6 @@
-package edu.usb.argos.ASTProcessor.DirectoryAnalyzers;
+package edu.usb.argos.ASTProcessor.reader.directory_readers;
 
-import edu.usb.argos.ASTProcessor.Validators.PathValidators.IPathValidator;
+import edu.usb.argos.ASTProcessor.reader.interfaces.IPathValidator;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

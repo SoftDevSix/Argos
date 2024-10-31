@@ -7,6 +7,11 @@ spring:
     url: '${DB_DEV_URL}'
     username: '${DB_DEV_USERNAME}'
     password: '${DB_DEV_PASSWORD}'
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 30000
 
   jpa:
     show-sql: true
@@ -16,6 +21,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         boot:
           allow_jdbc_metadata_access: false
+        format_sql: true
 
     hibernate:
       ddl-auto: update

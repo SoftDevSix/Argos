@@ -1,6 +1,6 @@
-package com.softdevsix.staticRules.rulesEntities;
+package com.softdevsix.argos.domain;
 
-public class StaticAnalysisRules {
+public class RulesRequestMap {
     private CodeQuality codeQuality;
     private BestPractices bestPractices;
     private CodeSmells codeSmells;
@@ -8,7 +8,7 @@ public class StaticAnalysisRules {
     private CodingStandards codingStandards;
     private Coverage coverage;
 
-    public StaticAnalysisRules() {
+    public RulesRequestMap() {
         
     }
 

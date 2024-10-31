@@ -1,4 +1,4 @@
-package com.softdevsix.staticRules.rulesEntities;
+package com.softdevsix.argos.domain;
 
 public class CodeQuality {
 

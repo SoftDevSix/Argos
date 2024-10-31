@@ -1,4 +1,6 @@
-package edu.usb.argos.ASTProcessor.Validators.PathValidators;
+package edu.usb.argos.ASTProcessor.reader.validations;
+
+import edu.usb.argos.ASTProcessor.reader.interfaces.IPathValidator;
 
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;

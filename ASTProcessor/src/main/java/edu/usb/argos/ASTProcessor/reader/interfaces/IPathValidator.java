@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.Validators.PathValidators;
+package edu.usb.argos.ASTProcessor.reader.interfaces;
 
 import java.nio.file.Path;
 

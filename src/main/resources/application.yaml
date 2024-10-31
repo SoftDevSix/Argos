@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: argos
+
+  profiles:
+    active: prod

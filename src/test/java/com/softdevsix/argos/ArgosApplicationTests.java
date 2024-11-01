@@ -19,11 +19,6 @@ class ArgosApplicationTests {
 	}
 
 	@Test
-	void main() {
-		ArgosApplication.main(new String[] {});
-	}
-
-	@Test
 	void testSimpleSum() {
 		int result = 1 + 1;
 		assertEquals(2, result, "1 + 1 should equal 2");

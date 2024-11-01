@@ -1,12 +1,23 @@
 package com.softdevsix.argos.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class BestPractices {
+  @Id @GeneratedValue(strategy = GenerationType.AUTO) private Integer id;
+  private Integer repositoryId;
+  @Column(nullable = true) private boolean noHardcodedValues;
 
-    private boolean noHardcodedValues = true;
-
-    public BestPractices() {
-    }
-
-    public boolean isNoHardcodedValuesEnabled() { return noHardcodedValues; }
-    public void setNoHardcodedValues(boolean noHardcodedValues) { this.noHardcodedValues = noHardcodedValues; }
+  public boolean isNoHardcodedValuesEnabled() { return noHardcodedValues; }
+  public void setNoHardcodedValues(boolean noHardcodedValues) {
+    this.noHardcodedValues = noHardcodedValues;
+  }
+  public Integer getRepositoryId() { return repositoryId; }
+  public void setRepositoryId(Integer repositoryId) {
+    this.repositoryId = repositoryId;
+  }
 }

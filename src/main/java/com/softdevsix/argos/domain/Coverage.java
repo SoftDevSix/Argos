@@ -1,24 +1,44 @@
 package com.softdevsix.argos.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Coverage {
+  @Id @GeneratedValue(strategy = GenerationType.AUTO) private Integer id;
+  private Integer repositoryId;
+  @Column(nullable = true) private boolean coverageReviewRequired;
+  @Column(nullable = true) private boolean minCoveragePercentage;
+  @Column(nullable = true) private boolean rejectIfLower;
+  @Column(nullable = true) private int coverageThreshold;
 
-    private boolean minCoveragePercentage = true;
-    private int coverageThreshold = 80; 
-    private boolean rejectIfLower = true;
-    private boolean coverageReviewRequired = true;
+  public boolean isMinCoveragePercentageEnabled() {
+    return minCoveragePercentage;
+  }
+  public void setMinCoveragePercentage(boolean minCoveragePercentage) {
+    this.minCoveragePercentage = minCoveragePercentage;
+  }
 
-    public Coverage() {
-    }
+  public int getCoverageThreshold() { return coverageThreshold; }
+  public void setCoverageThreshold(int coverageThreshold) {
+    this.coverageThreshold = coverageThreshold;
+  }
 
-    public boolean isMinCoveragePercentageEnabled() { return minCoveragePercentage; }
-    public void setMinCoveragePercentage(boolean minCoveragePercentage) { this.minCoveragePercentage = minCoveragePercentage; }
+  public boolean isRejectIfLowerEnabled() { return rejectIfLower; }
+  public void setRejectIfLower(boolean rejectIfLower) {
+    this.rejectIfLower = rejectIfLower;
+  }
 
-    public int getCoverageThreshold() { return coverageThreshold; }
-    public void setCoverageThreshold(int coverageThreshold) { this.coverageThreshold = coverageThreshold; }
+  public boolean isCoverageReviewRequired() { return coverageReviewRequired; }
+  public void setCoverageReviewRequired(boolean coverageReviewRequired) {
+    this.coverageReviewRequired = coverageReviewRequired;
+  }
 
-    public boolean isRejectIfLowerEnabled() { return rejectIfLower; }
-    public void setRejectIfLower(boolean rejectIfLower) { this.rejectIfLower = rejectIfLower; }
-
-    public boolean isCoverageReviewRequired() { return coverageReviewRequired; }
-    public void setCoverageReviewRequired(boolean coverageReviewRequired) { this.coverageReviewRequired = coverageReviewRequired; }
+  public Integer getRepositoryId() { return repositoryId; }
+  public void setRepositoryId(Integer repositoryId) {
+    this.repositoryId = repositoryId;
+  }
 }

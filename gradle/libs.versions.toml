@@ -2,7 +2,7 @@
 springboot = "3.3.4"
 dependencyManagement = "1.1.6"
 springDocVersion = "2.6.0"
-javaParser = "3.26.2"
+antlr = "4.13.2"
 
 [plugins]
 springboot-web = { id = "org.springframework.boot", version.ref = "springboot" }
@@ -11,8 +11,8 @@ dependency-management = { id = "io.spring.dependency-management", version.ref = 
 [libraries]
 springboot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 springboot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springboot" }
-java-parser-core = { module = "com.github.javaparser:javaparser-core", version.ref = "javaParser" }
 springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springDocVersion" }
 springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
 springboot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }

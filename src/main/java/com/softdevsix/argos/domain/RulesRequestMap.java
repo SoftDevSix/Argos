@@ -11,7 +11,14 @@ public class RulesRequestMap {
     public RulesRequestMap() {
         
     }
-
+    public void mapFromJson(RulesRequestMap requestData) {
+        this.setCodeQuality(requestData.getCodeQuality());
+        this.setBestPractices(requestData.getBestPractices());
+        this.setCodeSmells(requestData.getCodeSmells());
+        this.setCodeComplexity(requestData.getCodeComplexity());
+        this.setCodingStandards(requestData.getCodingStandards());
+        this.setCoverage(requestData.getCoverage());
+    }
     public CodeQuality getCodeQuality() { return codeQuality; }
     public void setCodeQuality(CodeQuality codeQuality) { this.codeQuality = codeQuality; }
 

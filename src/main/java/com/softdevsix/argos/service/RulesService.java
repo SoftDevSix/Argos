@@ -1,35 +1,56 @@
 package com.softdevsix.argos.service;
 
-import com.softdevsix.argos.domain.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.softdevsix.argos.domain.CodeComplexity;
+import com.softdevsix.argos.domain.CodeQuality;
+import com.softdevsix.argos.domain.CodeSmells;
+import com.softdevsix.argos.domain.Coverage;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
+import com.softdevsix.argos.repository.RulesRepoImpl;
 
+@Component
 public class RulesService {
 
     private Rules validatedRules;
+    private RulesRepoImpl rulesRepo;
 
-    public RulesService() {
+    @Autowired
+    public RulesService(RulesRepoImpl rulesRepo) {
         this.validatedRules = new Rules();
+        this.rulesRepo = rulesRepo;
     }
 
     public void handleRules(RulesRequestMap rulesRequestMap) {
-       
+        validateAndSetCodeQuality(rulesRequestMap);
+        validateAndSetBestPractices(rulesRequestMap);
+        validateAndSetCodeSmells(rulesRequestMap);
+        validateAndSetCodeComplexity(rulesRequestMap);
+        validateAndSetCodingStandards(rulesRequestMap);
+        validateAndSetCoverage(rulesRequestMap);
+
+        rulesRepo.createRule(validatedRules);
+    }
+
+    private void validateAndSetCodeQuality(RulesRequestMap rulesRequestMap) {
         if (rulesRequestMap.getCodeQuality() != null) {
             CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
-            
             if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
                 throw new IllegalArgumentException("The line length limit must be positive");
             }
             validatedRules.setCodeQuality(codeQuality);
         }
+    }
 
-       
+    private void validateAndSetBestPractices(RulesRequestMap rulesRequestMap) {
         if (rulesRequestMap.getBestPractices() != null) {
-            BestPractices bestPractices = rulesRequestMap.getBestPractices();
-            validatedRules.setBestPractices(bestPractices);
+            validatedRules.setBestPractices(rulesRequestMap.getBestPractices());
         }
+    }
 
-        
+    private void validateAndSetCodeSmells(RulesRequestMap rulesRequestMap) {
         if (rulesRequestMap.getCodeSmells() != null) {
             CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
             if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
@@ -37,8 +58,9 @@ public class RulesService {
             }
             validatedRules.setCodeSmells(codeSmells);
         }
+    }
 
-        
+    private void validateAndSetCodeComplexity(RulesRequestMap rulesRequestMap) {
         if (rulesRequestMap.getCodeComplexity() != null) {
             CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
             if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
@@ -49,14 +71,15 @@ public class RulesService {
             }
             validatedRules.setCodeComplexity(codeComplexity);
         }
+    }
 
-       
+    private void validateAndSetCodingStandards(RulesRequestMap rulesRequestMap) {
         if (rulesRequestMap.getCodingStandards() != null) {
-            CodingStandards codingStandards = rulesRequestMap.getCodingStandards();
-            validatedRules.setCodingStandards(codingStandards);
+            validatedRules.setCodingStandards(rulesRequestMap.getCodingStandards());
         }
+    }
 
-        
+    private void validateAndSetCoverage(RulesRequestMap rulesRequestMap) {
         if (rulesRequestMap.getCoverage() != null) {
             Coverage coverage = rulesRequestMap.getCoverage();
             if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {

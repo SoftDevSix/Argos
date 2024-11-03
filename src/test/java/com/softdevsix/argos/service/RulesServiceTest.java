@@ -5,21 +5,32 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.softdevsix.argos.domain.*;
-import com.softdevsix.argos.service.RulesService;
+import com.softdevsix.argos.repository.RulesRepoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 
 @SpringBootTest
 class RulesServiceTests {
 
-    private RulesService rulesService;
+    @Mock
+    private RulesRepoImpl rulesRepo;
+
+    @InjectMocks
+    private RulesService rulesService; 
+
     private RulesRequestMap rulesRequestMap;
 
     @BeforeEach
     void setUp() {
-        rulesService = new RulesService();
+
+        MockitoAnnotations.openMocks(this); 
         rulesRequestMap = new RulesRequestMap();
+
     }
 
     @Test
@@ -40,7 +51,7 @@ class RulesServiceTests {
     void testHandleRules_withInvalidMaxLineLengthLimit() {
         CodeQuality codeQuality = new CodeQuality();
         codeQuality.setMaxLineLength(true);
-        codeQuality.setMaxLineLengthLimit(-1); // Valor inválido
+        codeQuality.setMaxLineLengthLimit(-1); 
 
         rulesRequestMap.setCodeQuality(codeQuality);
 
@@ -71,7 +82,7 @@ class RulesServiceTests {
     void testHandleRules_withInvalidCyclomaticComplexityLimit() {
         CodeComplexity codeComplexity = new CodeComplexity();
         codeComplexity.setCyclomaticComplexityLimit(true);
-        codeComplexity.setMaxCyclomaticComplexity(-5); // Valor inválido
+        codeComplexity.setMaxCyclomaticComplexity(-5); 
 
         rulesRequestMap.setCodeComplexity(codeComplexity);
 

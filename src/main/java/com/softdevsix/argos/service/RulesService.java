@@ -1,12 +1,25 @@
 package com.softdevsix.argos.service;
 
-import com.softdevsix.argos.domain.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.softdevsix.argos.domain.BestPractices;
+import com.softdevsix.argos.domain.CodeComplexity;
+import com.softdevsix.argos.domain.CodeQuality;
+import com.softdevsix.argos.domain.CodeSmells;
+import com.softdevsix.argos.domain.CodingStandards;
+import com.softdevsix.argos.domain.Coverage;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
+import com.softdevsix.argos.repository.RulesRepoImpl;
 
+@Component
 public class RulesService {
 
     private Rules validatedRules;
+
+    @Autowired
+    private RulesRepoImpl rulesRepo;
 
     public RulesService() {
         this.validatedRules = new Rules();
@@ -38,7 +51,6 @@ public class RulesService {
             validatedRules.setCodeSmells(codeSmells);
         }
 
-        
         if (rulesRequestMap.getCodeComplexity() != null) {
             CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
             if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
@@ -50,7 +62,6 @@ public class RulesService {
             validatedRules.setCodeComplexity(codeComplexity);
         }
 
-       
         if (rulesRequestMap.getCodingStandards() != null) {
             CodingStandards codingStandards = rulesRequestMap.getCodingStandards();
             validatedRules.setCodingStandards(codingStandards);
@@ -64,6 +75,8 @@ public class RulesService {
             }
             validatedRules.setCoverage(coverage);
         }
+
+        rulesRepo.createRule(validatedRules);
     }
 
     public Rules getRules() {

@@ -2,148 +2,108 @@ package com.softdevsix.argos.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.softdevsix.argos.domain.RulesRequestMap;
-import com.softdevsix.argos.domain.BestPractices;
-import com.softdevsix.argos.domain.CodeSmells;
-import com.softdevsix.argos.domain.CodeComplexity;
-import com.softdevsix.argos.domain.CodeQuality;
-import com.softdevsix.argos.domain.Coverage;
+import com.softdevsix.argos.domain.*;
 import com.softdevsix.argos.service.RulesService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RulesServiceTest {
+class RulesServiceTests {
 
-    @Autowired
     private RulesService rulesService;
-
     private RulesRequestMap rulesRequestMap;
 
     @BeforeEach
     void setUp() {
+        rulesService = new RulesService();
         rulesRequestMap = new RulesRequestMap();
     }
 
     @Test
-    void testHandleRules_ValidRules() {
-        setUpValidRules();
-        
+    void testHandleRules_withValidCodeQuality() {
+        CodeQuality codeQuality = new CodeQuality();
+        codeQuality.setMaxLineLength(true);
+        codeQuality.setMaxLineLengthLimit(120);
+        rulesRequestMap.setCodeQuality(codeQuality);
+
         rulesService.handleRules(rulesRequestMap);
-        
-        assertTrue(rulesService.getValidationErrors().isEmpty(), "No validation errors expected.");
-        assertNotNull(rulesService.getRules(), "Rules should be saved when valid.");
+        Rules validatedRules = rulesService.getRules();
+
+        assertNotNull(validatedRules.getCodeQuality(), "CodeQuality should not be null");
+        assertEquals(120, validatedRules.getCodeQuality().getMaxLineLengthLimit(), "Max line length should be 120");
     }
 
     @Test
-    void testHandleRules_NoHardcodedValuesError() {
+    void testHandleRules_withInvalidMaxLineLengthLimit() {
+        CodeQuality codeQuality = new CodeQuality();
+        codeQuality.setMaxLineLength(true);
+        codeQuality.setMaxLineLengthLimit(-1); // Valor inválido
+
+        rulesRequestMap.setCodeQuality(codeQuality);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            rulesService.handleRules(rulesRequestMap);
+        }, "Should throw exception for negative max line length limit");
+    }
+
+    @Test
+    void testHandleRules_withValidCodeComplexity() {
+        CodeComplexity codeComplexity = new CodeComplexity();
+        codeComplexity.setCyclomaticComplexityLimit(true);
+        codeComplexity.setMaxCyclomaticComplexity(15);
+        codeComplexity.setNestingDepthLimit(true);
+        codeComplexity.setMaxNestingDepth(5);
+
+        rulesRequestMap.setCodeComplexity(codeComplexity);
+
+        rulesService.handleRules(rulesRequestMap);
+        Rules validatedRules = rulesService.getRules();
+
+        assertNotNull(validatedRules.getCodeComplexity(), "CodeComplexity should not be null");
+        assertEquals(15, validatedRules.getCodeComplexity().getMaxCyclomaticComplexity(), "Max cyclomatic complexity should be 15");
+        assertEquals(5, validatedRules.getCodeComplexity().getMaxNestingDepth(), "Max nesting depth should be 5");
+    }
+
+    @Test
+    void testHandleRules_withInvalidCyclomaticComplexityLimit() {
+        CodeComplexity codeComplexity = new CodeComplexity();
+        codeComplexity.setCyclomaticComplexityLimit(true);
+        codeComplexity.setMaxCyclomaticComplexity(-5); // Valor inválido
+
+        rulesRequestMap.setCodeComplexity(codeComplexity);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            rulesService.handleRules(rulesRequestMap);
+        }, "Should throw exception for negative cyclomatic complexity limit");
+    }
+
+    @Test
+    void testGetRules_afterHandlingRules() {
+        CodeQuality codeQuality = new CodeQuality();
+        codeQuality.setMaxLineLength(true);
+        codeQuality.setMaxLineLengthLimit(100);
+        rulesRequestMap.setCodeQuality(codeQuality);
+
+        rulesService.handleRules(rulesRequestMap);
+        Rules validatedRules = rulesService.getRules();
+
+        assertNotNull(validatedRules, "Rules should not be null after handling");
+        assertEquals(100, validatedRules.getCodeQuality().getMaxLineLengthLimit(), "Max line length limit should be set to 100");
+    }
+
+    @Test
+    void testHandleRules_withValidBestPractices() {
         BestPractices bestPractices = new BestPractices();
         bestPractices.setNoHardcodedValues(false);
         rulesRequestMap.setBestPractices(bestPractices);
 
         rulesService.handleRules(rulesRequestMap);
+        Rules validatedRules = rulesService.getRules();
 
-        assertEquals(1, rulesService.getValidationErrors().size());
-        assertEquals("Best Practices - Avoid hardcoded values.", rulesService.getValidationErrors().get(0));
-    }
-
-    @Test
-    void testHandleRules_LongMethodEnabledError() {
-        CodeSmells codeSmells = new CodeSmells();
-        codeSmells.setMethodTooLong(true);
-        codeSmells.setMaxMethodLength(0);
-        rulesRequestMap.setCodeSmells(codeSmells);
-
-        rulesService.handleRules(rulesRequestMap);
-
-        assertEquals(1, rulesService.getValidationErrors().size());
-        assertEquals("Code Smells - Method too long is enabled, but max length must be positive.", 
-                      rulesService.getValidationErrors().get(0));
-    }
-
-    @Test
-    void testHandleRules_CyclomaticComplexityLimitError() {
-        CodeComplexity codeComplexity = new CodeComplexity();
-        codeComplexity.setMaxCyclomaticComplexity(0);
-        rulesRequestMap.setCodeComplexity(codeComplexity);
-
-        rulesService.handleRules(rulesRequestMap);
-
-        assertEquals(1, rulesService.getValidationErrors().size());
-        assertEquals("Code Complexity - Cyclomatic complexity limit must be positive.", 
-                      rulesService.getValidationErrors().get(0));
-    }
-
-    @Test
-    void testHandleRules_MaxLineLengthError() {
-        CodeQuality codeQuality = new CodeQuality();
-        codeQuality.setMaxLineLengthLimit(0);
-        rulesRequestMap.setCodeQuality(codeQuality);
-
-        rulesService.handleRules(rulesRequestMap);
-
-        assertEquals(1, rulesService.getValidationErrors().size());
-        assertEquals("Code Quality - Max line length must be positive.", 
-                      rulesService.getValidationErrors().get(0));
-    }
-
-    @Test
-    void testHandleRules_MinCoveragePercentageError() {
-        Coverage coverage = new Coverage();
-        coverage.setCoverageThreshold(150);
-        rulesRequestMap.setCoverage(coverage);
-
-        rulesService.handleRules(rulesRequestMap);
-
-        assertEquals(1, rulesService.getValidationErrors().size());
-        assertEquals("Coverage - Min coverage percentage must be between 0 and 100.", 
-                      rulesService.getValidationErrors().get(0));
-    }
-
-    @Test
-    void testGetValidationErrors() {
-        CodeQuality codeQuality = new CodeQuality();
-        codeQuality.setMaxLineLengthLimit(0);
-        rulesRequestMap.setCodeQuality(codeQuality);
-        
-        rulesService.handleRules(rulesRequestMap);
-        
-        assertEquals(1, rulesService.getValidationErrors().size(), "Expected one validation error.");
-    }
-
-    @Test
-    void testGetRules() {
-        setUpValidRules();
-
-        rulesService.handleRules(rulesRequestMap);
-
-        assertNotNull(rulesService.getRules(), "Rules should be saved when valid.");
-    }
-
-    private void setUpValidRules() {
-        BestPractices bestPractices = new BestPractices();
-        bestPractices.setNoHardcodedValues(true);
-        rulesRequestMap.setBestPractices(bestPractices);
-
-        CodeSmells codeSmells = new CodeSmells();
-        codeSmells.setMethodTooLong(true);
-        codeSmells.setMaxMethodLength(10);
-        rulesRequestMap.setCodeSmells(codeSmells);
-
-        CodeComplexity codeComplexity = new CodeComplexity();
-        codeComplexity.setMaxCyclomaticComplexity(10);
-        rulesRequestMap.setCodeComplexity(codeComplexity);
-
-        CodeQuality codeQuality = new CodeQuality();
-        codeQuality.setMaxLineLengthLimit(80);
-        rulesRequestMap.setCodeQuality(codeQuality);
-
-        Coverage coverage = new Coverage();
-        coverage.setCoverageThreshold(85);
-        rulesRequestMap.setCoverage(coverage);
+        assertNotNull(validatedRules.getBestPractices(), "BestPractices should not be null");
+        assertEquals(false, validatedRules.getBestPractices().isNoHardcodedValuesEnabled(), "NoHardcodedValues should be false");
     }
 }

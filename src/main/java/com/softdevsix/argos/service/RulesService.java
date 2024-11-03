@@ -3,10 +3,6 @@ package com.softdevsix.argos.service;
 import com.softdevsix.argos.domain.*;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RulesService {
 
@@ -22,7 +18,7 @@ public class RulesService {
             CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
             
             if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
-                throw new IllegalArgumentException("El límite de longitud de línea debe ser positivo");
+                throw new IllegalArgumentException("The line length limit must be positive");
             }
             validatedRules.setCodeQuality(codeQuality);
         }
@@ -37,7 +33,7 @@ public class RulesService {
         if (rulesRequestMap.getCodeSmells() != null) {
             CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
             if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
-                throw new IllegalArgumentException("El límite de longitud de método debe ser positivo");
+                throw new IllegalArgumentException("The method length limit must be positive");
             }
             validatedRules.setCodeSmells(codeSmells);
         }
@@ -46,10 +42,10 @@ public class RulesService {
         if (rulesRequestMap.getCodeComplexity() != null) {
             CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
             if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
-                throw new IllegalArgumentException("El límite de complejidad ciclomática debe ser positivo");
+                throw new IllegalArgumentException("The cyclomatic complexity limit must be positive");
             }
             if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
-                throw new IllegalArgumentException("El límite de profundidad de anidación debe ser positivo");
+                throw new IllegalArgumentException("The nesting depth limit must be positive.");
             }
             validatedRules.setCodeComplexity(codeComplexity);
         }
@@ -64,7 +60,7 @@ public class RulesService {
         if (rulesRequestMap.getCoverage() != null) {
             Coverage coverage = rulesRequestMap.getCoverage();
             if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {
-                throw new IllegalArgumentException("El umbral de cobertura debe ser no negativo");
+                throw new IllegalArgumentException("The coverage threshold must be non-negative");
             }
             validatedRules.setCoverage(coverage);
         }

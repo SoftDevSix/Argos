@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/argos/rules")
 public class RulesHandler {
   private final RulesRequestMap rulesRequestMap;
+  private final RulesService service;
+
 
   @Autowired
-  public RulesHandler() {
-    rulesRequestMap = new RulesRequestMap();
+  public RulesHandler(RulesService service) {
+    this.rulesRequestMap = new RulesRequestMap();
+    this.service = service;
   }
 
-  @Autowired private RulesService service;
+  
 
   @PostMapping
   public ResponseEntity<Void>

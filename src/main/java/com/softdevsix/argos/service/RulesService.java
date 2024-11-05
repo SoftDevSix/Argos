@@ -3,11 +3,9 @@ package com.softdevsix.argos.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.softdevsix.argos.domain.BestPractices;
 import com.softdevsix.argos.domain.CodeComplexity;
 import com.softdevsix.argos.domain.CodeQuality;
 import com.softdevsix.argos.domain.CodeSmells;
-import com.softdevsix.argos.domain.CodingStandards;
 import com.softdevsix.argos.domain.Coverage;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
@@ -17,12 +15,12 @@ import com.softdevsix.argos.repository.RulesRepoImpl;
 public class RulesService {
 
     private Rules validatedRules;
-
-    @Autowired
     private RulesRepoImpl rulesRepo;
 
-    public RulesService() {
+    @Autowired
+    public RulesService(RulesRepoImpl rulesRepo) {
         this.validatedRules = new Rules();
+        this.rulesRepo = rulesRepo;
     }
 
     public void handleRules(RulesRequestMap rulesRequestMap) {

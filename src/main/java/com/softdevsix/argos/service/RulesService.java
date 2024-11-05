@@ -7,6 +7,7 @@ import com.softdevsix.argos.domain.CodeComplexity;
 import com.softdevsix.argos.domain.CodeQuality;
 import com.softdevsix.argos.domain.CodeSmells;
 import com.softdevsix.argos.domain.Coverage;
+import com.softdevsix.argos.domain.Project;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
 import com.softdevsix.argos.repository.RulesRepoImpl;
@@ -31,7 +32,8 @@ public class RulesService {
         validateAndSetCodingStandards(rulesRequestMap);
         validateAndSetCoverage(rulesRequestMap);
 
-        rulesRepo.createRule(validatedRules);
+        // TODO: createRule requires the project id, the endpoint should request the project id
+        //rulesRepo.createRule(validatedRules);
     }
 
     private void validateAndSetCodeQuality(RulesRequestMap rulesRequestMap) {

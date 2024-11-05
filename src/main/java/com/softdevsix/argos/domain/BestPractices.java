@@ -8,16 +8,18 @@ import jakarta.persistence.Id;
 
 @Entity
 public class BestPractices {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO) private Integer id;
-  private Integer repositoryId;
-  @Column(nullable = true) private boolean noHardcodedValues;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Integer id;
 
-  public boolean isNoHardcodedValuesEnabled() { return noHardcodedValues; }
+  @Column(nullable = true)
+  private boolean noHardcodedValues;
+
+  public boolean isNoHardcodedValuesEnabled() {
+    return noHardcodedValues;
+  }
+
   public void setNoHardcodedValues(boolean noHardcodedValues) {
     this.noHardcodedValues = noHardcodedValues;
-  }
-  public Integer getRepositoryId() { return repositoryId; }
-  public void setRepositoryId(Integer repositoryId) {
-    this.repositoryId = repositoryId;
   }
 }

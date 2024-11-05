@@ -1,6 +1,7 @@
 package edu.usb.argos.ASTProcessor.reader.directory_readers;
 
 import edu.usb.argos.ASTProcessor.reader.interfaces.IPathValidator;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,9 +9,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Component
 public class SourceTreeAnalyzer {
 
-    private IPathValidator pathValidator;
+    private final IPathValidator pathValidator;
 
     public SourceTreeAnalyzer(IPathValidator pathValidator) {
         this.pathValidator = pathValidator;

@@ -1,11 +1,13 @@
 package edu.usb.argos.ASTProcessor.reader.validations;
 
 import edu.usb.argos.ASTProcessor.reader.interfaces.IPathValidator;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
+@Component
 public class DirectoryPathAnalyzer implements IPathValidator {
 
     @Override

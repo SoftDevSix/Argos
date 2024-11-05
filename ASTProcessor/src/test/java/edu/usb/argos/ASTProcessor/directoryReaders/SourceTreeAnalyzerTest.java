@@ -1,6 +1,6 @@
-package edu.usb.argos.ASTProcessor.directory_analyzers;
+package edu.usb.argos.ASTProcessor.directoryReaders;
 
-import edu.usb.argos.ASTProcessor.reader.directory_readers.SourceTreeAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.directoryReaders.SourceTreeAnalyzer;
 import edu.usb.argos.ASTProcessor.reader.validations.DirectoryPathAnalyzer;
 import edu.usb.argos.ASTProcessor.reader.interfaces.IPathValidator;
 import org.junit.jupiter.api.BeforeEach;

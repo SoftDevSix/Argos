@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.directory_analyzers;
+package edu.usb.argos.ASTProcessor.directoryReaders;
 
 import edu.usb.argos.ASTProcessor.reader.validations.DirectoryPathAnalyzer;
 import edu.usb.argos.ASTProcessor.reader.interfaces.IPathValidator;

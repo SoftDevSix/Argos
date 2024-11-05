@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.reader.directory_readers;
+package edu.usb.argos.ASTProcessor.reader.directoryReaders;
 
 import edu.usb.argos.ASTProcessor.reader.interfaces.IPathValidator;
 import org.springframework.stereotype.Component;

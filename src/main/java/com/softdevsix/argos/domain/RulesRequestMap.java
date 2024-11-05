@@ -8,9 +8,6 @@ public class RulesRequestMap {
     private CodingStandards codingStandards;
     private Coverage coverage;
 
-    public RulesRequestMap() {
-        
-    }
     public void mapFromJson(RulesRequestMap requestData) {
         this.setCodeQuality(requestData.getCodeQuality());
         this.setBestPractices(requestData.getBestPractices());

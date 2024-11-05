@@ -13,14 +13,14 @@ import java.util.stream.Stream;
 public class SourceTreeAnalyzer {
 
     private final IPathValidator pathValidator;
+    private final String JAVA_EXTENSION = ".java";
 
     public SourceTreeAnalyzer(IPathValidator pathValidator) {
         this.pathValidator = pathValidator;
     }
 
     public List<Path> getJavaFiles(Path directoryPath) throws Exception {
-        String javaExtension = ".java";
-        return getFilesByExtension(directoryPath, javaExtension);
+        return getFilesByExtension(directoryPath, JAVA_EXTENSION);
     }
 
     private List<Path> getFilesByExtension(Path directoryPath, String extension) throws Exception {

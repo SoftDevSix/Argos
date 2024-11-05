@@ -1,4 +1,6 @@
 package com.softdevsix.argos;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +18,7 @@ import com.softdevsix.argos.repository.RulesRepoImpl;
  * RulesRepoTest
  */
 @SpringBootTest
-public class RulesRepoTest {
+class RulesRepoTest {
 
   @Autowired RulesRepoImpl rulesRepo;
   @Test
@@ -46,7 +48,9 @@ public class RulesRepoTest {
 
     try {
       rulesRepo.createRule(rules);
-      rulesRepo.fetchRule(repositoryId);
+
+      Rules fetchedRule = rulesRepo.fetchRule(repositoryId);  
+      assertNotNull(fetchedRule, "The fetched rule should not be null");
     } catch (Exception e) {
       throw new Exception(e);
     }

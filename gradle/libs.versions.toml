@@ -1,0 +1,18 @@
+[versions]
+springboot = "3.3.4"
+dependencyManagement = "1.1.6"
+springDocVersion = "2.6.0"
+antlr = "4.13.2"
+
+[plugins]
+springboot-web = { id = "org.springframework.boot", version.ref = "springboot" }
+dependency-management = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }
+
+[libraries]
+springboot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+springboot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springboot" }
+springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springDocVersion" }
+springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
+springboot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }

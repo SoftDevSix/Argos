@@ -44,6 +44,25 @@ public class SourceTreeAnalyzerTest {
     }
 
     @Test
+    void testGetJavaFilesInNestedDirectories() throws Exception {
+        Path subDir1 = Files.createDirectory(tempDir.resolve("subDir1"));
+        Path subDir2 = Files.createDirectory(tempDir.resolve("subDir1/subDir2"));
+        Path subDir3 = Files.createDirectory(tempDir.resolve("subDir3"));
+
+        Path javaFile1 = Files.createFile(tempDir.resolve("Main.java"));
+        Path javaFile2 = Files.createFile(subDir1.resolve("SubFile1.java"));
+        Path javaFile3 = Files.createFile(subDir2.resolve("SubFile2.java"));
+        Path textFile = Files.createFile(subDir3.resolve("TextFile.txt"));
+
+        List<Path> javaFiles = analyzer.getJavaFiles(tempDir);
+        assertEquals(3, javaFiles.size());
+        assertTrue(javaFiles.contains(javaFile1));
+        assertTrue(javaFiles.contains(javaFile2));
+        assertTrue(javaFiles.contains(javaFile3));
+        assertFalse(javaFiles.contains(textFile));
+    }
+
+    @Test
     void testGetJavaFilesInNonJavaFilesDirectory() throws Exception {
         Files.createFile(tempDir.resolve("TestFile.txt"));
         List<Path> javaFiles = analyzer.getJavaFiles(tempDir);

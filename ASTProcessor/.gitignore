@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### ANTLR ###
+/src/main/java/edu/usb/argos/ASTProcessor/antlr/

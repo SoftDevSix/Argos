@@ -28,8 +28,8 @@ class JavaLexerTest {
     @Test
     void testKeywordToken() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.CLASS, JavaLexer.WS, JavaLexer.IF, JavaLexer.WS,
-                JavaLexer.FOR, JavaLexer.WS, JavaLexer.WHILE, JavaLexer.EOF
+                JavaLexer.CLASS, JavaLexer.IF,
+                JavaLexer.FOR, JavaLexer.WHILE, JavaLexer.EOF
         );
         assertTokenTypes("class if for while", expectedTypes);
     }
@@ -37,12 +37,9 @@ class JavaLexerTest {
     @Test
     void testOperatorsToken() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.ADD, JavaLexer.WS, JavaLexer.SUB, JavaLexer.WS,
-                JavaLexer.MUL, JavaLexer.WS, JavaLexer.DIV, JavaLexer.WS,
-                JavaLexer.ASSIGN, JavaLexer.WS, JavaLexer.EQUAL, JavaLexer.WS,
-                JavaLexer.NOTEQUAL, JavaLexer.WS, JavaLexer.LE, JavaLexer.WS,
-                JavaLexer.GE, JavaLexer.WS, JavaLexer.AND, JavaLexer.WS, JavaLexer.OR,
-                JavaLexer.WS, JavaLexer.INC, JavaLexer.WS, JavaLexer.DEC, JavaLexer.WS,
+                JavaLexer.ADD, JavaLexer.SUB, JavaLexer.MUL, JavaLexer.DIV,
+                JavaLexer.ASSIGN, JavaLexer.EQUAL, JavaLexer.NOTEQUAL, JavaLexer.LE,
+                JavaLexer.GE, JavaLexer.AND, JavaLexer.OR, JavaLexer.INC, JavaLexer.DEC,
                 JavaLexer.DIV_ASSIGN, JavaLexer.EOF
         );
         assertTokenTypes("+ - * / = == != <= >= && || ++ -- /=", expectedTypes);
@@ -51,9 +48,9 @@ class JavaLexerTest {
     @Test
     void testLiteralsToken() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.DECIMAL_LITERAL, JavaLexer.WS, JavaLexer.FLOAT_LITERAL, JavaLexer.WS,
-                JavaLexer.BOOL_LITERAL, JavaLexer.WS, JavaLexer.BOOL_LITERAL, JavaLexer.WS,
-                JavaLexer.CHAR_LITERAL, JavaLexer.WS, JavaLexer.STRING_LITERAL, JavaLexer.EOF
+                JavaLexer.DECIMAL_LITERAL, JavaLexer.FLOAT_LITERAL,
+                JavaLexer.BOOL_LITERAL, JavaLexer.BOOL_LITERAL,
+                JavaLexer.CHAR_LITERAL, JavaLexer.STRING_LITERAL, JavaLexer.EOF
         );
         assertTokenTypes("123 3.14 true false 'c' \"string\"", expectedTypes);
     }
@@ -61,9 +58,9 @@ class JavaLexerTest {
     @Test
     void testSeparatorsToken() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.LPAREN, JavaLexer.WS, JavaLexer.RPAREN, JavaLexer.WS,
-                JavaLexer.LBRACE, JavaLexer.WS, JavaLexer.RBRACE, JavaLexer.WS,
-                JavaLexer.SEMI, JavaLexer.WS, JavaLexer.COMMA, JavaLexer.WS,
+                JavaLexer.LPAREN, JavaLexer.RPAREN,
+                JavaLexer.LBRACE, JavaLexer.RBRACE,
+                JavaLexer.SEMI, JavaLexer.COMMA,
                 JavaLexer.DOT, JavaLexer.EOF
         );
         assertTokenTypes("( ) { } ; , .", expectedTypes);
@@ -72,8 +69,7 @@ class JavaLexerTest {
     @Test
     void testIdentifiersToken() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.IDENTIFIER, JavaLexer.WS,
-                JavaLexer.IDENTIFIER, JavaLexer.WS,
+                JavaLexer.IDENTIFIER, JavaLexer.IDENTIFIER,
                 JavaLexer.IDENTIFIER, JavaLexer.EOF
         );
         assertTokenTypes("myVariable _myVariable myVariable123", expectedTypes);
@@ -82,8 +78,7 @@ class JavaLexerTest {
     @Test
     void testInvalidIdentifiersToken() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.DECIMAL_LITERAL,
-                JavaLexer.IDENTIFIER, JavaLexer.WS,
+                JavaLexer.DECIMAL_LITERAL, JavaLexer.IDENTIFIER,
                 JavaLexer.IDENTIFIER, JavaLexer.EOF
         );
         assertTokenTypes("123myVariable $InvalidId", expectedTypes);
@@ -92,12 +87,8 @@ class JavaLexerTest {
     @Test
     void testWhitespaceAndComments() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.INT, JavaLexer.WS,
-                JavaLexer.IDENTIFIER, JavaLexer.WS,
-                JavaLexer.ASSIGN, JavaLexer.WS,
-                JavaLexer.DECIMAL_LITERAL, JavaLexer.SEMI, JavaLexer.WS,
-                JavaLexer.LINE_COMMENT, JavaLexer.WS,
-                JavaLexer.COMMENT, JavaLexer.EOF
+                JavaLexer.INT, JavaLexer.IDENTIFIER, JavaLexer.ASSIGN,
+                JavaLexer.DECIMAL_LITERAL, JavaLexer.SEMI, JavaLexer.EOF
         );
         assertTokenTypes(
                 "int x = 42; // this is a comment\n/* multi-line\n comment */",
@@ -108,12 +99,12 @@ class JavaLexerTest {
     @Test
     void testMultipleTokensTogetherFilteringWS() {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.INT, JavaLexer.WS, JavaLexer.IDENTIFIER, JavaLexer.WS, JavaLexer.ASSIGN,
-                JavaLexer.WS, JavaLexer.DECIMAL_LITERAL, JavaLexer.SEMI, JavaLexer.WS,
-                JavaLexer.IF, JavaLexer.WS, JavaLexer.LPAREN, JavaLexer.IDENTIFIER,
-                JavaLexer.WS, JavaLexer.EQUAL, JavaLexer.WS, JavaLexer.DECIMAL_LITERAL,
-                JavaLexer.RPAREN, JavaLexer.WS, JavaLexer.LBRACE, JavaLexer.WS, JavaLexer.RETURN,
-                JavaLexer.WS, JavaLexer.BOOL_LITERAL, JavaLexer.SEMI, JavaLexer.WS,
+                JavaLexer.INT, JavaLexer.IDENTIFIER, JavaLexer.ASSIGN,
+                JavaLexer.DECIMAL_LITERAL, JavaLexer.SEMI,
+                JavaLexer.IF, JavaLexer.LPAREN, JavaLexer.IDENTIFIER,
+                JavaLexer.EQUAL, JavaLexer.DECIMAL_LITERAL,
+                JavaLexer.RPAREN, JavaLexer.LBRACE, JavaLexer.RETURN,
+                JavaLexer.BOOL_LITERAL, JavaLexer.SEMI,
                 JavaLexer.RBRACE, JavaLexer.EOF
         );
         assertTokenTypes(

@@ -20,5 +20,3 @@ public class LexerFileProcessor {
         return tokens;
     }
 }
-
-

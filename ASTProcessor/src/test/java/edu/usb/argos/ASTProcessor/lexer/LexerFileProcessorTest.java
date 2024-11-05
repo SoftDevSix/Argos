@@ -33,9 +33,9 @@ public class LexerFileProcessorTest {
     @Test
     void testGetTokensFromFile() throws IOException {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.IDENTIFIER, JavaLexer.WS, JavaLexer.DECIMAL_LITERAL, JavaLexer.WS,
-                JavaLexer.ADD, JavaLexer.WS, JavaLexer.SUB, JavaLexer.WS, JavaLexer.MUL,
-                JavaLexer.WS, JavaLexer.DIV, Token.EOF
+                JavaLexer.IDENTIFIER, JavaLexer.DECIMAL_LITERAL,
+                JavaLexer.ADD, JavaLexer.SUB, JavaLexer.MUL,
+                JavaLexer.DIV, Token.EOF
         );
         assertTokenTypes("abc 123 + - * /", expectedTypes);
     }
@@ -43,11 +43,11 @@ public class LexerFileProcessorTest {
     @Test
     void testGetTokensFromFile_WithConditionalAndOperators() throws IOException {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.IF, JavaLexer.WS, JavaLexer.LPAREN, JavaLexer.IDENTIFIER,
-                JavaLexer.WS, JavaLexer.LT, JavaLexer.WS, JavaLexer.IDENTIFIER,
-                JavaLexer.RPAREN, JavaLexer.WS, JavaLexer.LBRACE, JavaLexer.WS, JavaLexer.IDENTIFIER,
-                JavaLexer.WS, JavaLexer.ADD_ASSIGN, JavaLexer.WS, JavaLexer.DECIMAL_LITERAL,
-                JavaLexer.SEMI, JavaLexer.WS, JavaLexer.RBRACE, JavaLexer.EOF
+                JavaLexer.IF, JavaLexer.LPAREN, JavaLexer.IDENTIFIER,
+                JavaLexer.LT, JavaLexer.IDENTIFIER,
+                JavaLexer.RPAREN, JavaLexer.LBRACE, JavaLexer.IDENTIFIER,
+                JavaLexer.ADD_ASSIGN, JavaLexer.DECIMAL_LITERAL,
+                JavaLexer.SEMI, JavaLexer.RBRACE, JavaLexer.EOF
         );
         assertTokenTypes("if (a < b) { a += 2; }", expectedTypes);
     }
@@ -55,12 +55,12 @@ public class LexerFileProcessorTest {
     @Test
     void testGetTokensFromFile_WithClassAndMethodStructure() throws IOException {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.PUBLIC, JavaLexer.WS, JavaLexer.CLASS, JavaLexer.WS, JavaLexer.IDENTIFIER,
-                JavaLexer.WS, JavaLexer.LBRACE, JavaLexer.WS, JavaLexer.VOID, JavaLexer.WS,
-                JavaLexer.IDENTIFIER, JavaLexer.LPAREN, JavaLexer.INT, JavaLexer.WS,
-                JavaLexer.IDENTIFIER, JavaLexer.RPAREN, JavaLexer.WS, JavaLexer.LBRACE, JavaLexer.WS,
-                JavaLexer.IDENTIFIER, JavaLexer.INC, JavaLexer.SEMI, JavaLexer.WS,
-                JavaLexer.RBRACE, JavaLexer.WS, JavaLexer.RBRACE, JavaLexer.EOF
+                JavaLexer.PUBLIC, JavaLexer.CLASS, JavaLexer.IDENTIFIER,
+                JavaLexer.LBRACE, JavaLexer.VOID, JavaLexer.IDENTIFIER,
+                JavaLexer.LPAREN, JavaLexer.INT, JavaLexer.IDENTIFIER,
+                JavaLexer.RPAREN, JavaLexer.LBRACE, JavaLexer.IDENTIFIER,
+                JavaLexer.INC, JavaLexer.SEMI, JavaLexer.RBRACE,
+                JavaLexer.RBRACE, JavaLexer.EOF
         );
         assertTokenTypes("public class MyClass { void doSomething(int a) { a++; } }", expectedTypes);
     }
@@ -68,14 +68,12 @@ public class LexerFileProcessorTest {
     @Test
     void testGetTokensFromFile_WithLiteralsAndOperators() throws IOException {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.BOOLEAN, JavaLexer.WS, JavaLexer.IDENTIFIER, JavaLexer.WS,
-                JavaLexer.ASSIGN, JavaLexer.WS, JavaLexer.BOOL_LITERAL, JavaLexer.SEMI, JavaLexer.WS,
-                JavaLexer.INT, JavaLexer.WS, JavaLexer.IDENTIFIER, JavaLexer.WS,
-                JavaLexer.ASSIGN, JavaLexer.WS, JavaLexer.DECIMAL_LITERAL, JavaLexer.SEMI,
-                JavaLexer.WS, JavaLexer.DOUBLE, JavaLexer.WS, JavaLexer.IDENTIFIER, JavaLexer.WS,
-                JavaLexer.ASSIGN, JavaLexer.WS, JavaLexer.FLOAT_LITERAL, JavaLexer.WS, JavaLexer.MUL,
-                JavaLexer.WS, JavaLexer.DECIMAL_LITERAL, JavaLexer.WS, JavaLexer.DIV, JavaLexer.WS,
-                JavaLexer.IDENTIFIER, JavaLexer.SEMI, JavaLexer.EOF
+                JavaLexer.BOOLEAN, JavaLexer.IDENTIFIER, JavaLexer.ASSIGN,
+                JavaLexer.BOOL_LITERAL, JavaLexer.SEMI, JavaLexer.INT, JavaLexer.IDENTIFIER,
+                JavaLexer.ASSIGN, JavaLexer.DECIMAL_LITERAL, JavaLexer.SEMI,
+                JavaLexer.DOUBLE, JavaLexer.IDENTIFIER, JavaLexer.ASSIGN,
+                JavaLexer.FLOAT_LITERAL, JavaLexer.MUL, JavaLexer.DECIMAL_LITERAL,
+                JavaLexer.DIV, JavaLexer.IDENTIFIER, JavaLexer.SEMI, JavaLexer.EOF
         );
         assertTokenTypes("boolean flag = true; int x = 100; double y = 2.5 * 4 / x;", expectedTypes);
     }
@@ -83,12 +81,9 @@ public class LexerFileProcessorTest {
     @Test
     void testCommentsAndWhitespace() throws IOException {
         List<Integer> expectedTypes = List.of(
-                JavaLexer.LINE_COMMENT, JavaLexer.WS, JavaLexer.INT, JavaLexer.WS,
-                JavaLexer.IDENTIFIER, JavaLexer.WS, JavaLexer.ASSIGN,
-                JavaLexer.WS, JavaLexer.DECIMAL_LITERAL,
-                JavaLexer.SEMI, JavaLexer.WS, JavaLexer.COMMENT, JavaLexer.EOF
+                JavaLexer.INT, JavaLexer.IDENTIFIER,
+                JavaLexer.ASSIGN, JavaLexer.DECIMAL_LITERAL, JavaLexer.SEMI, JavaLexer.EOF
         );
         assertTokenTypes("// This is a comment\nint x = 10; /* Another comment */", expectedTypes);
     }
-
 }

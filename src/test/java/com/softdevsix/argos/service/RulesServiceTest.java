@@ -3,23 +3,37 @@ package com.softdevsix.argos.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.softdevsix.argos.domain.*;
 import com.softdevsix.argos.service.RulesService;
+import com.softdevsix.argos.repository.RulesRepoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 
 @SpringBootTest
 class RulesServiceTests {
 
-    private RulesService rulesService;
+    @Mock
+    private RulesRepoImpl rulesRepo;
+
+    @InjectMocks
+    private RulesService rulesService; 
+
     private RulesRequestMap rulesRequestMap;
 
     @BeforeEach
     void setUp() {
-        rulesService = new RulesService();
+
+        MockitoAnnotations.openMocks(this); 
         rulesRequestMap = new RulesRequestMap();
+
     }
 
     @Test

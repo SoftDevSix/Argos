@@ -10,12 +10,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class RulesRepoImpl implements RulesRepo {
 
-  @Autowired private BestPracticesRepository bestPractices;
-  @Autowired private CodeComplexityRepository codeComplexity;
-  @Autowired private CodeQualityRepository codeQuality;
-  @Autowired private CodeSmellsRepository codeSmells;
-  @Autowired private CodingStandardsRepository codingStandards;
-  @Autowired private CoverageRepository coverage;
+  private final BestPracticesRepository bestPractices;
+  private final CodeComplexityRepository codeComplexity;
+  private final CodeQualityRepository codeQuality;
+  private final CodeSmellsRepository codeSmells;
+  private final CodingStandardsRepository codingStandards;
+  private final CoverageRepository coverage;
+
+  @Autowired
+  public RulesRepoImpl(BestPracticesRepository bestPractices,
+                       CodeComplexityRepository codeComplexity,
+                       CodeQualityRepository codeQuality,
+                       CodeSmellsRepository codeSmells,
+                       CodingStandardsRepository codingStandards,
+                       CoverageRepository coverage) {
+    this.bestPractices = bestPractices;
+    this.codeComplexity = codeComplexity;
+    this.codeQuality = codeQuality;
+    this.codeSmells = codeSmells;
+    this.codingStandards = codingStandards;
+    this.coverage = coverage;
+  }
 
   @Override
   public void createRule(Rules rules) {

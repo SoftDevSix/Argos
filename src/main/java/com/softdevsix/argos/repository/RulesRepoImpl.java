@@ -46,32 +46,32 @@ public class RulesRepoImpl implements RulesRepo {
   public Rules fetchRule(Integer repoId) {
     Rules rules = new Rules();
     bestPractices.findAll().forEach(item -> {
-      if (item.getRepositoryId() == repoId) {
+      if (repoId.equals(item.getRepositoryId())) {
         rules.setBestPractices(item);
       }
     });
     codeComplexity.findAll().forEach(item -> {
-      if (item.getRepositoryId() == repoId) {
+      if (repoId.equals(item.getRepositoryId())) {
         rules.setCodeComplexity(item);
       }
     });
     codeQuality.findAll().forEach(item -> {
-      if (item.getRepositoryId() == repoId) {
+      if (repoId.equals(item.getRepositoryId())) {
         rules.setCodeQuality(item);
       }
     });
     codeSmells.findAll().forEach(item -> {
-      if (item.getRepositoryId() == repoId) {
+      if (repoId.equals(item.getRepositoryId())) {
         rules.setCodeSmells(item);
       }
     });
     codingStandards.findAll().forEach(item -> {
-      if (item.getRepositoryId() == repoId) {
+      if (repoId.equals(item.getRepositoryId())) {
         rules.setCodingStandards(item);
       }
     });
     coverage.findAll().forEach(item -> {
-      if (item.getRepositoryId() == repoId) {
+      if (repoId.equals(item.getRepositoryId())) {
         rules.setCoverage(item);
       }
     });

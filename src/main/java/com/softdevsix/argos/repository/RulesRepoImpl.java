@@ -1,81 +1,81 @@
 package com.softdevsix.argos.repository;
 
+import com.softdevsix.argos.domain.Project;
+import com.softdevsix.argos.domain.ProjectRules;
 import com.softdevsix.argos.domain.Rules;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * RulesRepoImpl
- */
+/** RulesRepoImpl */
 @Component
 public class RulesRepoImpl implements RulesRepo {
 
-  private final BestPracticesRepository bestPractices;
-  private final CodeComplexityRepository codeComplexity;
-  private final CodeQualityRepository codeQuality;
-  private final CodeSmellsRepository codeSmells;
-  private final CodingStandardsRepository codingStandards;
-  private final CoverageRepository coverage;
+  private BestPracticesRepository bestPractices;
+  private CodeComplexityRepository codeComplexity;
+  private CodeQualityRepository codeQuality;
+  private CodeSmellsRepository codeSmells;
+  private CodingStandardsRepository codingStandards;
+  private CoverageRepository coverage;
+  private ProjectRulesRepository projectRulesRepository;
 
   @Autowired
-  public RulesRepoImpl(BestPracticesRepository bestPractices,
-                       CodeComplexityRepository codeComplexity,
-                       CodeQualityRepository codeQuality,
-                       CodeSmellsRepository codeSmells,
-                       CodingStandardsRepository codingStandards,
-                       CoverageRepository coverage) {
+  public RulesRepoImpl(
+      BestPracticesRepository bestPractices,
+      CodeComplexityRepository codeComplexity,
+      CodeQualityRepository codeQuality,
+      CodeSmellsRepository codeSmells,
+      CodingStandardsRepository codingStandards,
+      CoverageRepository coverage,
+      ProjectRulesRepository projectRulesRepository) {
+
     this.bestPractices = bestPractices;
     this.codeComplexity = codeComplexity;
     this.codeQuality = codeQuality;
     this.codeSmells = codeSmells;
     this.codingStandards = codingStandards;
     this.coverage = coverage;
+    this.projectRulesRepository = projectRulesRepository;
   }
 
   @Override
-  public void createRule(Rules rules) {
+  public Integer createRule(Rules rules, Project project) {
+    ProjectRules projectRules =
+        new ProjectRules(
+            project,
+            rules.getBestPractices(),
+            rules.getCodeComplexity(),
+            rules.getCodeQuality(),
+            rules.getCodeSmells(),
+            rules.getCodingStandards(),
+            rules.getCoverage());
+
     bestPractices.save(rules.getBestPractices());
     codeComplexity.save(rules.getCodeComplexity());
     codeQuality.save(rules.getCodeQuality());
     codeSmells.save(rules.getCodeSmells());
     codingStandards.save(rules.getCodingStandards());
     coverage.save(rules.getCoverage());
+
+    ProjectRules savedProjecRules = projectRulesRepository.save(projectRules);
+    return savedProjecRules.getId();
   }
 
   @Override
   public Rules fetchRule(Integer repoId) {
-    Rules rules = new Rules();
-    bestPractices.findAll().forEach(item -> {
-      if (repoId.equals(item.getRepositoryId())) {
-        rules.setBestPractices(item);
-      }
-    });
-    codeComplexity.findAll().forEach(item -> {
-      if (repoId.equals(item.getRepositoryId())) {
-        rules.setCodeComplexity(item);
-      }
-    });
-    codeQuality.findAll().forEach(item -> {
-      if (repoId.equals(item.getRepositoryId())) {
-        rules.setCodeQuality(item);
-      }
-    });
-    codeSmells.findAll().forEach(item -> {
-      if (repoId.equals(item.getRepositoryId())) {
-        rules.setCodeSmells(item);
-      }
-    });
-    codingStandards.findAll().forEach(item -> {
-      if (repoId.equals(item.getRepositoryId())) {
-        rules.setCodingStandards(item);
-      }
-    });
-    coverage.findAll().forEach(item -> {
-      if (repoId.equals(item.getRepositoryId())) {
-        rules.setCoverage(item);
-      }
-    });
+    Optional<ProjectRules> optional = projectRulesRepository.findById(repoId);
+    if (optional.isEmpty()) {
+      return null;
+    }
 
+    ProjectRules repositoryRules = optional.get();
+    Rules rules = new Rules();
+    rules.setBestPractices(repositoryRules.getBestPractices());
+    rules.setCodeComplexity(repositoryRules.getCodeComplexity());
+    rules.setCodeQuality(repositoryRules.getCodeQuality());
+    rules.setCodeSmells(repositoryRules.getCodeSmells());
+    rules.setCodingStandards(repositoryRules.getCodingStandards());
+    rules.setCoverage(repositoryRules.getCoverage());
     return rules;
   }
 }

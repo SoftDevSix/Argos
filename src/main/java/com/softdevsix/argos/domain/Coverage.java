@@ -8,37 +8,52 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Coverage {
-  @Id @GeneratedValue(strategy = GenerationType.AUTO) private Integer id;
-  private Integer repositoryId;
-  @Column(nullable = true) private boolean coverageReviewRequired;
-  @Column(nullable = true) private boolean minCoveragePercentage;
-  @Column(nullable = true) private boolean rejectIfLower;
-  @Column(nullable = true) private int coverageThreshold;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Integer id;
+
+
+  @Column(nullable = true)
+  private boolean coverageReviewRequired;
+
+  @Column(nullable = true)
+  private boolean minCoveragePercentage;
+
+  @Column(nullable = true)
+  private boolean rejectIfLower;
+
+  @Column(nullable = true)
+  private int coverageThreshold;
 
   public boolean isMinCoveragePercentageEnabled() {
     return minCoveragePercentage;
   }
+
   public void setMinCoveragePercentage(boolean minCoveragePercentage) {
     this.minCoveragePercentage = minCoveragePercentage;
   }
 
-  public int getCoverageThreshold() { return coverageThreshold; }
+  public int getCoverageThreshold() {
+    return coverageThreshold;
+  }
+
   public void setCoverageThreshold(int coverageThreshold) {
     this.coverageThreshold = coverageThreshold;
   }
 
-  public boolean isRejectIfLowerEnabled() { return rejectIfLower; }
+  public boolean isRejectIfLowerEnabled() {
+    return rejectIfLower;
+  }
+
   public void setRejectIfLower(boolean rejectIfLower) {
     this.rejectIfLower = rejectIfLower;
   }
 
-  public boolean isCoverageReviewRequired() { return coverageReviewRequired; }
-  public void setCoverageReviewRequired(boolean coverageReviewRequired) {
-    this.coverageReviewRequired = coverageReviewRequired;
+  public boolean isCoverageReviewRequired() {
+    return coverageReviewRequired;
   }
 
-  public Integer getRepositoryId() { return repositoryId; }
-  public void setRepositoryId(Integer repositoryId) {
-    this.repositoryId = repositoryId;
+  public void setCoverageReviewRequired(boolean coverageReviewRequired) {
+    this.coverageReviewRequired = coverageReviewRequired;
   }
 }

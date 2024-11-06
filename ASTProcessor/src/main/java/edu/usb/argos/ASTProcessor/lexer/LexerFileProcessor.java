@@ -15,6 +15,11 @@ public class LexerFileProcessor {
         String content = new String(Files.readAllBytes(path));
 
         JavaLexer lexer = new JavaLexer(CharStreams.fromString(content));
+
+        CustomErrorListener errorListener = new CustomErrorListener();
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(errorListener);
+
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         tokens.fill();
         return tokens;

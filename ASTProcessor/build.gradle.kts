@@ -19,6 +19,7 @@ repositories {
 dependencies {
 	implementation(libs.springboot.starter.web)
 	implementation(libs.springdoc.openapi)
+	implementation(libs.antlr.runtime)
 	developmentOnly(libs.springboot.devtools)
 	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)

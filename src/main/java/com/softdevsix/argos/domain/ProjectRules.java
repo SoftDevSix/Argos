@@ -15,7 +15,7 @@ public class ProjectRules {
   private Integer id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "repository_id")
+  @JoinColumn(name = "project_id")
   private Project project;
 
   @ManyToOne(fetch = FetchType.LAZY)

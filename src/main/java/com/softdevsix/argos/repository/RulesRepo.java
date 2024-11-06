@@ -1,5 +1,7 @@
 package com.softdevsix.argos.repository;
 
+import java.util.Optional;
+
 import com.softdevsix.argos.domain.Project;
 import com.softdevsix.argos.domain.Rules;
 
@@ -8,5 +10,5 @@ import com.softdevsix.argos.domain.Rules;
  */
 public interface RulesRepo {
   Integer createRule(Rules rules, Project project);
-  Rules fetchRule(Integer repoId);
+  Optional<Rules> fetchRule(Integer repoId);
 }

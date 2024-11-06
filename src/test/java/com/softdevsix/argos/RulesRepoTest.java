@@ -44,7 +44,7 @@ class RulesRepoTest {
     projectRepository.save(project);
 
     Integer projectRuleId = rulesRepo.createRule(rules, project);
-    Rules fetchedRule = rulesRepo.fetchRule(projectRuleId);
+    Rules fetchedRule = rulesRepo.fetchRule(projectRuleId).orElseThrow(() -> new RuntimeException("Rule not found"));
     assertNotNull(fetchedRule, "The fetched rule should not be null");
   }
 }

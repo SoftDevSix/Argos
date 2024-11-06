@@ -3,4 +3,4 @@ spring:
     name: argos
 
   profiles:
-    active: prod
+    active: dev

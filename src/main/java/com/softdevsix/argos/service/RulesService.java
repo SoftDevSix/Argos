@@ -41,7 +41,7 @@ public class RulesService {
     validateAndSetCodingStandards(rulesRequestMap);
     validateAndSetCoverage(rulesRequestMap);
     validateProjectAvailability(projectId);
-    Project project = validateProjectExitence(projectId);
+    Project project = validateProjectExistence(projectId);
     rulesRepo.createRule(validatedRules, project);
   }
 
@@ -106,13 +106,13 @@ public class RulesService {
         .findAll()
         .forEach(
             projectRules -> {
-              if (projectRules.getProject().getId() == projectId) {
+              if (projectRules.getProject().getId().equals(projectId)) {
                 throw new IllegalArgumentException("Project already has rules");
               }
             });
   }
 
-  private Project validateProjectExitence(Integer projectId) {
+  private Project validateProjectExistence(Integer projectId) {
     Optional<Project> optional = projectRepository.findById(projectId);
     if (optional.isEmpty()) {
       throw new IllegalArgumentException("Provided project ID is not registered");

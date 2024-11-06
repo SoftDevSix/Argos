@@ -11,13 +11,32 @@ import org.springframework.stereotype.Component;
 @Component
 public class RulesRepoImpl implements RulesRepo {
 
-  @Autowired private BestPracticesRepository bestPractices;
-  @Autowired private CodeComplexityRepository codeComplexity;
-  @Autowired private CodeQualityRepository codeQuality;
-  @Autowired private CodeSmellsRepository codeSmells;
-  @Autowired private CodingStandardsRepository codingStandards;
-  @Autowired private CoverageRepository coverage;
-  @Autowired private ProjectRulesRepository projectRulesRepository;
+  private BestPracticesRepository bestPractices;
+  private CodeComplexityRepository codeComplexity;
+  private CodeQualityRepository codeQuality;
+  private CodeSmellsRepository codeSmells;
+  private CodingStandardsRepository codingStandards;
+  private CoverageRepository coverage;
+  private ProjectRulesRepository projectRulesRepository;
+
+  @Autowired
+  public RulesRepoImpl(
+      BestPracticesRepository bestPractices,
+      CodeComplexityRepository codeComplexity,
+      CodeQualityRepository codeQuality,
+      CodeSmellsRepository codeSmells,
+      CodingStandardsRepository codingStandards,
+      CoverageRepository coverage,
+      ProjectRulesRepository projectRulesRepository) {
+
+    this.bestPractices = bestPractices;
+    this.codeComplexity = codeComplexity;
+    this.codeQuality = codeQuality;
+    this.codeSmells = codeSmells;
+    this.codingStandards = codingStandards;
+    this.coverage = coverage;
+    this.projectRulesRepository = projectRulesRepository;
+  }
 
   @Override
   public Integer createRule(Rules rules, Project project) {
@@ -46,7 +65,6 @@ public class RulesRepoImpl implements RulesRepo {
   public Rules fetchRule(Integer repoId) {
     Optional<ProjectRules> optional = projectRulesRepository.findById(repoId);
     if (optional.isEmpty()) {
-      System.out.printf("Could not find repoId: %d", repoId);
       return null;
     }
 

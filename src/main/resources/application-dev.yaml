@@ -2,6 +2,9 @@ server:
   port: '8080'
 
 spring:
+  config:
+    import: 'optional:file:.env[.properties]'
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: '${DB_DEV_URL}'

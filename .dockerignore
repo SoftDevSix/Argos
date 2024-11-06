@@ -21,6 +21,10 @@ out/
 .github/
 
 # Ignore docker files
-Dockerfile
+Dockerfile.dev
+Dockerfile.stage
+Dockerfile.prod
 .dockerignore
 docker-compose.yml
+
+.env.*

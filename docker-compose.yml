@@ -1,22 +1,104 @@
 services:
-  app:
-    image: argos-app
+  argos_dev:
+    image: argos-app:dev
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    environment:
+      SPRING_DATASOURCE_URL: ${DEV_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DEV_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DEV_DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: dev
     ports:
       - "8080:8080"
-  helios-db:
-    container_name: helios-db
+    depends_on:
+      - postgres_dev
+    profiles:
+      - development
+    env_file:
+      - .env
+
+  postgres_dev:
+    container_name: postgres_dev_db
     image: postgres:12.20-alpine3.20
-    ports:
-      - "5100:5432"
     environment:
-      POSTGRES_DB: helios
-      POSTGRES_USER: phaeton
-      POSTGRES_PASSWORD: ecliptic
+      POSTGRES_DB: ${DEV_DB_URL}
+      POSTGRES_USER: ${DEV_DB_USERNAME}
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
+    ports:
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_development_data:/var/lib/postgresql/data
+    profiles:
+      - development
+
+  argos_stage:
+    image: argos-app:stage
+    build:
+      context: .
+      dockerfile: Dockerfile.stage
+    environment:
+      SPRING_DATASOURCE_URL: ${STAGE_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${STAGE_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${STAGE_DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: stage
+    ports:
+      - "8181:8181"
+    depends_on:
+      - postgres_stage
+    profiles:
+      - stage
+    env_file:
+      - .env
+
+  postgres_stage:
+    container_name: postgres_stage_db
+    image: postgres:12.20-alpine3.20
+    environment:
+      POSTGRES_DB: ${STAGE_DB_URL}
+      POSTGRES_USER: ${STAGE_DB_USERNAME}
+      POSTGRES_PASSWORD: ${STAGE_DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_stage_data:/var/lib/postgresql/data
+    profiles:
+      - stage
+
+  argos_prod:
+    image: argos-app:prod
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    environment:
+      SPRING_DATASOURCE_URL: ${PROD_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${PROD_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${PROD_DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8282:8282"
+    depends_on:
+      - postgres_prod
+    profiles:
+      - production
+    env_file:
+      - .env
+
+  postgres_prod:
+    container_name: postgres_prod_db
+    image: postgres:12.20-alpine3.20
+    environment:
+      POSTGRES_DB: ${PROD_DB_URL}
+      POSTGRES_USER: ${PROD_DB_USERNAME}
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_production_data:/var/lib/postgresql/data
+    profiles:
+      - production
 
 volumes:
-  postgres_data: {}
+  postgres_development_data: {}
+  postgres_stage_data: {}
+  postgres_production_data: {}

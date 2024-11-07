@@ -26,6 +26,7 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("com.h2database:h2")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -38,6 +39,7 @@ tasks.withType<Test> {
 	testLogging {
 		events("passed", "skipped", "failed")
 	}
+	systemProperty("spring.profiles.active", "test")
 }
 
 tasks.jacocoTestReport {

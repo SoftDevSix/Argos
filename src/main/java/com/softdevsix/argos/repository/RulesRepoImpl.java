@@ -62,10 +62,10 @@ public class RulesRepoImpl implements RulesRepo {
   }
 
   @Override
-  public Rules fetchRule(Integer repoId) {
+  public Optional<Rules> fetchRule(Integer repoId) {
     Optional<ProjectRules> optional = projectRulesRepository.findById(repoId);
     if (optional.isEmpty()) {
-      return null;
+      return Optional.empty();
     }
 
     ProjectRules repositoryRules = optional.get();
@@ -76,6 +76,6 @@ public class RulesRepoImpl implements RulesRepo {
     rules.setCodeSmells(repositoryRules.getCodeSmells());
     rules.setCodingStandards(repositoryRules.getCodingStandards());
     rules.setCoverage(repositoryRules.getCoverage());
-    return rules;
+    return Optional.of(rules);
   }
 }

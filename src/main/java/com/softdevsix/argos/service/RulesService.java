@@ -23,9 +23,9 @@ public class RulesService {
       RulesRepoImpl rulesRepo,
       ProjectRepository projectRepository,
       ProjectValidator projectValidator) {
-    this.rulesRepo = rulesRepo;
-    this.projectValidator = projectValidator;
-    this.rulesValidator = new RulesValidator();
+        this.rulesRepo = rulesRepo;
+        this.projectValidator = projectValidator;
+        this.rulesValidator = new RulesValidator();
   }
 
   public void handleRules(RulesRequestMap rulesRequestMap, Integer projectId) {

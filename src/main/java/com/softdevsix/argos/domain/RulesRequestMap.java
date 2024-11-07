@@ -31,4 +31,28 @@ public class RulesRequestMap {
   public Coverage getCoverage() {
     return coverage;
   }
+
+  public void setCodeQuality(CodeQuality codeQuality) {
+    this.codeQuality = codeQuality;
+  }
+
+  public void setBestPractices(BestPractices bestPractices) {
+    this.bestPractices = bestPractices;
+  }
+
+  public void setCodeSmells(CodeSmells codeSmells) {
+    this.codeSmells = codeSmells;
+  }
+
+  public void setCodeComplexity(CodeComplexity codeComplexity) {
+    this.codeComplexity = codeComplexity;
+  }
+
+  public void setCodingStandards(CodingStandards codingStandards) {
+    this.codingStandards = codingStandards;
+  }
+
+  public void setCoverage(Coverage coverage) {
+    this.coverage = coverage;
+  }
 }

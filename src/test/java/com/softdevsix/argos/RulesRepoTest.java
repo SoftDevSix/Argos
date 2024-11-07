@@ -24,7 +24,7 @@ class RulesRepoTest {
   @Autowired ProjectRepository projectRepository;
 
   @Test
-  void verifyRepoWorks() throws Exception {
+  void verifyRepoWorks() {
     Rules rules = new Rules();
     BestPractices bestPractices = new BestPractices();
     CodeComplexity codeComplexity = new CodeComplexity();

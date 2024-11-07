@@ -1,36 +1,34 @@
 package com.softdevsix.argos.domain;
 
 public class RulesRequestMap {
-    private CodeQuality codeQuality;
-    private BestPractices bestPractices;
-    private CodeSmells codeSmells;
-    private CodeComplexity codeComplexity;
-    private CodingStandards codingStandards;
-    private Coverage coverage;
+  private CodeQuality codeQuality;
+  private BestPractices bestPractices;
+  private CodeSmells codeSmells;
+  private CodeComplexity codeComplexity;
+  private CodingStandards codingStandards;
+  private Coverage coverage;
 
-    public void mapFromJson(RulesRequestMap requestData) {
-        this.setCodeQuality(requestData.getCodeQuality());
-        this.setBestPractices(requestData.getBestPractices());
-        this.setCodeSmells(requestData.getCodeSmells());
-        this.setCodeComplexity(requestData.getCodeComplexity());
-        this.setCodingStandards(requestData.getCodingStandards());
-        this.setCoverage(requestData.getCoverage());
-    }
-    public CodeQuality getCodeQuality() { return codeQuality; }
-    public void setCodeQuality(CodeQuality codeQuality) { this.codeQuality = codeQuality; }
+  public CodeQuality getCodeQuality() {
+    return codeQuality;
+  }
 
-    public BestPractices getBestPractices() { return bestPractices; }
-    public void setBestPractices(BestPractices bestPractices) { this.bestPractices = bestPractices; }
+  public BestPractices getBestPractices() {
+    return bestPractices;
+  }
 
-    public CodeSmells getCodeSmells() { return codeSmells; }
-    public void setCodeSmells(CodeSmells codeSmells) { this.codeSmells = codeSmells; }
+  public CodeSmells getCodeSmells() {
+    return codeSmells;
+  }
 
-    public CodeComplexity getCodeComplexity() { return codeComplexity; }
-    public void setCodeComplexity(CodeComplexity codeComplexity) { this.codeComplexity = codeComplexity; }
+  public CodeComplexity getCodeComplexity() {
+    return codeComplexity;
+  }
 
-    public CodingStandards getCodingStandards() { return codingStandards; }
-    public void setCodingStandards(CodingStandards codingStandards) { this.codingStandards = codingStandards; }
+  public CodingStandards getCodingStandards() {
+    return codingStandards;
+  }
 
-    public Coverage getCoverage() { return coverage; }
-    public void setCoverage(Coverage coverage) { this.coverage = coverage; }
+  public Coverage getCoverage() {
+    return coverage;
+  }
 }

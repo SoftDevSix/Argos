@@ -20,17 +20,21 @@ class RulesServiceTests {
     @Mock
     private RulesRepoImpl rulesRepo;
 
+    @Mock
+    private ProjectValidator projectValidator;
+
     @InjectMocks
-    private RulesService rulesService; 
+    private RulesService rulesService;
 
     private RulesRequestMap rulesRequestMap;
+    private Project mockProject;
 
     @BeforeEach
     void setUp() {
 
-        MockitoAnnotations.openMocks(this); 
+        MockitoAnnotations.openMocks(this);
         rulesRequestMap = new RulesRequestMap();
-
+        mockProject = new Project();
     }
 
     @Test
@@ -40,8 +44,8 @@ class RulesServiceTests {
         codeQuality.setMaxLineLengthLimit(120);
         rulesRequestMap.setCodeQuality(codeQuality);
 
-        rulesService.handleRules(rulesRequestMap);
-        Rules validatedRules = rulesService.getRules();
+        rulesService.handleRules(rulesRequestMap,mockProject.getId());
+        Rules validatedRules = rulesService.getRules(mockProject.getId());
 
         assertNotNull(validatedRules.getCodeQuality(), "CodeQuality should not be null");
         assertEquals(120, validatedRules.getCodeQuality().getMaxLineLengthLimit(), "Max line length should be 120");
@@ -51,12 +55,12 @@ class RulesServiceTests {
     void testHandleRules_withInvalidMaxLineLengthLimit() {
         CodeQuality codeQuality = new CodeQuality();
         codeQuality.setMaxLineLength(true);
-        codeQuality.setMaxLineLengthLimit(-1); 
+        codeQuality.setMaxLineLengthLimit(-1);
 
         rulesRequestMap.setCodeQuality(codeQuality);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            rulesService.handleRules(rulesRequestMap);
+            rulesService.handleRules(rulesRequestMap,mockProject.getId());
         }, "Should throw exception for negative max line length limit");
     }
 
@@ -68,10 +72,10 @@ class RulesServiceTests {
         codeComplexity.setNestingDepthLimit(true);
         codeComplexity.setMaxNestingDepth(5);
 
-        rulesRequestMap.setCodeComplexity(codeComplexity);
+       rulesRequestMap.setCodeComplexity(codeComplexity);
 
-        rulesService.handleRules(rulesRequestMap);
-        Rules validatedRules = rulesService.getRules();
+        rulesService.handleRules(rulesRequestMap,mockProject.getId());
+        Rules validatedRules = rulesService.getRules(mockProject.getId());
 
         assertNotNull(validatedRules.getCodeComplexity(), "CodeComplexity should not be null");
         assertEquals(15, validatedRules.getCodeComplexity().getMaxCyclomaticComplexity(), "Max cyclomatic complexity should be 15");
@@ -82,12 +86,12 @@ class RulesServiceTests {
     void testHandleRules_withInvalidCyclomaticComplexityLimit() {
         CodeComplexity codeComplexity = new CodeComplexity();
         codeComplexity.setCyclomaticComplexityLimit(true);
-        codeComplexity.setMaxCyclomaticComplexity(-5); 
+        codeComplexity.setMaxCyclomaticComplexity(-5);
 
         rulesRequestMap.setCodeComplexity(codeComplexity);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            rulesService.handleRules(rulesRequestMap);
+            rulesService.handleRules(rulesRequestMap,mockProject.getId());
         }, "Should throw exception for negative cyclomatic complexity limit");
     }
 
@@ -98,8 +102,8 @@ class RulesServiceTests {
         codeQuality.setMaxLineLengthLimit(100);
         rulesRequestMap.setCodeQuality(codeQuality);
 
-        rulesService.handleRules(rulesRequestMap);
-        Rules validatedRules = rulesService.getRules();
+        rulesService.handleRules(rulesRequestMap,mockProject.getId());
+        Rules validatedRules = rulesService.getRules(mockProject.getId());
 
         assertNotNull(validatedRules, "Rules should not be null after handling");
         assertEquals(100, validatedRules.getCodeQuality().getMaxLineLengthLimit(), "Max line length limit should be set to 100");
@@ -111,8 +115,8 @@ class RulesServiceTests {
         bestPractices.setNoHardcodedValues(false);
         rulesRequestMap.setBestPractices(bestPractices);
 
-        rulesService.handleRules(rulesRequestMap);
-        Rules validatedRules = rulesService.getRules();
+        rulesService.handleRules(rulesRequestMap,mockProject.getId());
+        Rules validatedRules = rulesService.getRules(mockProject.getId());
 
         assertNotNull(validatedRules.getBestPractices(), "BestPractices should not be null");
         assertEquals(false, validatedRules.getBestPractices().isNoHardcodedValuesEnabled(), "NoHardcodedValues should be false");

@@ -1,2 +1,2 @@
-rootProject.name = "argos"
-include("ASTProcessor")
+rootProject.name = "Argos"
+include(":ASTProcessor")

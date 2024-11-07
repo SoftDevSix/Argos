@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.CharStream;
 
 public class AntlrFileReaderByTextTest {
-private FileReaderByText fileReader;
+    private FileReaderByText fileReader;
 
     @BeforeEach
     void setUp() {
@@ -20,7 +20,7 @@ private FileReaderByText fileReader;
 
     @Test
     void testReadFileWithValidContent() throws Exception {
-        String content = "class Example {}"; 
+        String content = "class Example {}";
         ParseTree parseTree = fileReader.readFile(content);
         assertNotNull(parseTree, "ParseTree should not be null for valid content");
     }
@@ -29,20 +29,21 @@ private FileReaderByText fileReader;
     void testReadFileWithEmptyContent() {
         String content = "";
         Exception exception = assertThrows(Exception.class, () -> fileReader.readFile(content));
-        assertEquals("error to read file", exception.getMessage(), "Should throw parse content error for empty input");
+        assertEquals("error to parse empty input", exception.getMessage(),
+                "Should throw parse content error for empty input");
     }
 
     @Test
     void testReadFileWithAConcreteClass() throws Exception {
         String content = "public class Calculator {\n" +
-                         "    public int add(int a, int b) {\n" +
-                         "        return a + b;\n" +
-                         "    }\n" +
-                         "\n" +
-                         "    public int subtract(int a, int b) {\n" +
-                         "        return a - b;\n" +
-                         "    }\n" +
-                         "}";
+                "    public int add(int a, int b) {\n" +
+                "        return a + b;\n" +
+                "    }\n" +
+                "\n" +
+                "    public int subtract(int a, int b) {\n" +
+                "        return a - b;\n" +
+                "    }\n" +
+                "}";
         ParseTree parseContent = fileReader.readFile(content);
         assertNotNull(parseContent, "ParseTree should not be null for valid content");
     }
@@ -51,6 +52,7 @@ private FileReaderByText fileReader;
     void testReadFileWithNullContent() {
         String content = null;
         Exception exception = assertThrows(Exception.class, () -> fileReader.readFile(content));
-        assertEquals("error to read file", exception.getMessage(), "Should throw read file error for null input");
+        assertEquals("error to parse null input", exception.getMessage(),
+                "Should throw read file error for null input");
     }
 }

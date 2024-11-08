@@ -92,4 +92,8 @@ public class ProjectRules {
   public Integer getId() {
     return id;
   }
+
+  public void setProject(Project mockProject) {
+    this.project = mockProject;
+  }
 }

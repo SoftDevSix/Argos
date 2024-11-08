@@ -16,9 +16,8 @@ public class LexerFileProcessor {
 
         JavaLexer lexer = new JavaLexer(CharStreams.fromString(content));
 
-        CustomErrorListener errorListener = new CustomErrorListener();
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(errorListener);
+        //CustomErrorListener errorListener = new CustomErrorListener();
+        //lexer.addErrorListener(errorListener);
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         tokens.fill();

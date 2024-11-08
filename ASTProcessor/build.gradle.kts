@@ -23,8 +23,8 @@ dependencies {
 	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)
 	antlr(libs.antlr)
-	implementation("org.slf4j:slf4j-api:2.0.16")
-	testImplementation("ch.qos.logback:logback-classic:1.5.6")
+	implementation(libs.slf4j.api)
+	testImplementation(libs.logback)
 }
 
 tasks.withType<Test> {

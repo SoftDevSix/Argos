@@ -3,7 +3,7 @@ package com.softdevsix.argos.domain;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CodeSmellsTest {
+class CodeSmellsTest {
     @Test
     void testNoDuplicatedCodeSetterAndGetter() {
         CodeSmells codeSmells = new CodeSmells();

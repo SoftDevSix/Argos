@@ -3,7 +3,7 @@ package com.softdevsix.argos.domain;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CodingStandardsTest {
+class CodingStandardsTest {
     @Test
     void testCamelCaseNamingSetterAndGetter() {
         CodingStandards codingStandards = new CodingStandards();

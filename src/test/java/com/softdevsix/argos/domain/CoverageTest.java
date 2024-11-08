@@ -3,7 +3,7 @@ package com.softdevsix.argos.domain;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CoverageTest {
+class CoverageTest {
     @Test
     void testCoverageReviewRequiredSetterAndGetter() {
         Coverage coverage = new Coverage();

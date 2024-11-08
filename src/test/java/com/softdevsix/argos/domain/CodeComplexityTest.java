@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CodeComplexityTest {
+class CodeComplexityTest {
     @Test
     void testCyclomaticComplexityLimitSetterAndGetter() {
         CodeComplexity codeComplexity = new CodeComplexity();

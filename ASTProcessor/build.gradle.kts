@@ -23,8 +23,11 @@ dependencies {
 	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)
 	antlr(libs.antlr)
-	implementation(libs.slf4j.api)
 	testImplementation(libs.logback)
+	compileOnly(libs.lombok)
+	annotationProcessor(libs.lombok)
+	testCompileOnly(libs.lombok)
+	testAnnotationProcessor(libs.lombok)
 }
 
 tasks.withType<Test> {

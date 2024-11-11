@@ -3,8 +3,8 @@ springboot = "3.3.4"
 dependencyManagement = "1.1.6"
 springDocVersion = "2.6.0"
 antlr = "4.13.2"
-slf4jApi = "2.0.16"
 logback = "1.5.6"
+lombok = "1.18.30"
 
 [plugins]
 springboot-web = { id = "org.springframework.boot", version.ref = "springboot" }
@@ -18,5 +18,5 @@ springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools"
 springboot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }

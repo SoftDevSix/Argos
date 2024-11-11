@@ -2,9 +2,9 @@ package edu.usb.argos.ASTProcessor.visitor.factory;
 
 import edu.usb.argos.ASTProcessor.visitor.interfaces.IMethodAnalyzerVisitor;
 
-public interface ASTVisitorFactory
+public interface ASTVisitorFactory<T>
 {
-    IMethodAnalyzerVisitor createMethodVisitor();
+    // Here method visitor
     // Here class visitor
     // Here attribute visitor
 }

@@ -1,6 +1,7 @@
 package edu.usb.argos.ASTProcessor.lexer;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
+import edu.usb.argos.ASTProcessor.lexer.errorHandler.ArgosErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -15,6 +16,10 @@ public class LexerFileProcessor {
         String content = new String(Files.readAllBytes(path));
 
         JavaLexer lexer = new JavaLexer(CharStreams.fromString(content));
+
+        ArgosErrorListener errorListener = new ArgosErrorListener();
+        lexer.addErrorListener(errorListener);
+
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         tokens.fill();
         return tokens;

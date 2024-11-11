@@ -1,21 +1,17 @@
 package edu.usb.argos.ASTProcessor.infrastructure.validators;
 
 import edu.usb.argos.ASTProcessor.application.exceptions.NoSuchFileException;
-import edu.usb.argos.ASTProcessor.application.logging.IAppLogger;
 import edu.usb.argos.ASTProcessor.application.validators.IPathValidator;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Slf4j
 @Component
 public class DirectoryPathValidator implements IPathValidator {
-
-    private final IAppLogger logger;
-
-    public DirectoryPathValidator(IAppLogger logger) {
-        this.logger = logger;
-    }
 
     @Override
     public boolean isValidPath(Path path) {
@@ -25,7 +21,7 @@ public class DirectoryPathValidator implements IPathValidator {
             existsDirectoryPath(path);
             isDirectoryPath(path);
         } catch (NoSuchFileException exception) {
-            logger.error(exception.getMessage(), exception);
+            log.error(exception.getMessage());
             isValidDirectoryPath = false;
         }
 

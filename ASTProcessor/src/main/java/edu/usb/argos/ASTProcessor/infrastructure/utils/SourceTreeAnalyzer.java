@@ -1,7 +1,9 @@
 package edu.usb.argos.ASTProcessor.infrastructure.utils;
 
-import edu.usb.argos.ASTProcessor.application.logging.IAppLogger;
 import edu.usb.argos.ASTProcessor.infrastructure.validators.DirectoryPathValidator;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -12,19 +14,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 @Component
+@AllArgsConstructor
 public class SourceTreeAnalyzer {
 
     private final String JAVA_EXTENSION = ".java";
     private final DirectoryPathValidator pathValidator;
-    private final IAppLogger logger;
 
-    public SourceTreeAnalyzer(DirectoryPathValidator pathValidator, IAppLogger logger) {
-        this.pathValidator = pathValidator;
-        this.logger = logger;
-    }
-
-    public List<Path> getJavaFiles(Path directoryPath) throws Exception {
+    public List<Path> getJavaFiles(Path directoryPath) {
         return getFilesByExtension(directoryPath, JAVA_EXTENSION);
     }
 
@@ -42,7 +40,7 @@ public class SourceTreeAnalyzer {
                     .collect(Collectors.toList());
         } catch (IOException exception) {
             String errorMessage = "Error getting " + extension + " files in path";
-            logger.error(errorMessage, exception);
+            log.error(errorMessage);
         }
 
         return filePaths;

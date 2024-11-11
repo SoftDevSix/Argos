@@ -2,7 +2,6 @@ package edu.usb.argos.ASTProcessor.utils;
 
 import edu.usb.argos.ASTProcessor.infrastructure.utils.SourceTreeAnalyzer;
 import edu.usb.argos.ASTProcessor.infrastructure.validators.DirectoryPathValidator;
-import edu.usb.argos.ASTProcessor.application.logging.IAppLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -23,17 +22,15 @@ public class SourceTreeAnalyzerTest {
     private Path tempDir;
     private SourceTreeAnalyzer analyzer;
     private DirectoryPathValidator mockPathValidator;
-    private IAppLogger mockLogger;
 
     @BeforeEach
     void setUp() throws IOException {
         mockPathValidator = mock(DirectoryPathValidator.class);
-        mockLogger = mock(IAppLogger.class);
 
         when(mockPathValidator.isValidPath(any(Path.class))).thenReturn(true);
 
         tempDir = Files.createTempDirectory("testDirectory");
-        analyzer = new SourceTreeAnalyzer(mockPathValidator, mockLogger);
+        analyzer = new SourceTreeAnalyzer(mockPathValidator);
     }
 
     @AfterEach

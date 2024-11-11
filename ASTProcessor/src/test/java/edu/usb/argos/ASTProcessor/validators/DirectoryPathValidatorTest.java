@@ -1,51 +1,44 @@
 package edu.usb.argos.ASTProcessor.validators;
 
 import edu.usb.argos.ASTProcessor.infrastructure.validators.DirectoryPathValidator;
-import edu.usb.argos.ASTProcessor.application.logging.IAppLogger;
-import edu.usb.argos.ASTProcessor.application.validators.IPathValidator;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class DirectoryPathValidatorTest {
+class DirectoryPathValidatorTest {
 
     private Path tempDir;
-    private IPathValidator pathValidator;
-    private IAppLogger mockLogger;
-    private String loggedMessage;
+    private DirectoryPathValidator pathValidator;
+    private TestAppender testAppender;
+    private Logger logger;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() throws Exception {
         tempDir = Files.createTempDirectory("testDirectory");
-        mockLogger = mock(IAppLogger.class);
+        pathValidator = new DirectoryPathValidator();
 
-        doAnswer(invocation -> {
-            loggedMessage = invocation.getArgument(0);
-            return null;
-        }).when(mockLogger).error(anyString(), any(Throwable.class));
-
-        pathValidator = new DirectoryPathValidator(mockLogger);
+        logger = (Logger) LoggerFactory.getLogger(DirectoryPathValidator.class);
+        testAppender = new TestAppender();
+        testAppender.start();
+        logger.addAppender(testAppender);
     }
 
     @AfterEach
-    void tearDown() throws IOException {
+    void tearDown() throws Exception {
         Files.walk(tempDir)
                 .map(Path::toFile)
                 .forEach(File::delete);
+
+        logger.detachAppender(testAppender);
+        testAppender.stop();
     }
 
     @Test
@@ -55,19 +48,21 @@ public class DirectoryPathValidatorTest {
         boolean isValid = pathValidator.isValidPath(nonExistentPath);
 
         assertFalse(isValid);
-        assertNotNull(loggedMessage);
-        assertTrue(loggedMessage.contains("No found directory for"));
+        assertTrue(testAppender.getMessages().stream().anyMatch(
+                msg -> msg.contains("No found directory for: " + nonExistentPath)
+        ));
     }
 
     @Test
-    void testInvalidPath_NotADirectory() throws IOException {
+    void testInvalidPath_NotADirectory() throws Exception {
         Path file = Files.createFile(tempDir.resolve("NotADirectory.java"));
 
         boolean isValid = pathValidator.isValidPath(file);
 
         assertFalse(isValid);
-        assertNotNull(loggedMessage);
-        assertTrue(loggedMessage.contains("The path provided is not a directory"));
+        assertTrue(testAppender.getMessages().stream().anyMatch(
+                msg -> msg.contains("The path provided is not a directory: " + file)
+        ));
     }
 
     @Test
@@ -75,6 +70,6 @@ public class DirectoryPathValidatorTest {
         boolean isValid = pathValidator.isValidPath(tempDir);
 
         assertTrue(isValid);
-        assertNull(loggedMessage);
+        assertTrue(testAppender.getMessages().isEmpty());
     }
 }

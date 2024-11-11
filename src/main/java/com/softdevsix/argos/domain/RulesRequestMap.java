@@ -8,10 +8,6 @@ public class RulesRequestMap {
     private CodingStandards codingStandards;
     private Coverage coverage;
 
-    public RulesRequestMap() {
-        
-    }
-
     public CodeQuality getCodeQuality() { return codeQuality; }
     public void setCodeQuality(CodeQuality codeQuality) { this.codeQuality = codeQuality; }
 

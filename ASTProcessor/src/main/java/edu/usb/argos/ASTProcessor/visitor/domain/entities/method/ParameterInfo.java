@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.models.method;
+package edu.usb.argos.ASTProcessor.visitor.domain.entities.method;
 
 public class ParameterInfo {
     private final String name;

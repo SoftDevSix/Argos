@@ -1,10 +1,10 @@
-package edu.usb.argos.ASTProcessor.visitor.implementation.method;
+package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
-import edu.usb.argos.ASTProcessor.visitor.interfaces.IMethodAnalyzerVisitor;
-import edu.usb.argos.ASTProcessor.visitor.models.method.MethodInfo;
-import edu.usb.argos.ASTProcessor.visitor.models.method.ParameterInfo;
+import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IMethodAnalyzerVisitor;
+import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.MethodInfo;
+import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.ParameterInfo;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 

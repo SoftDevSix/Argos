@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo> implements IMethodAnalyzerVisitor {
+public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo> implements IMethodAnalyzerVisitor<ParserRuleContext> {
     @Override
     public MethodInfo visitMethod(ParserRuleContext ctx) {
         return validateAndExecute(ctx, methodCtx -> {

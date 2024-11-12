@@ -54,8 +54,9 @@ class ProjectValidatorTests {
 
     @Test
     void testValidate_withExistingProjectRules() {
-        ProjectRules projectRules = new ProjectRules();
-        projectRules.setProject(mockProject);
+        ProjectRules projectRules = ProjectRules.builder()
+            .project(mockProject)
+            .build();
         when(projectRulesRepository.findAll()).thenReturn(List.of(projectRules));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {

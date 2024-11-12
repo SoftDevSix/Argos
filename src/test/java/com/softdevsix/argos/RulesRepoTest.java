@@ -25,7 +25,6 @@ class RulesRepoTest {
 
   @Test
   void verifyRepoWorks() {
-    Rules rules = new Rules();
     BestPractices bestPractices = new BestPractices();
     CodeComplexity codeComplexity = new CodeComplexity();
     CodeQuality codeQuality = new CodeQuality();
@@ -33,12 +32,14 @@ class RulesRepoTest {
     CodingStandards codingStandards = new CodingStandards();
     Coverage coverage = new Coverage();
 
-    rules.setBestPractices(bestPractices);
-    rules.setCodeComplexity(codeComplexity);
-    rules.setCodeQuality(codeQuality);
-    rules.setCodeSmells(codeSmells);
-    rules.setCodingStandards(codingStandards);
-    rules.setCoverage(coverage);
+    Rules rules = Rules.builder()
+        .bestPractices(bestPractices)
+        .codeComplexity(codeComplexity)
+        .codeQuality(codeQuality)
+        .codeSmells(codeSmells)
+        .codingStandards(codingStandards)
+        .coverage(coverage)
+        .build();
 
     Project project = new Project();
     projectRepository.save(project);

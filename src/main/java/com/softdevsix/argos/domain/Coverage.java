@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 public class Coverage {
@@ -35,10 +37,6 @@ public class Coverage {
 
   public int getCoverageThreshold() {
     return coverageThreshold;
-  }
-
-  public void setCoverageThreshold(int coverageThreshold) {
-    this.coverageThreshold = coverageThreshold;
   }
 
   public boolean isRejectIfLowerEnabled() {

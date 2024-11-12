@@ -7,15 +7,21 @@ public class MethodInfo {
     private final String returnType;
     private final List<String> modifiers;
     private final List<ParameterInfo> parameters;
-    private final int lines;
+    private final ComplexityMetrics complexityMetrics;
+    private final CodeMetrics codeMetrics;
+    private final DependencyInfo dependencies;
 
     public MethodInfo(String name, String returnType, List<String> modifiers,
-                      List<ParameterInfo> parameters, int lines) {
+                      List<ParameterInfo> parameters,
+                      ComplexityMetrics complexityMetrics,
+                      CodeMetrics codeMetrics, DependencyInfo dependencies) {
         this.name = name;
         this.returnType = returnType;
-        this.modifiers = modifiers;
-        this.parameters = parameters;
-        this.lines = lines;
+        this.modifiers = List.copyOf(modifiers);
+        this.parameters = List.copyOf(parameters);
+        this.complexityMetrics = complexityMetrics;
+        this.codeMetrics = codeMetrics;
+        this.dependencies = dependencies;
     }
 
     public String getName() {
@@ -34,7 +40,15 @@ public class MethodInfo {
         return parameters;
     }
 
-    public int getLines() {
-        return lines;
+    public ComplexityMetrics getComplexityMetrics() {
+        return complexityMetrics;
+    }
+
+    public CodeMetrics getCodeMetrics() {
+        return codeMetrics;
+    }
+
+    public DependencyInfo getDependencies() {
+        return dependencies;
     }
 }

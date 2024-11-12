@@ -10,8 +10,9 @@ import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
 import com.softdevsix.argos.repository.ProjectRepository;
 import com.softdevsix.argos.repository.RulesRepoImpl;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class RulesService {
 
   private final RulesRepoImpl rulesRepo;

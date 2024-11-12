@@ -6,7 +6,10 @@ import com.softdevsix.argos.domain.CodeSmells;
 import com.softdevsix.argos.domain.Coverage;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
+import com.softdevsix.argos.exception.RulesValidatorException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RulesValidator {
 
   public Rules validate(RulesRequestMap rulesRequestMap){
@@ -24,13 +27,13 @@ public class RulesValidator {
     if (rulesRequestMap.getCodeQuality() != null) {
       CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
       if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
-        throw new IllegalArgumentException("The line length limit must be positive");
+        throw RulesValidatorException.LineLengthException();
       }
       validatedRules.setCodeQuality(codeQuality);
     }
   }
 
-  private void validateAndSetBestPractices(RulesRequestMap rulesRequestMap, Rules validatedRules) {
+  private Rules validateAndSetBestPractices(RulesRequestMap rulesRequestMap, Rules validatedRules) {
     if (rulesRequestMap.getBestPractices() != null) {
       validatedRules.setBestPractices(rulesRequestMap.getBestPractices());
     }
@@ -40,7 +43,7 @@ public class RulesValidator {
     if (rulesRequestMap.getCodeSmells() != null) {
       CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
       if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
-        throw new IllegalArgumentException("The method length limit must be positive");
+        throw RulesValidatorException.LineLengthException();
       }
       validatedRules.setCodeSmells(codeSmells);
     }
@@ -51,10 +54,10 @@ public class RulesValidator {
       CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
       if (codeComplexity.isCyclomaticComplexityLimitEnabled()
           && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
-        throw new IllegalArgumentException("The cyclomatic complexity limit must be positive");
+        throw RulesValidatorException.CyclomaticComplexityException();
       }
       if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
-        throw new IllegalArgumentException("The nesting depth limit must be positive.");
+        throw RulesValidatorException.NestingDepthException();
       }
       validatedRules.setCodeComplexity(codeComplexity);
     }
@@ -70,7 +73,7 @@ public class RulesValidator {
     if (rulesRequestMap.getCoverage() != null) {
       Coverage coverage = rulesRequestMap.getCoverage();
       if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {
-        throw new IllegalArgumentException("The coverage threshold must be non-negative");
+        throw RulesValidatorException.CoverageThresholdException();
       }
       validatedRules.setCoverage(coverage);
     }

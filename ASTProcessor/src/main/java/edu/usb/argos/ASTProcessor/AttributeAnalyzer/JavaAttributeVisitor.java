@@ -1,100 +1,40 @@
-package main.java.edu.usb.argos.ASTProcessor.AttributeAnalyzer;
+package edu.usb.argos.ASTProcessor.AttributeAnalyzer;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
-import java.util.ArrayList;
+import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
+import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Interfaces.IAttributeAnalyzer;
+
 import java.util.List;
-import java.util.function.Function;
 
-import main.java.edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
-import main.java.edu.usb.argos.ASTProcessor.AttributeAnalyzer.Interfaces.IAttributeAnalyzer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
+import org.springframework.stereotype.Component;
 
-public class JavaAttributeVisitor extends JavaParserBaseVisitor<AttributeInfo>
-        implements IAttributeAnalyzer<ParserRuleContext> {
-    @Override
-    public AttributeInfo visitAttribute(ParserRuleContext context) {
-        return validateAndExecute(context, attributeContext -> {
-            String name = getAttributeName(attributeContext);
-            String type = getAttributeType(attributeContext);
-            List<String> modifiers = getAttributeModifiers(attributeContext);
+@Component
+public class JavaAttributeVisitor extends JavaParserBaseVisitor<List<AttributeInfo>> implements IAttributeAnalyzer<JavaParser.ClassBodyContext> {
 
-            return new AttributeInfo(name, type, modifiers);
-        }, null);
+    private final AttributeHandler attributeHandler;
+
+    public JavaAttributeVisitor(AttributeHandler attributeHandler) {
+        this.attributeHandler = attributeHandler;
     }
 
     @Override
-    public List<String> getAttributeModifiers(ParserRuleContext context) {
-        return validateAndExecute(context, attributeContext -> {
-            List<String> modifiers = new ArrayList<>();
-            for (int i = 0; i < attributeContext.getChildCount(); i++) {
-                String tokenText = attributeContext.getChild(i).getText();
-                if (isModifier(tokenText)) {
-                    modifiers.add(tokenText);
-                    tokenText = "";
-                } else {
-                    break;
-                }
-            }
-            return modifiers;
-        }, new ArrayList<>());
+    public List<AttributeInfo> visitClassBody(JavaParser.ClassBodyContext context) {
+        return attributeHandler.extractAttributesFromClassBody(context);
     }
 
     @Override
-    public String getAttributeType(ParserRuleContext context) {
-        return validateAndExecute(context, attributeContext -> {
-            System.out.println(attributeContext.getChildCount());
-            for (int i = 0; i < attributeContext.getChildCount(); i++) {
-                String tokenText = attributeContext.getChild(i).getText();
-                System.out.println(tokenText);
-                if (isModifier(tokenText)) {
-                    continue;
-                }
-
-                if (isPrimitiveType(tokenText)) {
-                    return tokenText;
-                }
-            }
-            return "";
-        }, "");
+    public List<AttributeInfo> visitAttribute(JavaParser.ClassBodyContext context) {
+        return visitClassBody(context);
     }
 
-    private boolean isPrimitiveType(String tokenText) {
-        return switch (tokenText) {
-            case "int", "double", "float", "boolean", "char", "byte", "short", "long" -> true;
-            default -> false;
-        };
+    @Override
+    public List<String> getAttributeModifiers(AttributeInfo ctx) {
+        return ctx.getModifiers();
     }
 
-    public String getAttributeName(ParserRuleContext context) {
-        return validateAndExecute(context, attributeContext -> {
-            boolean typeFound = false;
-            for (int i = 0; i < attributeContext.getChildCount(); i++) {
-                String tokenText = attributeContext.getChild(i).getText();
-                if (typeFound) {
-                    return tokenText;
-                }
-                if (!isModifier(tokenText)) {
-                    typeFound = true;
-                }
-            }
-            return "";
-        }, "");
-    }
-
-    private <T> T validateAndExecute(ParserRuleContext context,
-            Function<JavaParser.FieldDeclarationContext, T> extractor,
-            T defaultValue) {
-        if (context instanceof JavaParser.FieldDeclarationContext attributeContext) {
-            return extractor.apply(attributeContext);
-        }
-        return defaultValue;
-    }
-
-    private boolean isModifier(String tokenText) {
-        return tokenText.equals("public") || tokenText.equals("private") || tokenText.equals("protected") ||
-                tokenText.equals("static") || tokenText.equals("final") || tokenText.equals("abstract") ||
-                tokenText.equals("volatile") || tokenText.equals("transient") || tokenText.equals("synchronized");
+    @Override
+    public String getAttributeType(AttributeInfo ctx) {
+        return ctx.getType();
     }
 }

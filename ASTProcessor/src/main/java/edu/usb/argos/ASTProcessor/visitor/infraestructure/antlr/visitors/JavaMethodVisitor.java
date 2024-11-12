@@ -2,11 +2,9 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
-import edu.usb.argos.ASTProcessor.visitor.application.analyzers.code.CodeMetricsAnalyzer;
-import edu.usb.argos.ASTProcessor.visitor.application.analyzers.complexity.ComplexityMetricsAnalyzer;
-import edu.usb.argos.ASTProcessor.visitor.application.analyzers.depedency.DependencyAnalyzer;
 import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.*;
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IMethodAnalyzerVisitor;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -16,24 +14,10 @@ import java.util.function.Function;
 public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
         implements IMethodAnalyzerVisitor<ParserRuleContext> {
 
-    private final CodeMetricsAnalyzer codeAnalyzer;
-    private final ComplexityMetricsAnalyzer complexityAnalyzer;
-    private final DependencyAnalyzer dependencyAnalyzer;
+    private final CommonTokenStream tokenStream;
 
-    public JavaMethodVisitor() {
-        this.codeAnalyzer = new CodeMetricsAnalyzer();
-        this.complexityAnalyzer = new ComplexityMetricsAnalyzer();
-        this.dependencyAnalyzer = new DependencyAnalyzer();
-    }
-
-    public JavaMethodVisitor(
-            CodeMetricsAnalyzer codeAnalyzer,
-            ComplexityMetricsAnalyzer complexityAnalyzer,
-            DependencyAnalyzer dependencyAnalyzer
-    ) {
-        this.codeAnalyzer = codeAnalyzer;
-        this.complexityAnalyzer = complexityAnalyzer;
-        this.dependencyAnalyzer = dependencyAnalyzer;
+    public JavaMethodVisitor(CommonTokenStream tokenStream) {
+        this.tokenStream = tokenStream;
     }
 
     @Override
@@ -43,44 +27,19 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
             String returnType = getReturnType(methodCtx);
             List<String> modifiers = getMethodModifiers(methodCtx);
             List<ParameterInfo> parameters = getParameters(methodCtx);
-            ComplexityMetrics complexityMetrics = getComplexityMetrics(methodCtx);
-            CodeMetrics codeMetrics = getCodeMetrics(methodCtx);
-            DependencyInfo dependencies = getDependencyInfo(methodCtx);
+            List<JavaParser.StatementContext> statements = collectStatements(methodCtx);
+            List<JavaParser.ExpressionContext> expressions = collectExpressions(methodCtx);
 
             return new MethodInfo(
                     name,
                     returnType,
                     modifiers,
                     parameters,
-                    complexityMetrics,
-                    codeMetrics,
-                    dependencies
+                    statements,
+                    expressions,
+                    tokenStream
             );
         }, null);
-    }
-
-    @Override
-    public CodeMetrics getCodeMetrics(ParserRuleContext ctx) {
-        return validateAndExecute(ctx, methodCtx ->
-                        codeAnalyzer.analyze(methodCtx),
-                new CodeMetrics(0, 0, 0, 0)
-        );
-    }
-
-    @Override
-    public ComplexityMetrics getComplexityMetrics(ParserRuleContext ctx) {
-        return validateAndExecute(ctx, methodCtx ->
-                        complexityAnalyzer.analyze(methodCtx),
-                new ComplexityMetrics(1, 0, 0)
-        );
-    }
-
-    @Override
-    public DependencyInfo getDependencyInfo(ParserRuleContext ctx) {
-        return validateAndExecute(ctx, methodCtx ->
-                        dependencyAnalyzer.analyze(methodCtx),
-                new DependencyInfo(new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
-        );
     }
 
     @Override
@@ -120,7 +79,7 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
     @Override
     public String getReturnType(ParserRuleContext ctx) {
         return validateAndExecute(ctx, methodCtx ->
-            methodCtx.typeTypeOrVoid().getText(), ""
+                methodCtx.typeTypeOrVoid().getText(), ""
         );
     }
 
@@ -138,9 +97,59 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
                             parameters.add(new ParameterInfo(paramName, paramType));
                         });
             }
-
             return parameters;
         }, new ArrayList<>());
+    }
+
+    private List<JavaParser.StatementContext> collectStatements(JavaParser.MethodDeclarationContext ctx) {
+        List<JavaParser.StatementContext> statements = new ArrayList<>();
+
+        if (ctx.methodBody() != null && ctx.methodBody().block() != null) {
+            JavaParser.BlockContext block = ctx.methodBody().block();
+            collectStatementsRecursive(block, statements);
+        }
+        return statements;
+    }
+
+    private void collectStatementsRecursive(JavaParser.BlockContext block,
+                                            List<JavaParser.StatementContext> statements) {
+        if (block == null || block.blockStatement() == null) return;
+
+        for (JavaParser.BlockStatementContext blockStatement : block.blockStatement()) {
+            if (blockStatement.statement() != null) {
+                if (blockStatement.statement().blockLabel != null) {
+                    collectStatementsRecursive(blockStatement.statement().blockLabel, statements);
+                } else {
+                    statements.add(blockStatement.statement());
+
+                    if (blockStatement.statement().block() != null) {
+                        collectStatementsRecursive(blockStatement.statement().block(), statements);
+                    }
+                }
+            }
+        }
+    }
+
+
+    private static class ExpressionCollectorVisitor extends JavaParserBaseVisitor<Void> {
+        private final List<JavaParser.ExpressionContext> expressions = new ArrayList<>();
+
+        @Override
+        public Void visitExpression(JavaParser.ExpressionContext ctx) {
+            expressions.add(ctx);
+            visitChildren(ctx);
+            return null;
+        }
+
+        public List<JavaParser.ExpressionContext> getExpressions() {
+            return expressions;
+        }
+    }
+
+    private List<JavaParser.ExpressionContext> collectExpressions(JavaParser.MethodDeclarationContext methodCtx) {
+        ExpressionCollectorVisitor expressionCollector = new ExpressionCollectorVisitor();
+        methodCtx.accept(expressionCollector);
+        return expressionCollector.getExpressions();
     }
 
     private <T> T validateAndExecute(

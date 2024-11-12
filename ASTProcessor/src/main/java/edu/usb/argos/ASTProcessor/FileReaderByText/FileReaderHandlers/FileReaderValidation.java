@@ -1,7 +1,8 @@
-package main.java.edu.usb.argos.ASTProcessor.FileReaderByText;
+package main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReaderHandlers;
+
+import main.java.edu.usb.argos.ASTProcessor.FileReaderByText.Interfaces.IFileReaderTextValidation;
 
 public class FileReaderValidation implements IFileReaderTextValidation {
-
     @Override
     public void validateFileReaderByText(String content) throws FileReaderException {
         validateNullInput(content);

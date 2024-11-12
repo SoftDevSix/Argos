@@ -1,7 +1,6 @@
-package main.java.edu.usb.argos.ASTProcessor.FileReaderByText;
+package main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReaderHandlers;
 
-public class FileReaderException extends Exception {
-
+public class FileReaderException extends RuntimeException {
     public FileReaderException(String message) {
         super(message);
     }

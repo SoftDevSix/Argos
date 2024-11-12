@@ -7,12 +7,12 @@ import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IExpressio
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IMethodAnalyzerVisitor;
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IModifierCollector;
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IStatementCollector;
+import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
         implements IMethodAnalyzerVisitor<ParserRuleContext, MethodInfo> {
@@ -36,24 +36,12 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
 
     @Override
     public MethodInfo visitMethod(ParserRuleContext ctx) {
-        return validateAndExecute(ctx, methodCtx -> {
-            String name = methodCtx.identifier().getText();
-            String returnType = getReturnType(methodCtx);
-            List<String> modifiers = getMethodModifiers(methodCtx);
-            List<ParameterInfo> parameters = getParameters(methodCtx);
-            List<JavaParser.StatementContext> statements = statementCollector.collectStatements(methodCtx);
-            List<JavaParser.ExpressionContext> expressions = expressionCollector.collectExpressions(methodCtx);
-
-            return new MethodInfo(
-                    name,
-                    returnType,
-                    modifiers,
-                    parameters,
-                    statements,
-                    expressions,
-                    tokenStream
-            );
-        }, null);
+        return ContextValidator.validateAndExecute(
+                ctx,
+                JavaParser.MethodDeclarationContext.class,
+                methodCtx -> buildMethodInfo(methodCtx),
+                null
+        );
     }
 
     @Override
@@ -63,36 +51,51 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
 
     @Override
     public String getReturnType(ParserRuleContext ctx) {
-        return validateAndExecute(ctx, methodCtx ->
-                methodCtx.typeTypeOrVoid().getText(), ""
+        return ContextValidator.validateAndExecute(
+                ctx,
+                JavaParser.MethodDeclarationContext.class,
+                methodCtx -> methodCtx.typeTypeOrVoid().getText(),
+                ""
         );
     }
 
     @Override
     public List<ParameterInfo> getParameters(ParserRuleContext ctx) {
-        return validateAndExecute(ctx, methodCtx -> {
-            List<ParameterInfo> parameters = new ArrayList<>();
-            if (methodCtx.formalParameters().formalParameterList() != null) {
-                methodCtx.formalParameters()
-                        .formalParameterList()
-                        .formalParameter()
-                        .forEach(param -> {
-                            String paramName = param.variableDeclaratorId().getText();
-                            String paramType = param.typeType().getText();
-                            parameters.add(new ParameterInfo(paramName, paramType));
-                        });
-            }
-            return parameters;
-        }, new ArrayList<>());
+        return ContextValidator.validateAndExecute(
+                ctx,
+                JavaParser.MethodDeclarationContext.class,
+                methodCtx -> {
+                    List<ParameterInfo> parameters = new ArrayList<>();
+                    if (methodCtx.formalParameters().formalParameterList() != null) {
+                        methodCtx.formalParameters()
+                                .formalParameterList()
+                                .formalParameter()
+                                .forEach(param -> {
+                                    String paramName = param.variableDeclaratorId().getText();
+                                    String paramType = param.typeType().getText();
+                                    parameters.add(new ParameterInfo(paramName, paramType));
+                                });
+                    }
+                    return parameters;
+                },
+                new ArrayList<>()
+        );
     }
 
-    private <T> T validateAndExecute(
-            ParserRuleContext ctx,
-            Function<JavaParser.MethodDeclarationContext, T> operation,
-            T defaultValue) {
-        if (ctx instanceof JavaParser.MethodDeclarationContext methodCtx) {
-            return operation.apply(methodCtx);
-        }
-        return defaultValue;
+    private MethodInfo buildMethodInfo(JavaParser.MethodDeclarationContext methodCtx) {
+        return new MethodInfo(
+                getName(methodCtx),
+                getReturnType(methodCtx),
+                getMethodModifiers(methodCtx),
+                getParameters(methodCtx),
+                statementCollector.collectStatements(methodCtx),
+                expressionCollector.collectExpressions(methodCtx),
+                tokenStream
+        );
     }
+
+    private String getName(JavaParser.MethodDeclarationContext methodCtx) {
+        return methodCtx.identifier().getText();
+    }
+
 }

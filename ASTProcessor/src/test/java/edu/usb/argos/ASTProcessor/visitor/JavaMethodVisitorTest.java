@@ -3,6 +3,8 @@ package edu.usb.argos.ASTProcessor.visitor;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.*;
+import edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.ExpressionCollector;
+import edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.StatementCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.JavaMethodVisitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -20,7 +22,7 @@ public class JavaMethodVisitorTest {
     @BeforeEach
     void setUp() {
         tokenStream = new CommonTokenStream(new JavaLexer(CharStreams.fromString("")));
-        visitor = new JavaMethodVisitor(tokenStream);
+        visitor = new JavaMethodVisitor(tokenStream, new ExpressionCollector(), new StatementCollector());
     }
 
     private JavaParser.MethodDeclarationContext parseMethod(String methodCode) {

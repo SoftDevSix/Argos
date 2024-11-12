@@ -1,10 +1,11 @@
-package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors;
+package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.*;
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IExpressionCollector;
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IMethodAnalyzerVisitor;
+import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IModifierCollector;
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IStatementCollector;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -18,16 +19,19 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
 
     private final CommonTokenStream tokenStream;
 
-    private final IStatementCollector statementCollector;
-    private final IExpressionCollector expressionCollector;
+    private final IStatementCollector<JavaParser.StatementContext, JavaParser.MethodDeclarationContext> statementCollector;
+    private final IExpressionCollector<JavaParser.ExpressionContext, JavaParser.MethodDeclarationContext> expressionCollector;
+    private final IModifierCollector<ParserRuleContext> modifierCollector;
 
     public JavaMethodVisitor(
             CommonTokenStream tokenStream,
-            IStatementCollector statementCollector,
-            IExpressionCollector expressionCollector) {
+            IStatementCollector<JavaParser.StatementContext, JavaParser.MethodDeclarationContext>  statementCollector,
+            IExpressionCollector<JavaParser.ExpressionContext, JavaParser.MethodDeclarationContext> expressionCollector,
+            IModifierCollector<ParserRuleContext> modifierCollector) {
         this.tokenStream = tokenStream;
         this.statementCollector = statementCollector;
         this.expressionCollector = expressionCollector;
+        this.modifierCollector = modifierCollector;
     }
 
     @Override
@@ -54,36 +58,7 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
 
     @Override
     public List<String> getMethodModifiers(ParserRuleContext ctx) {
-        return validateAndExecute(ctx, methodCtx -> {
-            List<String> modifiers = new ArrayList<>();
-
-            ParserRuleContext parent = methodCtx.getParent();
-            if (parent instanceof JavaParser.MemberDeclarationContext) {
-                parent = parent.getParent();
-            }
-
-            if (parent instanceof JavaParser.ClassBodyDeclarationContext parentCtx) {
-                List<JavaParser.ModifierContext> modifierContexts = parentCtx.modifier();
-                if (modifierContexts != null) {
-                    for (JavaParser.ModifierContext mod : modifierContexts) {
-                        if (mod.classOrInterfaceModifier() != null) {
-                            if (mod.classOrInterfaceModifier().PUBLIC() != null) {
-                                modifiers.add("public");
-                            } else if (mod.classOrInterfaceModifier().PRIVATE() != null) {
-                                modifiers.add("private");
-                            } else if (mod.classOrInterfaceModifier().PROTECTED() != null) {
-                                modifiers.add("protected");
-                            } else if (mod.classOrInterfaceModifier().STATIC() != null) {
-                                modifiers.add("static");
-                            } else if (mod.classOrInterfaceModifier().FINAL() != null) {
-                                modifiers.add("final");
-                            }
-                        }
-                    }
-                }
-            }
-            return modifiers;
-        }, new ArrayList<>());
+        return modifierCollector.collectModifiers(ctx);
     }
 
     @Override

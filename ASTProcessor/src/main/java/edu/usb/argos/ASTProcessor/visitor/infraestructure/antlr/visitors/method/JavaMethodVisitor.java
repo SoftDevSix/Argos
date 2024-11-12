@@ -152,4 +152,5 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
         }
         return (JavaParser.ClassBodyDeclarationContext) current;
     }
+
 }

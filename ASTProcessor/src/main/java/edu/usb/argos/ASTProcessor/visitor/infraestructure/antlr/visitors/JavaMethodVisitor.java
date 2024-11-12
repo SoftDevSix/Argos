@@ -3,7 +3,9 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.*;
+import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IExpressionCollector;
 import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IMethodAnalyzerVisitor;
+import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IStatementCollector;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -12,12 +14,20 @@ import java.util.List;
 import java.util.function.Function;
 
 public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
-        implements IMethodAnalyzerVisitor<ParserRuleContext> {
+        implements IMethodAnalyzerVisitor<ParserRuleContext, MethodInfo> {
 
     private final CommonTokenStream tokenStream;
 
-    public JavaMethodVisitor(CommonTokenStream tokenStream) {
+    private final IStatementCollector statementCollector;
+    private final IExpressionCollector expressionCollector;
+
+    public JavaMethodVisitor(
+            CommonTokenStream tokenStream,
+            IStatementCollector statementCollector,
+            IExpressionCollector expressionCollector) {
         this.tokenStream = tokenStream;
+        this.statementCollector = statementCollector;
+        this.expressionCollector = expressionCollector;
     }
 
     @Override
@@ -27,8 +37,8 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
             String returnType = getReturnType(methodCtx);
             List<String> modifiers = getMethodModifiers(methodCtx);
             List<ParameterInfo> parameters = getParameters(methodCtx);
-            List<JavaParser.StatementContext> statements = collectStatements(methodCtx);
-            List<JavaParser.ExpressionContext> expressions = collectExpressions(methodCtx);
+            List<JavaParser.StatementContext> statements = statementCollector.collectStatements(methodCtx);
+            List<JavaParser.ExpressionContext> expressions = expressionCollector.collectExpressions(methodCtx);
 
             return new MethodInfo(
                     name,
@@ -99,57 +109,6 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
             }
             return parameters;
         }, new ArrayList<>());
-    }
-
-    private List<JavaParser.StatementContext> collectStatements(JavaParser.MethodDeclarationContext ctx) {
-        List<JavaParser.StatementContext> statements = new ArrayList<>();
-
-        if (ctx.methodBody() != null && ctx.methodBody().block() != null) {
-            JavaParser.BlockContext block = ctx.methodBody().block();
-            collectStatementsRecursive(block, statements);
-        }
-        return statements;
-    }
-
-    private void collectStatementsRecursive(JavaParser.BlockContext block,
-                                            List<JavaParser.StatementContext> statements) {
-        if (block == null || block.blockStatement() == null) return;
-
-        for (JavaParser.BlockStatementContext blockStatement : block.blockStatement()) {
-            if (blockStatement.statement() != null) {
-                if (blockStatement.statement().blockLabel != null) {
-                    collectStatementsRecursive(blockStatement.statement().blockLabel, statements);
-                } else {
-                    statements.add(blockStatement.statement());
-
-                    if (blockStatement.statement().block() != null) {
-                        collectStatementsRecursive(blockStatement.statement().block(), statements);
-                    }
-                }
-            }
-        }
-    }
-
-
-    private static class ExpressionCollectorVisitor extends JavaParserBaseVisitor<Void> {
-        private final List<JavaParser.ExpressionContext> expressions = new ArrayList<>();
-
-        @Override
-        public Void visitExpression(JavaParser.ExpressionContext ctx) {
-            expressions.add(ctx);
-            visitChildren(ctx);
-            return null;
-        }
-
-        public List<JavaParser.ExpressionContext> getExpressions() {
-            return expressions;
-        }
-    }
-
-    private List<JavaParser.ExpressionContext> collectExpressions(JavaParser.MethodDeclarationContext methodCtx) {
-        ExpressionCollectorVisitor expressionCollector = new ExpressionCollectorVisitor();
-        methodCtx.accept(expressionCollector);
-        return expressionCollector.getExpressions();
     }
 
     private <T> T validateAndExecute(

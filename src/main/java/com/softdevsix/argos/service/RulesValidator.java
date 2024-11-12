@@ -23,7 +23,7 @@ public class RulesValidator {
     return rules;
   }
 
-  private void validateAndSetCodeQuality(RulesRequestMap rulesRequestMap, Rules validatedRules) {
+  private Rules validateAndSetCodeQuality(RulesRequestMap rulesRequestMap, Rules validatedRules) {
     if (rulesRequestMap.getCodeQuality() != null) {
       CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
       if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
@@ -31,15 +31,17 @@ public class RulesValidator {
       }
       validatedRules.setCodeQuality(codeQuality);
     }
+    return validatedRules;
   }
 
   private Rules validateAndSetBestPractices(RulesRequestMap rulesRequestMap, Rules validatedRules) {
     if (rulesRequestMap.getBestPractices() != null) {
       validatedRules.setBestPractices(rulesRequestMap.getBestPractices());
     }
+    return validatedRules;
   }
 
-  private void validateAndSetCodeSmells(RulesRequestMap rulesRequestMap, Rules validatedRules) {
+  private Rules validateAndSetCodeSmells(RulesRequestMap rulesRequestMap, Rules validatedRules) {
     if (rulesRequestMap.getCodeSmells() != null) {
       CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
       if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
@@ -47,29 +49,39 @@ public class RulesValidator {
       }
       validatedRules.setCodeSmells(codeSmells);
     }
+    return validatedRules;
   }
 
-  private void validateAndSetCodeComplexity(RulesRequestMap rulesRequestMap, Rules validatedRules) {
+  private Rules validateAndSetCodeComplexity(RulesRequestMap rulesRequestMap, Rules validatedRules) {
     if (rulesRequestMap.getCodeComplexity() != null) {
       CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
-      if (codeComplexity.isCyclomaticComplexityLimitEnabled()
-          && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
-        throw RulesValidatorException.CyclomaticComplexityException();
-      }
-      if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
-        throw RulesValidatorException.NestingDepthException();
-      }
+      validateCyclomaticComplexity(codeComplexity);
+      validateNestingDepth(codeComplexity);
       validatedRules.setCodeComplexity(codeComplexity);
+    }
+    return validatedRules;
+  }
+
+  private void validateCyclomaticComplexity(CodeComplexity codeComplexity) {
+    if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
+      throw RulesValidatorException.CyclomaticComplexityException();
     }
   }
 
-  private void validateAndSetCodingStandards(RulesRequestMap rulesRequestMap, Rules validatedRules) {
+  private void validateNestingDepth(CodeComplexity codeComplexity) {
+    if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
+      throw RulesValidatorException.NestingDepthException();
+    }
+  }
+
+  private Rules validateAndSetCodingStandards(RulesRequestMap rulesRequestMap, Rules validatedRules) {
     if (rulesRequestMap.getCodingStandards() != null) {
       validatedRules.setCodingStandards(rulesRequestMap.getCodingStandards());
     }
+    return validatedRules;
   }
 
-  private void validateAndSetCoverage(RulesRequestMap rulesRequestMap, Rules validatedRules) {
+  private Rules validateAndSetCoverage(RulesRequestMap rulesRequestMap, Rules validatedRules) {
     if (rulesRequestMap.getCoverage() != null) {
       Coverage coverage = rulesRequestMap.getCoverage();
       if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {
@@ -77,5 +89,6 @@ public class RulesValidator {
       }
       validatedRules.setCoverage(coverage);
     }
+    return validatedRules;
   }
 }

@@ -1,5 +1,6 @@
 package com.softdevsix.argos.handler;
 
+import com.softdevsix.argos.domain.Rules;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +21,8 @@ public class RulesHandler {
   }
 
   @PostMapping
-  public ResponseEntity<Void> createRules(@RequestParam Integer project, @RequestBody RulesRequestMap requestData) {
-    service.handleRules(requestData, project);
-    return ResponseEntity.ok().build();
+  public ResponseEntity<Rules> createRules(@RequestParam Integer project, @RequestBody RulesRequestMap requestData) {
+    Rules createdRules = service.handleRules(requestData, project);
+    return ResponseEntity.ok(createdRules);
   }
 }

@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.reader.validations;
+package edu.usb.argos.ASTProcessor.infrastructure.validators;
 
-import edu.usb.argos.ASTProcessor.reader.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.interfaces.IValidationStrategy;
+import edu.usb.argos.ASTProcessor.application.exceptions.FileAnalyzerException;
+import edu.usb.argos.ASTProcessor.application.validators.IValidationStrategy;
 
 import java.nio.file.Path;
 

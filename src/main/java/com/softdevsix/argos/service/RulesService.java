@@ -14,11 +14,10 @@ import com.softdevsix.argos.repository.RulesRepoImpl;
 @Component
 public class RulesService {
 
-  private RulesRepoImpl rulesRepo;
-  private ProjectValidator projectValidator;
-  private RulesValidator rulesValidator;
+  private final RulesRepoImpl rulesRepo;
+  private final ProjectValidator projectValidator;
+  private final RulesValidator rulesValidator;
 
-  @Autowired
   public RulesService(
       RulesRepoImpl rulesRepo,
       ProjectRepository projectRepository,

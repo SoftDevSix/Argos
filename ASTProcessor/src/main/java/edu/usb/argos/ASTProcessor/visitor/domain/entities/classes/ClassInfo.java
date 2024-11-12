@@ -3,32 +3,33 @@ package edu.usb.argos.ASTProcessor.visitor.domain.entities.classes;
 import java.util.List;
 
 public class ClassInfo {
-    private final String name;
-    private final List<String> modifiers;
-    private final List<String> interfaces;
-    private final String superClass;
 
-    public ClassInfo(String name, List<String> modifiers, List<String> interfaces, String superClass) {
-        this.name = name;
-        this.modifiers = modifiers;
-        this.interfaces = interfaces;
-        this.superClass = superClass;
+    private final ClassIdentity identity;
+    private final ClassStructure structure;
+    private final ClassMembers members;
+    private final ClassMetrics metrics;
+
+    public ClassInfo(ClassIdentity identity, ClassStructure structure,
+                     ClassMembers members, ClassMetrics metrics) {
+        this.identity = identity;
+        this.structure = structure;
+        this.members = members;
+        this.metrics = metrics;
     }
 
-    public String getName() {
-        return name;
+    public ClassIdentity getIdentity() {
+        return identity;
     }
 
-    public List<String> getModifiers() {
-        return modifiers;
+    public ClassStructure getStructure() {
+        return structure;
     }
 
-    public List<String> getInterfaces() {
-        return interfaces;
+    public ClassMembers getMembers() {
+        return members;
     }
 
-    public String getSuperClass() {
-        return superClass;
+    public ClassMetrics getMetrics() {
+        return metrics;
     }
-
 }

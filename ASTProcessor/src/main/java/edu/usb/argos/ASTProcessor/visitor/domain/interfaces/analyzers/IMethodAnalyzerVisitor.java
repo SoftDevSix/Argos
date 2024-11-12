@@ -4,9 +4,9 @@ import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.*;
 
 import java.util.List;
 
-public interface IMethodAnalyzerVisitor<T> {
-    MethodInfo visitMethod(T ctx);
-    List<String> getMethodModifiers(T ctx);
-    String getReturnType(T ctx);
-    List<ParameterInfo> getParameters(T ctx);
+public interface IMethodAnalyzerVisitor<C, T> {
+    T visitMethod(C ctx);
+    List<String> getMethodModifiers(C ctx);
+    String getReturnType(C ctx);
+    List<ParameterInfo> getParameters(C ctx);
 }

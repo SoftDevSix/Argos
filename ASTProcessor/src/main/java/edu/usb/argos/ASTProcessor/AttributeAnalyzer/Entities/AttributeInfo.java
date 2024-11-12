@@ -1,4 +1,4 @@
-package main.java.edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities;
+package edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities;
 
 import java.util.List;
 

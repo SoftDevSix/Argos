@@ -13,9 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SourceTreeAnalyzerTest {
 
@@ -26,9 +24,6 @@ public class SourceTreeAnalyzerTest {
     @BeforeEach
     void setUp() throws IOException {
         mockPathValidator = mock(DirectoryPathValidator.class);
-
-        when(mockPathValidator.isValidPath(any(Path.class))).thenReturn(true);
-
         tempDir = Files.createTempDirectory("testDirectory");
         analyzer = new SourceTreeAnalyzer(mockPathValidator);
     }

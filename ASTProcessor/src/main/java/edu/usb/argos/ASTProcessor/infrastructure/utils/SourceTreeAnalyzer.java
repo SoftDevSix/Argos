@@ -1,5 +1,6 @@
 package edu.usb.argos.ASTProcessor.infrastructure.utils;
 
+import edu.usb.argos.ASTProcessor.application.exceptions.NoSuchFileException;
 import edu.usb.argos.ASTProcessor.infrastructure.validators.DirectoryPathValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,19 +29,24 @@ public class SourceTreeAnalyzer {
 
     private List<Path> getFilesByExtension(Path directoryPath, String extension) {
         List<Path> filePaths = new ArrayList<>();
-        boolean isValidPathDirectory = pathValidator.isValidPath(directoryPath);
-        if (!isValidPathDirectory) {
-            return filePaths;
-        }
+        Stream<Path> stream = null;
 
-        try (Stream<Path> stream = Files.walk(directoryPath)) {
+        try {
+            pathValidator.validatePath(directoryPath);
+            stream = Files.walk(directoryPath);
             filePaths = stream
                     .filter(file -> !Files.isDirectory(file))
                     .filter(file -> file.toString().endsWith(extension))
                     .collect(Collectors.toList());
+        } catch (NoSuchFileException exception) {
+            log.error(exception.getMessage());
         } catch (IOException exception) {
             String errorMessage = "Error getting " + extension + " files in path";
             log.error(errorMessage);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
         }
 
         return filePaths;

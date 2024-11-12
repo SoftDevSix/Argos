@@ -30,5 +30,5 @@ public class ClassInfo {
     public String getSuperClass() {
         return superClass;
     }
-    
+
 }

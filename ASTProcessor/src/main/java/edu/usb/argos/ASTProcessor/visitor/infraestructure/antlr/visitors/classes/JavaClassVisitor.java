@@ -13,22 +13,19 @@ public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
     private final IClassIdentityCollector<ParserRuleContext> identityCollector;
     private final IClassStructureCollector<ParserRuleContext> structureCollector;
     private final IClassMemberCollector<ParserRuleContext> memberCollector;
-    private final IClassMetricsCollector<ParserRuleContext> metricsCollector;
 
     public JavaClassVisitor(
             IClassIdentityCollector<ParserRuleContext> identityCollector,
             IClassStructureCollector<ParserRuleContext> structureCollector,
-            IClassMemberCollector<ParserRuleContext> memberCollector,
-            IClassMetricsCollector<ParserRuleContext> metricsCollector) {
+            IClassMemberCollector<ParserRuleContext> memberCollector) {
         this.identityCollector = identityCollector;
         this.structureCollector = structureCollector;
         this.memberCollector = memberCollector;
-        this.metricsCollector = metricsCollector;
     }
 
     @Override
     public ClassInfo visitClassDeclaration(ParserRuleContext ctx) {
-        // Construir la identidad de la clase
+
         ClassIdentity identity = new ClassIdentity(
                 identityCollector.getClassName(ctx),
                 identityCollector.getPackageName(ctx),
@@ -36,26 +33,16 @@ public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
                 identityCollector.getClassAnnotations(ctx)
         );
 
-        // Construir la estructura de la clase
         ClassStructure structure = new ClassStructure(
                 structureCollector.getSuperClass(ctx),
                 structureCollector.getImplementedInterfaces(ctx)
         );
 
-        // Construir los miembros de la clase
         ClassMembers members = new ClassMembers(
-                memberCollector.getClassMethods(ctx)
+                memberCollector.getClassMethods(ctx),
+                memberCollector.getClassAttributes(ctx)
         );
 
-        // Construir las métricas de la clase
-        ClassMetrics metrics = new ClassMetrics(
-                metricsCollector.getTotalLines(ctx),
-                metricsCollector.getCommentLines(ctx),
-                metricsCollector.getCommentRatio(ctx),
-                metricsCollector.getNumberOfMethods(ctx),
-                metricsCollector.getNumberOfAttributes(ctx)
-        );
-
-        return new ClassInfo(identity, structure, members, metrics);
+        return new ClassInfo(identity, structure, members);
     }
 }

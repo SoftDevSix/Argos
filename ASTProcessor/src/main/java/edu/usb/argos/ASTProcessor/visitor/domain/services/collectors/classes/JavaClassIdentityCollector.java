@@ -43,10 +43,15 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
                 JavaParser.ClassDeclarationContext.class,
                 classCtx -> {
                     List<String> modifiers = new ArrayList<>();
-                    if (classCtx.parent instanceof JavaParser.ClassBodyDeclarationContext) {
-                        JavaParser.ClassBodyDeclarationContext parent =
-                                (JavaParser.ClassBodyDeclarationContext) classCtx.parent;
-                        parent.modifier().forEach(mod -> modifiers.add(mod.getText()));
+                    if (ctx.parent instanceof JavaParser.TypeDeclarationContext) {
+                        JavaParser.TypeDeclarationContext typeCtx = (JavaParser.TypeDeclarationContext) ctx.parent;
+                        if (typeCtx.classOrInterfaceModifier() != null) {
+                            for (JavaParser.ClassOrInterfaceModifierContext mod : typeCtx.classOrInterfaceModifier()) {
+                                if (mod.getText() != null) {
+                                    modifiers.add(mod.getText());
+                                }
+                            }
+                        }
                     }
                     return modifiers;
                 },
@@ -61,27 +66,29 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
                 JavaParser.ClassDeclarationContext.class,
                 classCtx -> {
                     List<AnnotationInfo> annotations = new ArrayList<>();
-                    if (classCtx.parent instanceof JavaParser.ClassBodyDeclarationContext) {
-                        JavaParser.ClassBodyDeclarationContext parent =
-                                (JavaParser.ClassBodyDeclarationContext) classCtx.parent;
+                    if (ctx.parent instanceof JavaParser.TypeDeclarationContext) {
+                        JavaParser.TypeDeclarationContext typeCtx = (JavaParser.TypeDeclarationContext) ctx.parent;
+                        if (typeCtx.classOrInterfaceModifier() != null) {
+                            for (JavaParser.ClassOrInterfaceModifierContext mod : typeCtx.classOrInterfaceModifier()) {
+                                if (mod.annotation() != null) {
+                                    AnnotationInfo annotation = new AnnotationInfo();
+                                    annotation.setName(mod.annotation().qualifiedName().getText());
 
-                        parent.modifier().stream()
-                                .filter(mod -> mod.classOrInterfaceModifier().annotation() != null)
-                                .forEach(mod -> {
-                                    String name = mod.classOrInterfaceModifier().annotation().qualifiedName().getText();
-                                    Map<String, Object> attributes = new HashMap<>();
-
-                                    if (mod.classOrInterfaceModifier().annotation().elementValuePairs() != null) {
-                                        mod.classOrInterfaceModifier().annotation().elementValuePairs()
-                                                .elementValuePair().forEach(pair -> {
-                                                    String attributeName = pair.identifier().getText();
-                                                    String attributeValue = pair.elementValue().getText();
-                                                    attributes.put(attributeName, attributeValue);
-                                                });
+                                    if (mod.annotation().elementValuePairs() != null) {
+                                        Map<String, String> attributes = new HashMap<>();
+                                        for (JavaParser.ElementValuePairContext pair : mod.annotation().elementValuePairs().elementValuePair()) {
+                                            attributes.put(pair.identifier().getText(),
+                                                    pair.elementValue().getText().replace("\"", ""));
+                                        }
+                                        annotation.setAttributes(attributes);
+                                    } else {
+                                        annotation.setAttributes(new HashMap<>());
                                     }
 
-                                    annotations.add(new AnnotationInfo(name, attributes));
-                                });
+                                    annotations.add(annotation);
+                                }
+                            }
+                        }
                     }
                     return annotations;
                 },

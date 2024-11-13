@@ -1,8 +1,8 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.services.collectors;
+package edu.usb.argos.ASTProcessor.visitor.core.services.collectors;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IExpressionCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IExpressionCollector;
 
 import java.util.ArrayList;
 import java.util.List;

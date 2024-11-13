@@ -2,6 +2,7 @@ package com.softdevsix.argos.service;
 
 import com.softdevsix.argos.domain.Project;
 import com.softdevsix.argos.domain.ProjectRules;
+import com.softdevsix.argos.exception.ProjectNotFoundException;
 import com.softdevsix.argos.repository.ProjectRepository;
 import com.softdevsix.argos.repository.ProjectRulesRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,10 +69,11 @@ class ProjectValidatorTests {
 
     @Test
     void testValidate_withNonexistentProject() {
+
         when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
         when(projectRulesRepository.findAll()).thenReturn(Collections.emptyList());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        ProjectNotFoundException exception = assertThrows(ProjectNotFoundException.class, () -> {
             projectValidator.validate(projectId);
         });
 

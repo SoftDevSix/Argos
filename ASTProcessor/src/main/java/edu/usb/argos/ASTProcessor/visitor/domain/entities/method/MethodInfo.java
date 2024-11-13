@@ -1,5 +1,7 @@
 package edu.usb.argos.ASTProcessor.visitor.domain.entities.method;
 
+import edu.usb.argos.ASTProcessor.antlr.JavaParser;
+import org.antlr.v4.runtime.CommonTokenStream;
 import java.util.List;
 
 public class MethodInfo {
@@ -7,15 +9,22 @@ public class MethodInfo {
     private final String returnType;
     private final List<String> modifiers;
     private final List<ParameterInfo> parameters;
-    private final int lines;
+    private final List<JavaParser.StatementContext> statements;
+    private final List<JavaParser.ExpressionContext> expressions;
+    private final CommonTokenStream tokens;
 
     public MethodInfo(String name, String returnType, List<String> modifiers,
-                      List<ParameterInfo> parameters, int lines) {
+                      List<ParameterInfo> parameters,
+                      List<JavaParser.StatementContext> statements,
+                      List<JavaParser.ExpressionContext> expressions,
+                      CommonTokenStream tokens) {
         this.name = name;
         this.returnType = returnType;
-        this.modifiers = modifiers;
-        this.parameters = parameters;
-        this.lines = lines;
+        this.modifiers = List.copyOf(modifiers);
+        this.parameters = List.copyOf(parameters);
+        this.statements = statements;
+        this.expressions = expressions;
+        this.tokens = tokens;
     }
 
     public String getName() {
@@ -34,7 +43,15 @@ public class MethodInfo {
         return parameters;
     }
 
-    public int getLines() {
-        return lines;
+    public List<JavaParser.StatementContext> getStatements() {
+        return statements;
+    }
+
+    public List<JavaParser.ExpressionContext> getExpressions() {
+        return expressions;
+    }
+
+    public CommonTokenStream getTokens() {
+        return tokens;
     }
 }

@@ -1,5 +1,4 @@
-package edu.usb.argos.ASTProcessor.AttributeAnalyzer;
-
+package edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeAnalyzerVisitor;
 import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
 import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Interfaces.IAttributeAnalyzer;
 
@@ -8,6 +7,7 @@ import java.util.List;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import org.springframework.stereotype.Component;
+import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeHandlers.AttributeHandler;
 
 @Component
 public class JavaAttributeVisitor extends JavaParserBaseVisitor<List<AttributeInfo>> implements IAttributeAnalyzer<JavaParser.ClassBodyContext> {

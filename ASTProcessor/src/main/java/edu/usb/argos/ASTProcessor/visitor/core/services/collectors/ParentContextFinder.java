@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.services.collectors;
+package edu.usb.argos.ASTProcessor.visitor.core.services.collectors;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import org.antlr.v4.runtime.ParserRuleContext;

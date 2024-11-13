@@ -6,12 +6,10 @@ public class ClassStructure {
 
     private final String superClass;
     private final List<String> interfaces;
-    private final ClassDependencyInfo dependencies;
 
-    public ClassStructure(String superClass, List<String> interfaces, ClassDependencyInfo dependencies) {
+    public ClassStructure(String superClass, List<String> interfaces) {
         this.superClass = superClass;
         this.interfaces = interfaces;
-        this.dependencies = dependencies;
     }
 
     public String getSuperClass() {
@@ -22,7 +20,4 @@ public class ClassStructure {
         return interfaces;
     }
 
-    public ClassDependencyInfo getDependencies() {
-        return dependencies;
-    }
 }

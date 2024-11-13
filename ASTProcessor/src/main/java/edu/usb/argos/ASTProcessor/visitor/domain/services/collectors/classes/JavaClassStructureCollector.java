@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.*;
 
 public class JavaClassStructureCollector implements IClassStructureCollector<ParserRuleContext> {
+
     @Override
     public String getSuperClass(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
@@ -31,7 +32,7 @@ public class JavaClassStructureCollector implements IClassStructureCollector<Par
                 classCtx -> {
                     List<String> interfaces = new ArrayList<>();
                     if (classCtx.IMPLEMENTS() != null && classCtx.typeList() != null) {
-                        JavaParser.TypeListContext typeList = (JavaParser.TypeListContext) classCtx.typeList();
+                        JavaParser.TypeListContext typeList = classCtx.typeList(0);
                         for (JavaParser.TypeTypeContext typeType : typeList.typeType()) {
                             interfaces.add(typeType.getText());
                         }

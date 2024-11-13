@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.reader.validations;
+package edu.usb.argos.ASTProcessor.reader.infraestructure.validation;
 
-import edu.usb.argos.ASTProcessor.reader.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.interfaces.IFileValidationStrategy;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;

@@ -1,12 +1,12 @@
-package edu.usb.argos.ASTProcessor.reader.implementation.file;
+package edu.usb.argos.ASTProcessor.reader.application.services;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.reader.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.exceptions.ParserException;
-import edu.usb.argos.ASTProcessor.reader.interfaces.IFileAnalyzer;
-import edu.usb.argos.ASTProcessor.reader.interfaces.IFileValidationStrategy;
-import edu.usb.argos.ASTProcessor.reader.validations.PathValidationStrategy;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ParserException;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileValidationStrategy;
+import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.PathValidationStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

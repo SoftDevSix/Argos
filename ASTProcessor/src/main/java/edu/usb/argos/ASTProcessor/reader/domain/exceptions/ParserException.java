@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.reader.exceptions;
+package edu.usb.argos.ASTProcessor.reader.domain.exceptions;
 
 public class ParserException extends RuntimeException {
     public ParserException(String message) {

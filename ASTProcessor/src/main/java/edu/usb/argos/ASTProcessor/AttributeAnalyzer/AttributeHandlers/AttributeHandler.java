@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.AttributeAnalyzer;
+package edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeHandlers;
 
 import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;

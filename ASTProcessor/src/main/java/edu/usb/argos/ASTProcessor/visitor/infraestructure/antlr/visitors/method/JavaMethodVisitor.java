@@ -2,23 +2,31 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.*;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IExpressionCollector;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IMethodAnalyzerVisitor;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IModifierCollector;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IStatementCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.*;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IExpressionCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Expression;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Token;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor.IMethodAnalyzerVisitor;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IModifierCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IStatementCollector;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrExpressionAdapter;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrStatementAdapter;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrTokenAdapter;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
-        implements IMethodAnalyzerVisitor<ParserRuleContext, MethodInfo> {
+public class JavaMethodVisitor extends
+        JavaParserBaseVisitor<MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>>
+        implements IMethodAnalyzerVisitor<ParserRuleContext,
+        MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>> {
 
     private final CommonTokenStream tokenStream;
-
     private final IStatementCollector<JavaParser.StatementContext, JavaParser.MethodDeclarationContext> statementCollector;
     private final IExpressionCollector<JavaParser.ExpressionContext, JavaParser.MethodDeclarationContext> expressionCollector;
     private final IModifierCollector<ParserRuleContext> modifierCollector;
@@ -35,7 +43,7 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
     }
 
     @Override
-    public MethodInfo visitMethod(ParserRuleContext ctx) {
+    public MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream> visitMethod(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.MethodDeclarationContext.class,
@@ -82,15 +90,28 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInfo>
         );
     }
 
-    private MethodInfo buildMethodInfo(JavaParser.MethodDeclarationContext methodCtx) {
-        return new MethodInfo(
+    private MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>
+    buildMethodInfo(JavaParser.MethodDeclarationContext methodCtx) {
+        List<Statement<JavaParser.StatementContext>> statements =
+                statementCollector.collectStatements(methodCtx).stream()
+                        .map(AntlrStatementAdapter::new)
+                        .collect(Collectors.toList());
+
+        List<Expression<JavaParser.ExpressionContext>> expressions =
+                expressionCollector.collectExpressions(methodCtx).stream()
+                        .map(AntlrExpressionAdapter::new)
+                        .collect(Collectors.toList());
+
+        Token<CommonTokenStream> tokenAdapter = new AntlrTokenAdapter(tokenStream);
+
+        return new MethodInfo<>(
                 getName(methodCtx),
                 getReturnType(methodCtx),
                 getMethodModifiers(methodCtx),
                 getParameters(methodCtx),
-                statementCollector.collectStatements(methodCtx),
-                expressionCollector.collectExpressions(methodCtx),
-                tokenStream
+                statements,
+                expressions,
+                tokenAdapter
         );
     }
 

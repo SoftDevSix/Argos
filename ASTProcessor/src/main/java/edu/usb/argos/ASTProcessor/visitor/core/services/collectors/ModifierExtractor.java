@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.services.collectors;
+package edu.usb.argos.ASTProcessor.visitor.core.services.collectors;
 
 import java.util.ArrayList;
 import java.util.List;

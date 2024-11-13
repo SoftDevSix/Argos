@@ -1,6 +1,6 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.services.collectors;
+package edu.usb.argos.ASTProcessor.visitor.core.services.collectors;
 
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.IModifierCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IModifierCollector;
 import org.antlr.v4.runtime.ParserRuleContext;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import java.util.ArrayList;

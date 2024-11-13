@@ -2,10 +2,12 @@ package edu.usb.argos.ASTProcessor.visitor;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.*;
-import edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.ExpressionCollector;
-import edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.ModifierCollector;
-import edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.StatementCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.*;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Expression;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ExpressionCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ModifierCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.StatementCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -47,7 +49,7 @@ public class JavaMethodVisitorTest {
         String methodCode = "public void testMethod() { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
-        MethodInfo methodInfo = visitor.visitMethod(ctx);
+        var methodInfo = visitor.visitMethod(ctx);
 
         assertNotNull(methodInfo);
         assertEquals("testMethod", methodInfo.getName());
@@ -61,7 +63,7 @@ public class JavaMethodVisitorTest {
         String methodCode = "public int calculateSum(int a, String b) { return a; }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
-        MethodInfo methodInfo = visitor.visitMethod(ctx);
+        var methodInfo = visitor.visitMethod(ctx);
 
         List<ParameterInfo> params = methodInfo.getParameters();
         assertEquals(2, params.size());
@@ -78,7 +80,7 @@ public class JavaMethodVisitorTest {
         String methodCode = "public static final void testMethod() { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
-        MethodInfo methodInfo = visitor.visitMethod(ctx);
+        var methodInfo = visitor.visitMethod(ctx);
 
         List<String> modifiers = methodInfo.getModifiers();
         assertTrue(modifiers.contains("public"));
@@ -97,9 +99,9 @@ public class JavaMethodVisitorTest {
                         "}";
 
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
-        MethodInfo methodInfo = visitor.visitMethod(ctx);
+        var methodInfo = visitor.visitMethod(ctx);
 
-        List<JavaParser.StatementContext> statements = methodInfo.getStatements();
+        List<Statement<JavaParser.StatementContext>> statements = methodInfo.getStatements();
 
         assertEquals(2, statements.size(),
                 "Expected 2 statements: println and if statement");
@@ -116,9 +118,9 @@ public class JavaMethodVisitorTest {
                         "}";
 
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
-        MethodInfo methodInfo = visitor.visitMethod(ctx);
+        var methodInfo = visitor.visitMethod(ctx);
 
-        List<JavaParser.StatementContext> statements = methodInfo.getStatements();
+        List<Statement<JavaParser.StatementContext>> statements = methodInfo.getStatements();
         assertEquals(1, statements.size(), "Expected 1 statement");
         assertNotNull(statements.get(0), "Statement should not be null");
     }
@@ -133,9 +135,9 @@ public class JavaMethodVisitorTest {
                         "}";
 
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
-        MethodInfo methodInfo = visitor.visitMethod(ctx);
+        var methodInfo = visitor.visitMethod(ctx);
 
-        List<JavaParser.StatementContext> statements = methodInfo.getStatements();
+        List<Statement<JavaParser.StatementContext>> statements = methodInfo.getStatements();
         assertEquals(1, statements.size(), "Expected 1 if statement");
         assertNotNull(statements.get(0), "If statement should not be null");
     }
@@ -151,13 +153,38 @@ public class JavaMethodVisitorTest {
                         "}";
 
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
-        MethodInfo methodInfo = visitor.visitMethod(ctx);
+        var methodInfo = visitor.visitMethod(ctx);
 
-        List<JavaParser.StatementContext> statements = methodInfo.getStatements();
+        List<Statement<JavaParser.StatementContext>> statements = methodInfo.getStatements();
         assertEquals(2, statements.size(),
                 "Expected 2 statements: if statement and return statement");
     }
 
+    @Test
+    void visitMethod_WithExpressions_ShouldParseCorrectly() {
+        String methodCode =
+                "public void testMethod() {\n" +
+                        "    System.out.println(\"Test\" + \"Hello\");\n" +
+                        "}";
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
+        var methodInfo = visitor.visitMethod(ctx);
+
+        List<Expression<JavaParser.ExpressionContext>> expressions = methodInfo.getExpressions();
+        assertFalse(expressions.isEmpty(), "Should have expressions");
+
+        assertNotNull(expressions.get(0).getNode(), "Expression node should not be null");
+    }
+
+    @Test
+    void visitMethod_VerifyTokenStream_ShouldBeAccessible() {
+        String methodCode = "public void testMethod() { }";
+        JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
+
+        var methodInfo = visitor.visitMethod(ctx);
+        assertNotNull(methodInfo.getTokens().getTokenStream(),
+                "Token stream should be accessible");
+    }
 
     @Test
     void getMethodModifiers_WithNoModifiers_ShouldReturnEmptyList() {

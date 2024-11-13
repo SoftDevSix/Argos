@@ -1,29 +1,30 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.entities.method;
+package edu.usb.argos.ASTProcessor.visitor.core.entities.method;
 
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import org.antlr.v4.runtime.CommonTokenStream;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Expression;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Token;
 import java.util.List;
 
-public class MethodInfo {
+public class MethodInfo<S, E, T> {
     private final String name;
     private final String returnType;
     private final List<String> modifiers;
     private final List<ParameterInfo> parameters;
-    private final List<JavaParser.StatementContext> statements;
-    private final List<JavaParser.ExpressionContext> expressions;
-    private final CommonTokenStream tokens;
+    private final List<Statement<S>> statements;
+    private final List<Expression<E>> expressions;
+    private final Token<T> tokens;
 
     public MethodInfo(String name, String returnType, List<String> modifiers,
                       List<ParameterInfo> parameters,
-                      List<JavaParser.StatementContext> statements,
-                      List<JavaParser.ExpressionContext> expressions,
-                      CommonTokenStream tokens) {
+                      List<Statement<S>> statements,
+                      List<Expression<E>> expressions,
+                      Token<T> tokens) {
         this.name = name;
         this.returnType = returnType;
         this.modifiers = List.copyOf(modifiers);
         this.parameters = List.copyOf(parameters);
-        this.statements = statements;
-        this.expressions = expressions;
+        this.statements = List.copyOf(statements);
+        this.expressions = List.copyOf(expressions);
         this.tokens = tokens;
     }
 
@@ -43,15 +44,15 @@ public class MethodInfo {
         return parameters;
     }
 
-    public List<JavaParser.StatementContext> getStatements() {
+    public List<Statement<S>> getStatements() {
         return statements;
     }
 
-    public List<JavaParser.ExpressionContext> getExpressions() {
+    public List<Expression<E>> getExpressions() {
         return expressions;
     }
 
-    public CommonTokenStream getTokens() {
+    public Token<T> getTokens() {
         return tokens;
     }
 }

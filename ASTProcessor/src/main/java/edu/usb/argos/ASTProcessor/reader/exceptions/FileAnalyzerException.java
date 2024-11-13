@@ -1,6 +1,6 @@
 package edu.usb.argos.ASTProcessor.reader.exceptions;
 
-public class FileAnalyzerException extends Exception {
+public class FileAnalyzerException extends RuntimeException {
     public FileAnalyzerException(String message) {
         super(message);
     }

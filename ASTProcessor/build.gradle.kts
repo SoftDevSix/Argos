@@ -20,6 +20,8 @@ dependencies {
 	implementation(libs.springboot.starter.web)
 	implementation(libs.springdoc.openapi)
 	implementation(libs.antlr.runtime)
+	compileOnly(libs.lombok)
+	annotationProcessor(libs.lombok)
 	developmentOnly(libs.springboot.devtools)
 	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)

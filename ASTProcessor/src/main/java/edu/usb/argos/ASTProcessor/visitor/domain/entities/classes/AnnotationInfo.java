@@ -1,22 +1,30 @@
 package edu.usb.argos.ASTProcessor.visitor.domain.entities.classes;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class AnnotationInfo {
 
-    private final String name;
-    private final Map<String, Object> attributes;
+    private String name;
+    private Map<String, String> attributes;
 
-    public AnnotationInfo(String name, Map<String, Object> attributes) {
-        this.name = name;
-        this.attributes = attributes;
+    public AnnotationInfo() {
+        this.attributes = new HashMap<>();
     }
 
     public String getName() {
         return name;
     }
 
-    public Map<String, Object> getAttributes() {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map<String, String> getAttributes() {
         return attributes;
+    }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
     }
 }

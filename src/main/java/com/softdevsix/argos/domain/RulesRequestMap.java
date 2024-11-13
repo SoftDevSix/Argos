@@ -1,9 +1,6 @@
 package com.softdevsix.argos.domain;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 
 @Data
 public class RulesRequestMap {

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import java.util.Optional;
@@ -42,27 +43,35 @@ class RulesServiceTests {
         mockProject = new Project();
         mockProject.setId(1);
 
-        Rules mockRules = new Rules();
+        Rules.RulesBuilder mockRulesBuilder  = Rules.builder();
 
         CodeQuality codeQuality = new CodeQuality();
         codeQuality.setMaxLineLength(true);
         codeQuality.setMaxLineLengthLimit(120);
-        mockRules.setCodeQuality(codeQuality);
+        mockRulesBuilder.codeQuality(codeQuality);
 
         BestPractices bestPractices = new BestPractices();
         bestPractices.setNoHardcodedValues(false);
-        mockRules.setBestPractices(bestPractices);
+        mockRulesBuilder.bestPractices(bestPractices);
 
         CodeComplexity codeComplexity = new CodeComplexity();
         codeComplexity.setCyclomaticComplexityLimit(true);
         codeComplexity.setMaxCyclomaticComplexity(15);
         codeComplexity.setNestingDepthLimit(true);
         codeComplexity.setMaxNestingDepth(5);
-        mockRules.setCodeComplexity(codeComplexity);
+        mockRulesBuilder.codeComplexity(codeComplexity);
+
 
         when(projectValidator.validate(mockProject.getId())).thenReturn(mockProject);
+
+        Rules mockRules = Rules.builder()
+                .codeQuality(new CodeQuality())
+                .bestPractices(new BestPractices())
+                .build();
+
         when(rulesRepo.fetchRule(mockProject.getId())).thenReturn(Optional.of(mockRules));
         when(rulesValidator.validate(any(RulesRequestMap.class))).thenReturn(mockRules);
+        when(rulesRepo.createRule(any(Rules.class), eq(mockProject))).thenReturn(mockProject.getId());
 
     }
 
@@ -74,8 +83,8 @@ class RulesServiceTests {
         codeQuality.setMaxLineLengthLimit(120);
         rulesRequestMap.setCodeQuality(codeQuality);
 
-        rulesService.handleRules(rulesRequestMap,mockProject.getId());
-        Rules validatedRules = rulesService.getRules(mockProject.getId());
+
+        Rules validatedRules = rulesService.handleRules(rulesRequestMap,mockProject.getId());
 
         assertNotNull(validatedRules.getCodeQuality(), "CodeQuality should not be null");
         assertEquals(120, validatedRules.getCodeQuality().getMaxLineLengthLimit(), "Max line length should be 120");

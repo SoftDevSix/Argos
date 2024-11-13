@@ -13,82 +13,78 @@ import org.springframework.stereotype.Component;
 public class RulesValidator {
 
   public Rules validate(RulesRequestMap rulesRequestMap){
-    Rules rules = new Rules();
-    validateAndSetCodeQuality(rulesRequestMap, rules );
-    validateAndSetBestPractices(rulesRequestMap, rules );
-    validateAndSetCodeSmells(rulesRequestMap, rules );
-    validateAndSetCodeComplexity(rulesRequestMap, rules );
-    validateAndSetCodingStandards(rulesRequestMap, rules );
-    validateAndSetCoverage(rulesRequestMap, rules );
-    return rules;
+    Rules.RulesBuilder builder = Rules.builder();
+
+    validateAndSetCodeQuality(rulesRequestMap, builder);
+    validateAndSetBestPractices(rulesRequestMap, builder);
+    validateAndSetCodeSmells(rulesRequestMap, builder);
+    validateAndSetCodeComplexity(rulesRequestMap, builder);
+    validateAndSetCodingStandards(rulesRequestMap, builder);
+    validateAndSetCoverage(rulesRequestMap, builder);
+
+    return builder.build();
   }
 
-  private Rules validateAndSetCodeQuality(RulesRequestMap rulesRequestMap, Rules validatedRules) {
-    if (rulesRequestMap.getCodeQuality() != null) {
-      CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
-      if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
-        throw RulesValidatorException.LineLengthException();
-      }
-      validatedRules.setCodeQuality(codeQuality);
+  private void validateAndSetCodeQuality(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
+        if (rulesRequestMap.getCodeQuality() != null) {
+            CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
+            if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
+                throw RulesValidatorException.LineLengthException();
+            }
+            builder.codeQuality(codeQuality);
+        }
     }
-    return validatedRules;
-  }
 
-  private Rules validateAndSetBestPractices(RulesRequestMap rulesRequestMap, Rules validatedRules) {
-    if (rulesRequestMap.getBestPractices() != null) {
-      validatedRules.setBestPractices(rulesRequestMap.getBestPractices());
+    private void validateAndSetBestPractices(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
+        if (rulesRequestMap.getBestPractices() != null) {
+            builder.bestPractices(rulesRequestMap.getBestPractices());
+        }
     }
-    return validatedRules;
-  }
 
-  private Rules validateAndSetCodeSmells(RulesRequestMap rulesRequestMap, Rules validatedRules) {
-    if (rulesRequestMap.getCodeSmells() != null) {
-      CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
-      if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
-        throw RulesValidatorException.LineLengthException();
-      }
-      validatedRules.setCodeSmells(codeSmells);
+    private void validateAndSetCodeSmells(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
+        if (rulesRequestMap.getCodeSmells() != null) {
+            CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
+            if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
+                throw RulesValidatorException.LineLengthException();
+            }
+            builder.codeSmells(codeSmells);
+        }
     }
-    return validatedRules;
-  }
 
-  private Rules validateAndSetCodeComplexity(RulesRequestMap rulesRequestMap, Rules validatedRules) {
-    if (rulesRequestMap.getCodeComplexity() != null) {
-      CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
-      validateCyclomaticComplexity(codeComplexity);
-      validateNestingDepth(codeComplexity);
-      validatedRules.setCodeComplexity(codeComplexity);
+    private void validateAndSetCodeComplexity(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
+        if (rulesRequestMap.getCodeComplexity() != null) {
+            CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
+            validateCyclomaticComplexity(codeComplexity);
+            validateNestingDepth(codeComplexity);
+            builder.codeComplexity(codeComplexity);
+        }
     }
-    return validatedRules;
-  }
 
-  private void validateCyclomaticComplexity(CodeComplexity codeComplexity) {
-    if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
-      throw RulesValidatorException.CyclomaticComplexityException();
+    private void validateCyclomaticComplexity(CodeComplexity codeComplexity) {
+        if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
+            throw RulesValidatorException.CyclomaticComplexityException();
+        }
     }
-  }
 
-  private void validateNestingDepth(CodeComplexity codeComplexity) {
-    if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
-      throw RulesValidatorException.NestingDepthException();
+    private void validateNestingDepth(CodeComplexity codeComplexity) {
+        if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
+            throw RulesValidatorException.NestingDepthException();
+        }
     }
-  }
 
-  private Rules validateAndSetCodingStandards(RulesRequestMap rulesRequestMap, Rules validatedRules) {
-    if (rulesRequestMap.getCodingStandards() != null) {
-      validatedRules.setCodingStandards(rulesRequestMap.getCodingStandards());
+    private void validateAndSetCodingStandards(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
+        if (rulesRequestMap.getCodingStandards() != null) {
+            builder.codingStandards(rulesRequestMap.getCodingStandards());
+        }
     }
-    return validatedRules;
-  }
 
-  private Rules validateAndSetCoverage(RulesRequestMap rulesRequestMap, Rules validatedRules) {
-    if (rulesRequestMap.getCoverage() != null) {
-      Coverage coverage = rulesRequestMap.getCoverage();
-      if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {
-        throw RulesValidatorException.CoverageThresholdException();
-      }
-      validatedRules.setCoverage(coverage);
+    private void validateAndSetCoverage(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
+        if (rulesRequestMap.getCoverage() != null) {
+            Coverage coverage = rulesRequestMap.getCoverage();
+            if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {
+                throw RulesValidatorException.CoverageThresholdException();
+            }
+            builder.coverage(coverage);
+        }
     }
-    return validatedRules;
-  }
 }

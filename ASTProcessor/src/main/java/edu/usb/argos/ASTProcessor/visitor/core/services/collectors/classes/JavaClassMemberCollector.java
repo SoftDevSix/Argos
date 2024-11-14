@@ -4,7 +4,7 @@ import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeAnalyzerVisitor.Jav
 import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.MethodInfo;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.classes.IClassMemberCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassMemberCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.ParserRuleContext;

@@ -1,7 +1,7 @@
 package edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.classes;
 import java.util.List;
 
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.classes.AnnotationInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInfo;
 public interface IClassIdentityCollector <T> {
 
     String getClassName(T ctx);

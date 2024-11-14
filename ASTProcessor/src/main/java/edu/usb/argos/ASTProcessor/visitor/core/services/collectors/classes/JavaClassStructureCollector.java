@@ -1,7 +1,7 @@
 package edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.classes.IClassStructureCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassStructureCollector;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.ParserRuleContext;
 

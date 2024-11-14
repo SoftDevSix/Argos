@@ -1,7 +1,7 @@
 package edu.usb.argos.ASTProcessor.reader.infraestructure.utils;
 
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.NoSuchFileException;
-import edu.usb.argos.ASTProcessor.reader.infraestructure.validators.DirectoryPathValidator;
+import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.DirectoryPathValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

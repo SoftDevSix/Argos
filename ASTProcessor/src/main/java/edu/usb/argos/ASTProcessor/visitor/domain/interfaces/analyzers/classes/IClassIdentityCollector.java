@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.classes;
+package edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes;
 import java.util.List;
 
 import edu.usb.argos.ASTProcessor.visitor.domain.entities.classes.AnnotationInfo;

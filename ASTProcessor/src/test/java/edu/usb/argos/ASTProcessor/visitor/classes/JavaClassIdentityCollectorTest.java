@@ -1,6 +1,7 @@
 package edu.usb.argos.ASTProcessor.visitor.classes;
 
-import edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.classes.JavaClassIdentityCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassIdentityCollector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.antlr.v4.runtime.*;
@@ -8,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 import edu.usb.argos.ASTProcessor.antlr.*;
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.classes.*;
 
 public class JavaClassIdentityCollectorTest {
     private JavaClassIdentityCollector classIdentityCollector;

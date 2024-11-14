@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.entities.classes;
+package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
 import java.util.List;
 

@@ -1,11 +1,15 @@
 package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.classes.ClassInfo;
-import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.classes.*;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassIdentity;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassMembers;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassStructure;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassAnalyzerVisitor;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassIdentityCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassMemberCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassStructureCollector;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.classes.*;
 
 public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
         implements IClassAnalyzerVisitor<ParserRuleContext> {

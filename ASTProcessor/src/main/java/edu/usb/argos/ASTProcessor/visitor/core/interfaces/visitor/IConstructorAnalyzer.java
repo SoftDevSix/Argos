@@ -4,6 +4,6 @@ import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInfo;
 
 import java.util.List;
 
-public interface IConstructorAnalyzer<T> {
-    List<ConstructorInfo> visitConstructors(T ctx);
+public interface IConstructorAnalyzer<T, S> {
+    List<ConstructorInfo<S>> visitConstructors(T ctx);
 }

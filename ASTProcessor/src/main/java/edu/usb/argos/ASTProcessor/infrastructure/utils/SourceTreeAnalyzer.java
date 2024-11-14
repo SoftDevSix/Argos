@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class SourceTreeAnalyzer {
 
-    private final String JAVA_EXTENSION = ".java";
+    private static final String JAVA_EXTENSION = ".java";
     private final DirectoryPathValidator pathValidator;
 
     public List<Path> getJavaFiles(Path directoryPath) {

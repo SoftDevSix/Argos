@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
-public class DirectoryPathValidator implements IPathValidator {
+public class DirectoryPathValidator implements IPathValidator<Path> {
 
     @Override
     public void validatePath(Path path) throws NoSuchFileException {

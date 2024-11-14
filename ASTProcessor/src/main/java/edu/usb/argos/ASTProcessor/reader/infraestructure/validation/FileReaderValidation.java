@@ -1,6 +1,8 @@
-package main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReaderHandlers;
+package edu.usb.argos.ASTProcessor.reader.infraestructure.validation;
 
-import main.java.edu.usb.argos.ASTProcessor.FileReaderByText.Interfaces.IFileReaderTextValidation;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileReaderTextValidation;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileReaderException;
+
 
 public class FileReaderValidation implements IFileReaderTextValidation {
     @Override

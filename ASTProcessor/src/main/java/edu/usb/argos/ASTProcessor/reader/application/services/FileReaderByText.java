@@ -1,4 +1,4 @@
-package main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReader;
+package edu.usb.argos.ASTProcessor.reader.application.services;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -8,9 +8,9 @@ import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import java.io.IOException;
 
-import main.java.edu.usb.argos.ASTProcessor.FileReaderByText.Interfaces.IFileAnalyzer;
-import main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReaderHandlers.FileReaderValidation;
-import main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReaderHandlers.FileReaderException;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileReaderException;
+import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.FileReaderValidation;
 
 public class FileReaderByText implements IFileAnalyzer<String, ParseTree> {
     public ParseTree readFile(String content) throws FileReaderException {

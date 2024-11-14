@@ -1,4 +1,4 @@
-package main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReaderHandlers;
+package edu.usb.argos.ASTProcessor.reader.domain.exceptions;
 
 public class FileReaderException extends RuntimeException {
     public FileReaderException(String message) {

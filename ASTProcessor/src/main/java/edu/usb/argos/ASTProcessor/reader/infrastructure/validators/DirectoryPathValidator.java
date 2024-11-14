@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.infrastructure.validators;
+package edu.usb.argos.ASTProcessor.reader.infrastructure.validators;
 
-import edu.usb.argos.ASTProcessor.application.exceptions.NoSuchFileException;
-import edu.usb.argos.ASTProcessor.application.validators.IPathValidator;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.NoSuchFileException;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IPathValidator;
 
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
-public class DirectoryPathValidator implements IPathValidator {
+public class DirectoryPathValidator implements IPathValidator<Path> {
 
     @Override
     public void validatePath(Path path) throws NoSuchFileException {

@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.application.validators;
+package edu.usb.argos.ASTProcessor.reader.domain.interfaces;
 
 public interface IPathValidator<P> {
 

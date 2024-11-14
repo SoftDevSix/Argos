@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.application.exceptions;
+package edu.usb.argos.ASTProcessor.reader.domain.exceptions;
 
 public class NoSuchFileException extends RuntimeException {
 

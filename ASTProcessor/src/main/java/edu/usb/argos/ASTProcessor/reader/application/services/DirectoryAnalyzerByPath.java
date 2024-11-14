@@ -1,9 +1,9 @@
-package edu.usb.argos.ASTProcessor.infrastructure.analyzers.directoryAnalyzers;
+package edu.usb.argos.ASTProcessor.reader.application.services;
 
-import edu.usb.argos.ASTProcessor.application.analyzers.IDirectoryAnalyzer;
-import edu.usb.argos.ASTProcessor.application.analyzers.IFileAnalyzer;
-import edu.usb.argos.ASTProcessor.application.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.infrastructure.utils.SourceTreeAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IDirectoryAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.infraestructure.utils.SourceTreeAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

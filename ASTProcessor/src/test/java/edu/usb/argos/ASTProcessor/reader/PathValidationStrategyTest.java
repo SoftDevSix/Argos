@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.validators;
+package edu.usb.argos.ASTProcessor.reader;
 
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
 import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.PathValidationStrategy;

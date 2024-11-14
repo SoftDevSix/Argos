@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.application.analyzers;
+package edu.usb.argos.ASTProcessor.reader.domain.interfaces;
 
 import java.util.List;
 

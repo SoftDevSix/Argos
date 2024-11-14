@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.infrastructure.validators;
+package edu.usb.argos.ASTProcessor.reader.infraestructure.validation;
 
-import edu.usb.argos.ASTProcessor.application.exceptions.NoSuchFileException;
-import edu.usb.argos.ASTProcessor.application.validators.IPathValidator;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.NoSuchFileException;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IPathValidator;
 
 import org.springframework.stereotype.Component;
 

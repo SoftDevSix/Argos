@@ -1,7 +1,7 @@
 package edu.usb.argos.ASTProcessor.validators;
 
-import edu.usb.argos.ASTProcessor.application.exceptions.NoSuchFileException;
-import edu.usb.argos.ASTProcessor.infrastructure.validators.DirectoryPathValidator;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.NoSuchFileException;
+import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.DirectoryPathValidator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +34,7 @@ class DirectoryPathValidatorTest {
         Path nonExistentPath = tempDir.resolve("nonexistentDir");
 
         NoSuchFileException exception = assertThrows(
-            edu.usb.argos.ASTProcessor.application.exceptions.NoSuchFileException.class,
+            NoSuchFileException.class,
             () -> pathValidator.validatePath(nonExistentPath)
         );
 
@@ -46,7 +46,7 @@ class DirectoryPathValidatorTest {
         Path file = Files.createFile(tempDir.resolve("NotADirectory.java"));
 
         NoSuchFileException exception = assertThrows(
-            edu.usb.argos.ASTProcessor.application.exceptions.NoSuchFileException.class,
+            NoSuchFileException.class,
             () -> pathValidator.validatePath(file)
         );
 

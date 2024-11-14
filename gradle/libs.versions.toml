@@ -20,3 +20,4 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }

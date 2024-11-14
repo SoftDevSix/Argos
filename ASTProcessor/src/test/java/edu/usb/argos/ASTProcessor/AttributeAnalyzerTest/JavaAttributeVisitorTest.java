@@ -1,8 +1,8 @@
 package edu.usb.argos.ASTProcessor.AttributeAnalyzerTest;
 
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeHandlers.AttributeHandler;
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeAnalyzerVisitor.JavaAttributeVisitor;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

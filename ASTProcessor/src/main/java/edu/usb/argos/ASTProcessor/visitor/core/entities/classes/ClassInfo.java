@@ -1,6 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.entities.classes;
-
-import java.util.List;
+package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
 public class ClassInfo {
 

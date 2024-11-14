@@ -1,9 +1,9 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.classes;
+package edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes;
 
 import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeAnalyzerVisitor.JavaAttributeVisitor;
 import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.MethodInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInfo;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassMemberCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;

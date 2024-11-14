@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.classes;
+package edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassStructureCollector;

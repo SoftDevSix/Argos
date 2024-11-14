@@ -1,6 +1,6 @@
 package edu.usb.argos.ASTProcessor.visitor.classes;
 
-import edu.usb.argos.ASTProcessor.visitor.domain.services.collectors.classes.JavaClassStructureCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassStructureCollector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.antlr.v4.runtime.*;

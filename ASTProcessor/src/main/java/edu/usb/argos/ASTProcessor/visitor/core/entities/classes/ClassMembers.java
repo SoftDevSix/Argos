@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.visitor.domain.entities.classes;
+package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
 import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.method.MethodInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInfo;
 
 import java.util.List;
 

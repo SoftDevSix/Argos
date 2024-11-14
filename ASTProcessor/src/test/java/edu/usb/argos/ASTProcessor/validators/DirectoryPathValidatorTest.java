@@ -1,7 +1,7 @@
 package edu.usb.argos.ASTProcessor.validators;
 
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.NoSuchFileException;
-import edu.usb.argos.ASTProcessor.reader.infrastructure.validators.DirectoryPathValidator;
+import edu.usb.argos.ASTProcessor.reader.infraestructure.validators.DirectoryPathValidator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;

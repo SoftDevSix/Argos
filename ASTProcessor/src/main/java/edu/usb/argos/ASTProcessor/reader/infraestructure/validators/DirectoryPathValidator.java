@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.reader.infrastructure.validators;
+package edu.usb.argos.ASTProcessor.reader.infraestructure.validators;
 
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.NoSuchFileException;
 import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IPathValidator;

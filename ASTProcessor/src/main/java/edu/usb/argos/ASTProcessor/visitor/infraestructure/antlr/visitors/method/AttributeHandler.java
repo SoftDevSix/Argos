@@ -1,13 +1,13 @@
-package edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeHandlers;
+package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method;
 
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Component("attributeHandlerOne")
 public class AttributeHandler {
 
     public List<AttributeInfo> extractAttributesFromClassBody(JavaParser.ClassBodyContext ctx) {

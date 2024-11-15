@@ -44,7 +44,8 @@ public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
 
         ClassMembers members = new ClassMembers(
                 memberCollector.getClassMethods(ctx),
-                memberCollector.getClassAttributes(ctx)
+                memberCollector.getClassAttributes(ctx),
+                memberCollector.getClassConstructors(ctx)
         );
 
         ClassInfo classInfo = new ClassInfo(identity, structure, members);

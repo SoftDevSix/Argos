@@ -1,7 +1,5 @@
 package edu.usb.argos.ASTProcessor.visitor.classes;
 
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeAnalyzerVisitor.JavaAttributeVisitor;
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeHandlers.AttributeHandler;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.*;
@@ -12,6 +10,9 @@ import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaC
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassMemberCollector;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassStructureCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaClassVisitor;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import org.antlr.v4.runtime.*;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,8 @@ public class JavaClassVisitorTest {
                 
                 public class TestClass extends BaseClass implements InterfaceOne, InterfaceTwo {
                     private int attribute;
+                    public TestClass() {}
+                    public TestClass(int attribute) { this.attribute = attribute; }
                     public void method() {}
                 }
                 """;
@@ -47,9 +50,15 @@ public class JavaClassVisitorTest {
         AttributeHandler attributeHandler = new AttributeHandler();
         JavaAttributeVisitor attributeVisitor = new JavaAttributeVisitor(attributeHandler);
 
+        JavaConstructorVisitor constructorVisitor = new JavaConstructorVisitor();
+
         JavaClassIdentityCollector identityCollector = new JavaClassIdentityCollector(tokenStream);
         JavaClassStructureCollector structureCollector = new JavaClassStructureCollector();
-        JavaClassMemberCollector memberCollector = new JavaClassMemberCollector(methodVisitor, attributeVisitor);
+        JavaClassMemberCollector memberCollector = new JavaClassMemberCollector(
+                methodVisitor,
+                attributeVisitor,
+                constructorVisitor
+        );
 
         JavaClassVisitor visitor = new JavaClassVisitor(identityCollector, structureCollector, memberCollector);
 
@@ -67,5 +76,6 @@ public class JavaClassVisitorTest {
         assertTrue(classInfo.getStructure().getInterfaces().contains("InterfaceTwo"));
         assertEquals(1, classInfo.getMembers().getAttributes().size());
         assertEquals(1, classInfo.getMembers().getMethods().size());
+        assertEquals(2, classInfo.getMembers().getConstructors().size());
     }
 }

@@ -1,6 +1,6 @@
-package edu.usb.argos.ASTProcessor.AttributeAnalyzer.Interfaces;
+package edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor;
 
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
 
 import java.util.List;
 

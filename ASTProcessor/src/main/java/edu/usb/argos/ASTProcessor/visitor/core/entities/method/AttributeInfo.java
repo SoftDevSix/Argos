@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities;
+package edu.usb.argos.ASTProcessor.visitor.core.entities.method;
 
 import java.util.List;
 
@@ -23,14 +23,5 @@ public class AttributeInfo {
 
     public List<String> getModifiers() {
         return modifiers;
-    }
-
-    @Override
-    public String toString() {
-        return "AttributeInfo{" +
-                "name='" + name + '\'' +
-                ", type='" + type + '\'' +
-                ", modifiers=" + modifiers +
-                '}';
     }
 }

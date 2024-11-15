@@ -26,7 +26,6 @@ public class JavaConstructorVisitor extends JavaParserBaseVisitor<List<Construct
                 constructors.add(new ConstructorInfo<>(constructorName, modifiers, parameters, bodyStatements));
             }
         }
-
         return constructors;
     }
 

@@ -10,11 +10,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class JavaAttributeVisitorTest {
@@ -27,7 +24,7 @@ class JavaAttributeVisitorTest {
         visitor = new JavaAttributeVisitor(attributeHandler);
     }
 
-    private Optional<JavaParser.ClassBodyContext> getClassFromText(String path) throws IOException {
+    private Optional<JavaParser.ClassBodyContext> getClassFromText(String path) {
         CharStream input = CharStreams.fromString(path);
 
         JavaLexer lexer = new JavaLexer(input);
@@ -47,7 +44,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withModifiers() throws IOException {
+    void testVisitAttribute_withModifiers() {
         String classBody = """
                 public class Example {
                     private final int someValue = 12;
@@ -64,7 +61,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withoutModifiers() throws IOException {
+    void testVisitAttribute_withoutModifiers() {
         String classBody = """
                 public class Example {
                     int someValue = 12;
@@ -81,7 +78,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testGetAttributeType() throws IOException {
+    void testGetAttributeType() {
         String classBody = """
                 public class Example {
                     private final int someValue = 12;
@@ -96,7 +93,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testGetAttributeName() throws IOException {
+    void testGetAttributeName() {
         String classBody = """
                 public class Example {
                     private final int someValue = 12;
@@ -111,7 +108,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitMultipleAttributes_withoutModifiers() throws IOException {
+    void testVisitMultipleAttributes_withoutModifiers() {
         String classBody = """
                 public class Example {
                     int someValue = 12;
@@ -140,7 +137,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withPrivateModifier() throws IOException {
+    void testVisitAttribute_withPrivateModifier() {
         String classBody = """
                 public class Example {
                     private int someValue = 12;
@@ -158,7 +155,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withFinalModifier() throws IOException {
+    void testVisitAttribute_withFinalModifier() {
         String classBody = """
                 public class Example {
                     public final int VALUE = 42;
@@ -175,7 +172,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withMultipleModifiers() throws IOException {
+    void testVisitAttribute_withMultipleModifiers() {
         String classBody = """
                 public class Example {
                     public static final String VALUE = "value";
@@ -192,7 +189,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withTwoAttributesAndModifiers() throws IOException {
+    void testVisitAttribute_withTwoAttributesAndModifiers() {
         String classBody = """
                 public class Example {
                     private int id;
@@ -217,7 +214,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withTwoAttributesAndMultipleModifiers() throws IOException {
+    void testVisitAttribute_withTwoAttributesAndMultipleModifiers() {
         String classBody = """
                 public class Example {
                     private static int id;

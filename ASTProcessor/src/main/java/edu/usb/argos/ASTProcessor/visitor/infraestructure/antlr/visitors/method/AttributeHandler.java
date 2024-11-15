@@ -22,7 +22,6 @@ public class AttributeHandler {
                 }
             }
         }
-
         return attributes;
     }
 

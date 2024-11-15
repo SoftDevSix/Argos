@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,7 +57,7 @@ class ProjectValidatorTests {
         ProjectRules projectRules = ProjectRules.builder()
             .project(mockProject)
             .build();
-        when(projectRulesRepository.findAll()).thenReturn(List.of(projectRules));
+        when(projectRulesRepository.findById(projectId)).thenReturn(Optional.of(projectRules));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             projectValidator.validate(projectId);

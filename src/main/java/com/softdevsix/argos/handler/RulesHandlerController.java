@@ -13,16 +13,16 @@ import com.softdevsix.argos.service.RulesService;
 
 @Controller
 @RequestMapping("/argos/rules")
-public class RulesHandler {
-  private final RulesService service;
+public class RulesHandlerController {
+  private final RulesService rulesService;
 
-  public RulesHandler(RulesService service) {
-    this.service = service;
+  public RulesHandlerController(RulesService service) {
+    this.rulesService = service;
   }
 
   @PostMapping
   public ResponseEntity<Rules> createRules(@RequestParam Integer project, @RequestBody RulesRequestMap requestData) {
-    Rules createdRules = service.handleRules(requestData, project);
+    Rules createdRules = rulesService.handleRules(requestData, project);
     return ResponseEntity.ok(createdRules);
   }
 }

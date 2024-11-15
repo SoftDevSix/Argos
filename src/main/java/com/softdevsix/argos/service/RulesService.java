@@ -1,10 +1,6 @@
 package com.softdevsix.argos.service;
 
 import java.security.InvalidParameterException;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.softdevsix.argos.domain.Project;
 import com.softdevsix.argos.domain.Rules;
@@ -23,7 +19,8 @@ public class RulesService {
   public RulesService(
       RulesRepoImpl rulesRepo,
       ProjectRepository projectRepository,
-      ProjectValidator projectValidator) {
+      ProjectValidator projectValidator,
+      RulesValidator rulesValidator) {
         this.rulesRepo = rulesRepo;
         this.projectValidator = projectValidator;
         this.rulesValidator = new RulesValidator();

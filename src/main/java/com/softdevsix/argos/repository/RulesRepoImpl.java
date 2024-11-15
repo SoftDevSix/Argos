@@ -4,7 +4,6 @@ import com.softdevsix.argos.domain.Project;
 import com.softdevsix.argos.domain.ProjectRules;
 import com.softdevsix.argos.domain.Rules;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /** RulesRepoImpl */
@@ -19,7 +18,6 @@ public class RulesRepoImpl implements RulesRepo {
   private CoverageRepository coverage;
   private ProjectRulesRepository projectRulesRepository;
 
-  @Autowired
   public RulesRepoImpl(
       BestPracticesRepository bestPractices,
       CodeComplexityRepository codeComplexity,

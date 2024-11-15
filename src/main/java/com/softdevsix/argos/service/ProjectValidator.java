@@ -1,11 +1,11 @@
 package com.softdevsix.argos.service;
 
 import com.softdevsix.argos.domain.Project;
+import com.softdevsix.argos.domain.ProjectRules;
 import com.softdevsix.argos.exception.ProjectNotFoundException;
 import com.softdevsix.argos.repository.ProjectRepository;
 import com.softdevsix.argos.repository.ProjectRulesRepository;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +14,6 @@ public class ProjectValidator {
   private final ProjectRepository projectRepository;
   private final ProjectRulesRepository projectRulesRepository;
 
-  @Autowired
   public ProjectValidator(
       ProjectRepository projectRepository, ProjectRulesRepository projectRulesRepository) {
     this.projectRepository = projectRepository;
@@ -27,14 +26,10 @@ public class ProjectValidator {
   }
 
   private void validateProjectAvailability(Integer projectId) {
-    projectRulesRepository
-        .findAll()
-        .forEach(
-            projectRules -> {
-              if (projectRules.getProject().getId().equals(projectId)) {
-                throw new IllegalArgumentException("Project already has rules");
-              }
-            });
+    Optional<ProjectRules> optional = projectRulesRepository.findById(projectId);
+    if (optional.isPresent()) {
+        throw new IllegalArgumentException("Project already has rules");
+    }
   }
 
   private Project validateProjectExistence(Integer projectId) {

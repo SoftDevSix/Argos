@@ -3,7 +3,6 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +22,11 @@ public class AttributeHandler {
                 }
             }
         }
-
         return attributes;
     }
 
-    private AttributeInfo extractFieldInfo(JavaParser.FieldDeclarationContext fieldCtx, JavaParser.ClassBodyDeclarationContext bodyCtx) {
+    private AttributeInfo extractFieldInfo(JavaParser.FieldDeclarationContext fieldCtx,
+            JavaParser.ClassBodyDeclarationContext bodyCtx) {
         String fieldType = fieldCtx.typeType().getText();
         List<String> modifiers = extractModifiers(bodyCtx);
 
@@ -45,5 +44,4 @@ public class AttributeHandler {
         }
         return modifiers;
     }
-
 }

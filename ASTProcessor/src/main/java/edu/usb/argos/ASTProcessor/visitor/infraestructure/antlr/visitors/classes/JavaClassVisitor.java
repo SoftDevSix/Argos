@@ -28,7 +28,7 @@ public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
     }
 
     @Override
-    public ClassInfo visitClassDeclaration(ParserRuleContext ctx) {
+    public ClassInfo visitClass(ParserRuleContext ctx) {
 
         ClassIdentity identity = new ClassIdentity(
                 identityCollector.getClassName(ctx),
@@ -47,6 +47,8 @@ public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
                 memberCollector.getClassAttributes(ctx)
         );
 
-        return new ClassInfo(identity, structure, members);
+        ClassInfo classInfo = new ClassInfo(identity, structure, members);
+
+        return classInfo;
     }
 }

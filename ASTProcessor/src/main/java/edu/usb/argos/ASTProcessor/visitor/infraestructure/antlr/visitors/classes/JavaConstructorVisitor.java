@@ -2,7 +2,6 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classe
 
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInfo;

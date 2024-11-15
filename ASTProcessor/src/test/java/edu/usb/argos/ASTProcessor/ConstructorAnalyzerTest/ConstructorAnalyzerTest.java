@@ -5,11 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -29,7 +26,7 @@ public class ConstructorAnalyzerTest {
         visitor = new JavaConstructorVisitor();
     }
 
-    private Optional<JavaParser.ClassBodyContext> getClassFromText(String classBody) throws IOException {
+    private Optional<JavaParser.ClassBodyContext> getClassFromText(String classBody) {
         CharStream input = CharStreams.fromString(classBody);
         JavaLexer lexer = new JavaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -48,7 +45,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_withModifiers() throws IOException {
+    void testVisitConstructors_withModifiers() {
         String classBody = """
                     public class MyClass {
                         public MyClass() {}
@@ -68,7 +65,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_withoutModifiers() throws IOException {
+    void testVisitConstructors_withoutModifiers() {
         String classBody = """
                     public class MyClass {
                         MyClass() {}
@@ -88,7 +85,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_withParameters() throws IOException {
+    void testVisitConstructors_withParameters() {
         String classBody = """
                     public class MyClass {
                         public MyClass(String name, int age) {}
@@ -108,7 +105,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_CalculatorClass() throws IOException {
+    void testVisitConstructors_CalculatorClass() {
         String classBody = """
                     public class Calculator {
                        private int num1;
@@ -139,7 +136,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_CircleClass_WithDefaultConstructor() throws IOException {
+    void testVisitConstructors_CircleClass_WithDefaultConstructor() {
         String classBody = """
                     public class Circle {
                        private int ratio;
@@ -174,7 +171,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_CircleClass_WithMethodCallInConstructor() throws IOException {
+    void testVisitConstructors_CircleClass_WithMethodCallInConstructor() {
         String classBody = """
                     public class Circle {
                        private int ratio;

@@ -38,14 +38,4 @@ public class ConstructorInfo<S> {
     public List<S> getBodyStatements() {
         return bodyStatements;
     }
-
-    @Override
-    public String toString() {
-        return "ConstructorInfo{" +
-                "name='" + name + '\'' +
-                ", modifiers=" + modifiers +
-                ", parameters=" + parameters +
-                ", statements=" + bodyStatements +
-                '}';
-    }
 }

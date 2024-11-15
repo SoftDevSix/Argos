@@ -28,71 +28,100 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
 
     @Override
     public String getPackageName(ParserRuleContext ctx) {
-        return ContextValidator.validateAndExecute(
-                ctx,
-                JavaParser.PackageDeclarationContext.class,
-                packageCtx -> packageCtx.qualifiedName().getText(),
-                ""
-        );
+        ParserRuleContext compilationUnitContext = findCompilationUnitContext(ctx);
+        return extractPackageName(compilationUnitContext);
+    }
+
+    private ParserRuleContext findCompilationUnitContext(ParserRuleContext ctx) {
+        ParserRuleContext current = ctx;
+        while (current != null && !(current instanceof JavaParser.CompilationUnitContext)) {
+            current = current.getParent();
+        }
+        return current;
+    }
+
+    private String extractPackageName(ParserRuleContext compilationUnitContext) {
+        if (compilationUnitContext instanceof JavaParser.CompilationUnitContext) {
+            return ContextValidator.validateAndExecute(
+                    ((JavaParser.CompilationUnitContext) compilationUnitContext).packageDeclaration(),
+                    JavaParser.PackageDeclarationContext.class,
+                    packageCtx -> packageCtx.qualifiedName().getText(),
+                    ""
+            );
+        }
+        return "";
     }
 
     @Override
     public List<String> getClassModifiers(ParserRuleContext ctx) {
-        return ContextValidator.validateAndExecute(
-                ctx,
-                JavaParser.ClassDeclarationContext.class,
-                classCtx -> {
-                    List<String> modifiers = new ArrayList<>();
-                    if (ctx.parent instanceof JavaParser.TypeDeclarationContext) {
-                        JavaParser.TypeDeclarationContext typeCtx = (JavaParser.TypeDeclarationContext) ctx.parent;
-                        if (typeCtx.classOrInterfaceModifier() != null) {
-                            for (JavaParser.ClassOrInterfaceModifierContext mod : typeCtx.classOrInterfaceModifier()) {
-                                if (mod.getText() != null) {
-                                    modifiers.add(mod.getText());
-                                }
-                            }
-                        }
-                    }
-                    return modifiers;
-                },
-                new ArrayList<>()
-        );
+        JavaParser.TypeDeclarationContext typeCtx = getTypeDeclarationContext(ctx);
+        return typeCtx != null ? extractModifiers(typeCtx) : new ArrayList<>();
+    }
+
+    private JavaParser.TypeDeclarationContext getTypeDeclarationContext(ParserRuleContext ctx) {
+        if (ctx.parent instanceof JavaParser.TypeDeclarationContext) {
+            return (JavaParser.TypeDeclarationContext) ctx.parent;
+        }
+        return null;
+    }
+
+    private List<String> extractModifiers(JavaParser.TypeDeclarationContext typeCtx) {
+        List<String> modifiers = new ArrayList<>();
+        for (JavaParser.ClassOrInterfaceModifierContext mod : getClassOrInterfaceModifiers(typeCtx)) {
+            String modifierText = getModifierText(mod);
+            if (!modifierText.isEmpty()) {
+                modifiers.add(modifierText);
+            }
+        }
+        return modifiers;
+    }
+
+    private List<JavaParser.ClassOrInterfaceModifierContext> getClassOrInterfaceModifiers(JavaParser.TypeDeclarationContext typeCtx) {
+        return typeCtx.classOrInterfaceModifier() != null ? typeCtx.classOrInterfaceModifier() : new ArrayList<>();
+    }
+
+    private String getModifierText(JavaParser.ClassOrInterfaceModifierContext mod) {
+        return mod.getText() != null ? mod.getText() : "";
     }
 
     @Override
     public List<AnnotationInfo> getClassAnnotations(ParserRuleContext ctx) {
-        return ContextValidator.validateAndExecute(
-                ctx,
-                JavaParser.ClassDeclarationContext.class,
-                classCtx -> {
-                    List<AnnotationInfo> annotations = new ArrayList<>();
-                    if (ctx.parent instanceof JavaParser.TypeDeclarationContext) {
-                        JavaParser.TypeDeclarationContext typeCtx = (JavaParser.TypeDeclarationContext) ctx.parent;
-                        if (typeCtx.classOrInterfaceModifier() != null) {
-                            for (JavaParser.ClassOrInterfaceModifierContext mod : typeCtx.classOrInterfaceModifier()) {
-                                if (mod.annotation() != null) {
-                                    AnnotationInfo annotation = new AnnotationInfo();
-                                    annotation.setName(mod.annotation().qualifiedName().getText());
+        JavaParser.TypeDeclarationContext typeCtx = getTypeDeclarationContext(ctx);
+        return typeCtx != null ? extractAnnotations(typeCtx) : new ArrayList<>();
+    }
 
-                                    if (mod.annotation().elementValuePairs() != null) {
-                                        Map<String, String> attributes = new HashMap<>();
-                                        for (JavaParser.ElementValuePairContext pair : mod.annotation().elementValuePairs().elementValuePair()) {
-                                            attributes.put(pair.identifier().getText(),
-                                                    pair.elementValue().getText().replace("\"", ""));
-                                        }
-                                        annotation.setAttributes(attributes);
-                                    } else {
-                                        annotation.setAttributes(new HashMap<>());
-                                    }
+    private List<AnnotationInfo> extractAnnotations(JavaParser.TypeDeclarationContext typeCtx) {
+        List<AnnotationInfo> annotations = new ArrayList<>();
+        for (JavaParser.ClassOrInterfaceModifierContext mod : getClassOrInterfaceModifiers(typeCtx)) {
+            if (mod.annotation() != null) {
+                annotations.add(createAnnotationInfo(mod));
+            }
+        }
+        return annotations;
+    }
 
-                                    annotations.add(annotation);
-                                }
-                            }
-                        }
-                    }
-                    return annotations;
-                },
-                new ArrayList<>()
-        );
+    private AnnotationInfo createAnnotationInfo(JavaParser.ClassOrInterfaceModifierContext mod) {
+        AnnotationInfo annotation = new AnnotationInfo();
+        annotation.setName(getAnnotationName(mod));
+        annotation.setAttributes(getAnnotationAttributes(mod));
+        return annotation;
+    }
+
+    private String getAnnotationName(JavaParser.ClassOrInterfaceModifierContext mod) {
+        return mod.annotation().qualifiedName().getText();
+    }
+
+    private Map<String, String> getAnnotationAttributes(JavaParser.ClassOrInterfaceModifierContext mod) {
+        Map<String, String> attributes = new HashMap<>();
+        if (mod.annotation().elementValuePairs() != null) {
+            for (JavaParser.ElementValuePairContext pair : mod.annotation().elementValuePairs().elementValuePair()) {
+                attributes.put(pair.identifier().getText(), getAttributeValue(pair));
+            }
+        }
+        return attributes;
+    }
+
+    private String getAttributeValue(JavaParser.ElementValuePairContext pair) {
+        return pair.elementValue().getText().replace("\"", "");
     }
 }

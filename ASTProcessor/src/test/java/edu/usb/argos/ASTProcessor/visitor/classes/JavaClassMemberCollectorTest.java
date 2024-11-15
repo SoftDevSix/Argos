@@ -1,9 +1,11 @@
 package edu.usb.argos.ASTProcessor.visitor.classes;
 
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.AttributeAnalyzerVisitor.JavaAttributeVisitor;
-import edu.usb.argos.ASTProcessor.AttributeAnalyzer.Entities.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInfo;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassMemberCollector;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,8 @@ public class JavaClassMemberCollectorTest {
     private JavaMethodVisitor methodVisitor;
     @Mock
     private JavaAttributeVisitor attributeVisitor;
+    @Mock
+    private JavaConstructorVisitor constructorVisitor;
 
     private JavaClassMemberCollector memberCollector;
     private JavaParser.CompilationUnitContext compilationUnit;
@@ -34,8 +38,10 @@ public class JavaClassMemberCollectorTest {
                 "public class TestClass {\n" +
                         "    private String field1;\n" +
                         "    public Integer field2;\n" +
+                        "    public TestClass() {}\n" +
+                        "    public TestClass(String field1) { this.field1 = field1; }\n" +
                         "    public void method1() {}\n" +
-                        "    private String method2() {return \"\";}\n" +
+                        "    private String method2() { return \"\"; }\n" +
                         "}";
 
         CharStream input = CharStreams.fromString(testClass);
@@ -44,7 +50,7 @@ public class JavaClassMemberCollectorTest {
         JavaParser parser = new JavaParser(tokens);
         compilationUnit = parser.compilationUnit();
 
-        memberCollector = new JavaClassMemberCollector(methodVisitor, attributeVisitor);
+        memberCollector = new JavaClassMemberCollector(methodVisitor, attributeVisitor, constructorVisitor);
     }
 
     @Test
@@ -64,7 +70,6 @@ public class JavaClassMemberCollectorTest {
         assertEquals("method1", methods.get(0).getName());
         assertEquals("method2", methods.get(1).getName());
     }
-
 
     @Test
     void getClassAttributes_ShouldReturnCorrectAttributes() {
@@ -134,5 +139,26 @@ public class JavaClassMemberCollectorTest {
         assertEquals(Arrays.asList("public"), attributes.get(1).getModifiers());
     }
 
+    @Test
+    void getClassConstructors_ShouldReturnCorrectConstructors() {
+        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+
+        ConstructorInfo constructor1 = new ConstructorInfo("TestClass", Arrays.asList("public"), new ArrayList<>());
+        ConstructorInfo constructor2 = new ConstructorInfo("TestClass", Arrays.asList("public"), Arrays.asList("String"));
+
+        when(constructorVisitor.visitConstructors(any())).thenReturn(Arrays.asList(constructor1, constructor2));
+
+        List<ConstructorInfo> constructors = memberCollector.getClassConstructors(ctx);
+
+        assertEquals(2, constructors.size());
+
+        assertEquals("TestClass", constructors.get(0).getName());
+        assertEquals(Arrays.asList("public"), constructors.get(0).getModifiers());
+        assertTrue(constructors.get(0).getParameters().isEmpty());
+
+        assertEquals("TestClass", constructors.get(1).getName());
+        assertEquals(Arrays.asList("public"), constructors.get(1).getModifiers());
+        assertEquals(Arrays.asList("String"), constructors.get(1).getParameters());
+    }
 }
 

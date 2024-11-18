@@ -3,6 +3,7 @@ springboot = "3.3.4"
 dependencyManagement = "1.1.6"
 springDocVersion = "2.6.0"
 antlr = "4.13.2"
+logback = "1.5.6"
 lombok = "1.18.30"
 
 [plugins]
@@ -19,3 +20,4 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }

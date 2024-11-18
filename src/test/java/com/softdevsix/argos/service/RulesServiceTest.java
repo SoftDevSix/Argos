@@ -28,15 +28,6 @@ class RulesServiceTests {
     @Mock
     private RulesValidator rulesValidator;
 
-    @Mock
-    private ProjectRepository projectRepository;
-
-    @Mock
-    private ProjectRulesRepository projectRulesRepository;
-
-    private RulesRequestMap rulesRequestMap;
-    private Project mockProject;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);

@@ -6,7 +6,7 @@ import com.softdevsix.argos.domain.CodeSmells;
 import com.softdevsix.argos.domain.Coverage;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
-import com.softdevsix.argos.exception.RulesValidatorException;
+import com.softdevsix.argos.exception.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,7 +29,7 @@ public class RulesValidator {
         if (rulesRequestMap.getCodeQuality() != null) {
             CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
             if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
-                throw RulesValidatorException.LineLengthException();
+                throw new LineLengthException("The line length limit must be positive.");
             }
             builder.codeQuality(codeQuality);
         }
@@ -45,7 +45,7 @@ public class RulesValidator {
         if (rulesRequestMap.getCodeSmells() != null) {
             CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
             if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
-                throw RulesValidatorException.LineLengthException();
+                throw new LineLengthException("The line length limit must be positive.");
             }
             builder.codeSmells(codeSmells);
         }
@@ -62,13 +62,13 @@ public class RulesValidator {
 
     private void validateCyclomaticComplexity(CodeComplexity codeComplexity) {
         if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
-            throw RulesValidatorException.CyclomaticComplexityException();
+            throw new CyclomaticComplexityException("The cyclomatic complexity limit must be positive.");
         }
     }
 
     private void validateNestingDepth(CodeComplexity codeComplexity) {
         if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
-            throw RulesValidatorException.NestingDepthException();
+            throw new NestingDepthException("The nesting depth limit must be positive.");
         }
     }
 
@@ -82,7 +82,7 @@ public class RulesValidator {
         if (rulesRequestMap.getCoverage() != null) {
             Coverage coverage = rulesRequestMap.getCoverage();
             if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {
-                throw RulesValidatorException.CoverageThresholdException();
+                throw new CoverageThresholdException("The coverage threshold must be non-negative.");
             }
             builder.coverage(coverage);
         }

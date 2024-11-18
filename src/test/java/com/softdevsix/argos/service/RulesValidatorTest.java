@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.softdevsix.argos.domain.*;
-import com.softdevsix.argos.exception.RulesValidatorException;
+import com.softdevsix.argos.exception.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class RulesValidatorTest {
         codeQuality.setMaxLineLengthLimit(-1); 
         rulesRequestMap.setCodeQuality(codeQuality);
 
-        assertThrows(RulesValidatorException.class, () -> rulesValidator.validate(rulesRequestMap),
+        assertThrows(LineLengthException.class, () -> rulesValidator.validate(rulesRequestMap),
         "The line length limit must be positive");
     }
 
@@ -77,7 +77,7 @@ class RulesValidatorTest {
         codeSmells.setMaxMethodLength(-10); 
         rulesRequestMap.setCodeSmells(codeSmells);
 
-        assertThrows(RulesValidatorException.class, () -> rulesValidator.validate(rulesRequestMap),
+        assertThrows(LineLengthException.class, () -> rulesValidator.validate(rulesRequestMap),
         "The method length limit must be positive");
     }
 
@@ -104,7 +104,7 @@ class RulesValidatorTest {
         codeComplexity.setMaxCyclomaticComplexity(-5); 
         rulesRequestMap.setCodeComplexity(codeComplexity);
 
-        assertThrows(RulesValidatorException.class, () -> rulesValidator.validate(rulesRequestMap),
+        assertThrows(CyclomaticComplexityException.class, () -> rulesValidator.validate(rulesRequestMap),
         "The cyclomatic complexity limit must be positive");
     }
 
@@ -115,7 +115,7 @@ class RulesValidatorTest {
         codeComplexity.setMaxNestingDepth(-3); 
         rulesRequestMap.setCodeComplexity(codeComplexity);
 
-        assertThrows(RulesValidatorException.class, () -> rulesValidator.validate(rulesRequestMap),
+        assertThrows(NestingDepthException.class, () -> rulesValidator.validate(rulesRequestMap),
         "The nesting depth limit must be positive.");
     }
 
@@ -139,7 +139,7 @@ class RulesValidatorTest {
         coverage.setCoverageThreshold(-10); 
         rulesRequestMap.setCoverage(coverage);
 
-        assertThrows(RulesValidatorException.class, () -> rulesValidator.validate(rulesRequestMap),
+        assertThrows(CoverageThresholdException.class, () -> rulesValidator.validate(rulesRequestMap),
         "The coverage threshold must be non-negative");
     }
 }

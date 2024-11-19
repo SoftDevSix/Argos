@@ -1,15 +1,14 @@
 package com.softdevsix.argos.domain;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
-@Value
-@Builder
-public class Rules {
-  private BestPractices bestPractices;
-  private CodeComplexity codeComplexity;
+@Data
+public class RulesRequestMap {
   private CodeQuality codeQuality;
+  private BestPractices bestPractices;
   private CodeSmells codeSmells;
+  private CodeComplexity codeComplexity;
   private CodingStandards codingStandards;
   private Coverage coverage;
+
 }

@@ -7,7 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class ProjectRules {
   @Id
@@ -15,7 +23,7 @@ public class ProjectRules {
   private Integer id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "repository_id")
+  @JoinColumn(name = "project_id")
   private Project project;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -41,55 +49,4 @@ public class ProjectRules {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "coverage_id")
   private Coverage coverage;
-
-  public ProjectRules() {}
-
-  public ProjectRules(
-      Project project,
-      BestPractices bestPractices,
-      CodeComplexity codeComplexity,
-      CodeQuality codeQuality,
-      CodeSmells codeSmells,
-      CodingStandards codingStandards,
-      Coverage coverage) {
-    this.project = project;
-    this.bestPractices = bestPractices;
-    this.codeComplexity = codeComplexity;
-    this.codeQuality = codeQuality;
-    this.codeSmells = codeSmells;
-    this.codingStandards = codingStandards;
-    this.coverage = coverage;
-  }
-
-  public Project getProject() {
-    return project;
-  }
-
-  public BestPractices getBestPractices() {
-    return bestPractices;
-  }
-
-  public CodeComplexity getCodeComplexity() {
-    return codeComplexity;
-  }
-
-  public CodeQuality getCodeQuality() {
-    return codeQuality;
-  }
-
-  public CodeSmells getCodeSmells() {
-    return codeSmells;
-  }
-
-  public CodingStandards getCodingStandards() {
-    return codingStandards;
-  }
-
-  public Coverage getCoverage() {
-    return coverage;
-  }
-
-  public Integer getId() {
-    return id;
-  }
 }

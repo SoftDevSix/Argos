@@ -4,7 +4,6 @@ import com.softdevsix.argos.domain.Project;
 import com.softdevsix.argos.domain.ProjectRules;
 import com.softdevsix.argos.domain.Rules;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /** RulesRepoImpl */
@@ -19,7 +18,6 @@ public class RulesRepoImpl implements RulesRepo {
   private CoverageRepository coverage;
   private ProjectRulesRepository projectRulesRepository;
 
-  @Autowired
   public RulesRepoImpl(
       BestPracticesRepository bestPractices,
       CodeComplexityRepository codeComplexity,
@@ -40,15 +38,15 @@ public class RulesRepoImpl implements RulesRepo {
 
   @Override
   public Integer createRule(Rules rules, Project project) {
-    ProjectRules projectRules =
-        new ProjectRules(
-            project,
-            rules.getBestPractices(),
-            rules.getCodeComplexity(),
-            rules.getCodeQuality(),
-            rules.getCodeSmells(),
-            rules.getCodingStandards(),
-            rules.getCoverage());
+    ProjectRules projectRules = ProjectRules.builder()
+        .project(project)
+        .bestPractices(rules.getBestPractices())
+        .codeComplexity(rules.getCodeComplexity())
+        .codeQuality(rules.getCodeQuality())
+        .codeSmells(rules.getCodeSmells())
+        .codingStandards(rules.getCodingStandards())
+        .coverage(rules.getCoverage())
+        .build();
 
     bestPractices.save(rules.getBestPractices());
     codeComplexity.save(rules.getCodeComplexity());
@@ -62,20 +60,23 @@ public class RulesRepoImpl implements RulesRepo {
   }
 
   @Override
-  public Rules fetchRule(Integer repoId) {
+  public Optional<Rules> fetchRule(Integer repoId) {
     Optional<ProjectRules> optional = projectRulesRepository.findById(repoId);
     if (optional.isEmpty()) {
-      return null;
+      return Optional.empty();
     }
 
     ProjectRules repositoryRules = optional.get();
-    Rules rules = new Rules();
-    rules.setBestPractices(repositoryRules.getBestPractices());
-    rules.setCodeComplexity(repositoryRules.getCodeComplexity());
-    rules.setCodeQuality(repositoryRules.getCodeQuality());
-    rules.setCodeSmells(repositoryRules.getCodeSmells());
-    rules.setCodingStandards(repositoryRules.getCodingStandards());
-    rules.setCoverage(repositoryRules.getCoverage());
-    return rules;
+
+    Rules rules = Rules.builder()
+        .bestPractices(repositoryRules.getBestPractices())
+        .codeComplexity(repositoryRules.getCodeComplexity())
+        .codeQuality(repositoryRules.getCodeQuality())
+        .codeSmells(repositoryRules.getCodeSmells())
+        .codingStandards(repositoryRules.getCodingStandards())
+        .coverage(repositoryRules.getCoverage())
+        .build();
+
+    return Optional.of(rules);
   }
 }

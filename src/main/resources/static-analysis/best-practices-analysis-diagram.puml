@@ -1,11 +1,5 @@
 @startuml
 package "com.softdevsix.argos.domain" {
-    class HardCodedValuesAnalyzer {
-        - Map<String, int> hardCodedValues
-        + Map<String, int> analyzeProject(String)
-        + Map<String, int> analyzeFile(String)
-        + Map<String, int> analyzeMethod(String)
-    }
 
     class BestPractices {
         - Integer id
@@ -77,6 +71,34 @@ package "com.softdevsix.argos.processor" {
     }
 }
 
+package "com.softdevsix.argos.Analyzer" {
+    abstract class BestPracticesAnalyzer {
+        + Map<String, int> analyze(String)
+    }
+
+    class BaseAnalyzer extends BestPracticesAnalyzer {
+        + Map<String, int> analyze(String)
+    }
+
+    abstract class AnalyzerDecorator extends BestPracticesAnalyzer {
+        # BestPracticesAnalyzer wrappedAnalyzer
+        + AnalyzerDecorator(BestPracticesAnalyzer)
+        + Map<String, int> analyze(String)
+    }
+
+    class HardCodedValuesDecorator extends AnalyzerDecorator {
+        + Map<String, int> analyze(String)
+    }
+
+    class CodeSmellsDecorator extends AnalyzerDecorator {
+        + Map<String, int> analyze(String)
+    }
+
+    class CoverageDecorator extends AnalyzerDecorator {
+        + Map<String, int> analyze(String)
+    }
+}
+
 ' Relationships
 BestPracticesRepository <|-- RulesRepoImpl
 RulesRepo <|.. RulesRepoImpl
@@ -85,6 +107,12 @@ RulesRepoImpl --> ProjectRules
 RulesRepoImpl --> ASTProcessor
 ProjectRules --> BestPractices
 ProjectRules --> Project
-ASTProcessor ..> HardCodedValuesAnalyzer : "Analyzes"
-HardCodedValuesAnalyzer ..> BestPractices : "Set value"
+ASTProcessor ..> BestPracticesAnalyzer : "Analyzes"
+BestPracticesAnalyzer ..> BestPractices : "Set value"
+
+BestPracticesAnalyzer <|-- BaseAnalyzer
+BestPracticesAnalyzer <|-- AnalyzerDecorator
+AnalyzerDecorator <|-- HardCodedValuesDecorator
+AnalyzerDecorator <|-- CodeSmellsDecorator
+AnalyzerDecorator <|-- CoverageDecorator
 @enduml

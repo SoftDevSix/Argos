@@ -1,0 +1,90 @@
+@startuml
+package "com.softdevsix.argos.domain" {
+    class HardCodedValuesAnalyzer {
+        - Map<String, int> hardCodedValues
+        + Map<String, int> analyzeProject(String)
+        + Map<String, int> analyzeFile(String)
+        + Map<String, int> analyzeMethod(String)
+    }
+
+    class BestPractices {
+        - Integer id
+        - boolean noHardcodedValues
+        + boolean isNoHardcodedValuesEnabled()
+        + void setNoHardcodedValues(boolean)
+    }
+
+    class ProjectRules {
+        - Integer id
+        - Project project
+        - BestPractices bestPractices
+        - CodeComplexity codeComplexity
+        - CodeQuality codeQuality
+        - CodeSmells codeSmells
+        - CodingStandards codingStandards
+        - Coverage coverage
+        + ProjectRules(Project, BestPractices, ...)
+        + Project getProject()
+        + BestPractices getBestPractices()
+        + Integer getId()
+    }
+
+    class Rules {
+        - BestPractices bestPractices
+        - CodeComplexity codeComplexity
+        - CodeQuality codeQuality
+        - CodeSmells codeSmells
+        - CodingStandards codingStandards
+        - Coverage coverage
+        + void setBestPractices(BestPractices)
+        + BestPractices getBestPractices()
+    }
+
+    class Project {
+        - Integer id
+        - String name
+        + String getName()
+    }
+}
+
+package "com.softdevsix.argos.repository" {
+    interface BestPracticesRepository {
+        + save(BestPractices)
+    }
+
+    interface RulesRepo {
+        + Integer createRule(Rules, Project)
+        + Rules fetchRule(Integer)
+    }
+
+    class RulesRepoImpl {
+        - BestPracticesRepository bestPractices
+        - CodeComplexityRepository codeComplexity
+        - CodeQualityRepository codeQuality
+        - CodeSmellsRepository codeSmells
+        - CodingStandardsRepository codingStandards
+        - CoverageRepository coverage
+        - ProjectRulesRepository projectRulesRepository
+        + createRule(Rules, Project)
+        + fetchRule(Integer)
+    }
+}
+
+package "com.softdevsix.argos.processor" {
+    class ASTProcessor {
+        + void getAST()
+        + void travelAST()
+    }
+}
+
+' Relationships
+BestPracticesRepository <|-- RulesRepoImpl
+RulesRepo <|.. RulesRepoImpl
+Rules --> BestPractices
+RulesRepoImpl --> ProjectRules
+RulesRepoImpl --> ASTProcessor
+ProjectRules --> BestPractices
+ProjectRules --> Project
+ASTProcessor ..> HardCodedValuesAnalyzer : "Analyzes"
+HardCodedValuesAnalyzer ..> BestPractices : "Set value"
+@enduml

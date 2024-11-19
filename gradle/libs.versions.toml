@@ -18,5 +18,6 @@ springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools"
 springboot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
-logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }

@@ -1,7 +1,7 @@
 package edu.usb.argos.ASTProcessor.AttributeAnalyzerTest;
 
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -10,12 +10,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JavaAttributeVisitorTest {
 
@@ -27,7 +27,7 @@ class JavaAttributeVisitorTest {
         visitor = new JavaAttributeVisitor(attributeHandler);
     }
 
-    private Optional<JavaParser.ClassBodyContext> getClassFromText(String path) throws IOException {
+    private Optional<JavaParser.ClassBodyContext> getClassFromText(String path) {
         CharStream input = CharStreams.fromString(path);
 
         JavaLexer lexer = new JavaLexer(input);
@@ -47,7 +47,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withModifiers() throws IOException {
+    void testVisitAttributeWithModifiers() {
         String classBody = """
                 public class Example {
                     private final int someValue = 12;
@@ -58,13 +58,13 @@ class JavaAttributeVisitorTest {
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
 
         assertFalse(classFound.isEmpty());
-        for (AttributeInfo attributeInfo : visitor.visitAttribute(classFound.get())) {
+        for (AttributeInformation attributeInfo : visitor.visitAttribute(classFound.get())) {
             assertFalse(visitor.getAttributeModifiers(attributeInfo).isEmpty());
         }
     }
 
     @Test
-    void testVisitAttribute_withoutModifiers() throws IOException {
+    void testVisitAttributeWithoutModifiers() {
         String classBody = """
                 public class Example {
                     int someValue = 12;
@@ -75,13 +75,13 @@ class JavaAttributeVisitorTest {
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
 
         assertFalse(classFound.isEmpty());
-        for (AttributeInfo attributeInfo : visitor.visitAttribute(classFound.get())) {
+        for (AttributeInformation attributeInfo : visitor.visitAttribute(classFound.get())) {
             assertTrue(attributeInfo.getModifiers().isEmpty());
         }
     }
 
     @Test
-    void testGetAttributeType() throws IOException {
+    void testGetAttributeType() {
         String classBody = """
                 public class Example {
                     private final int someValue = 12;
@@ -90,13 +90,13 @@ class JavaAttributeVisitorTest {
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
 
         assertFalse(classFound.isEmpty());
-        Optional<AttributeInfo> attributeInfo = Optional.ofNullable(visitor.visitAttribute(classFound.get()).get(0));
+        Optional<AttributeInformation> attributeInfo = Optional.ofNullable(visitor.visitAttribute(classFound.get()).get(0));
         assertFalse(attributeInfo.isEmpty());
         assertEquals("int", visitor.getAttributeType(attributeInfo.get()));
     }
 
     @Test
-    void testGetAttributeName() throws IOException {
+    void testGetAttributeName() {
         String classBody = """
                 public class Example {
                     private final int someValue = 12;
@@ -105,13 +105,13 @@ class JavaAttributeVisitorTest {
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
 
         assertFalse(classFound.isEmpty());
-        Optional<AttributeInfo> attributeInfo = Optional.ofNullable(visitor.visitAttribute(classFound.get()).get(0));
+        Optional<AttributeInformation> attributeInfo = Optional.ofNullable(visitor.visitAttribute(classFound.get()).get(0));
         assertFalse(attributeInfo.isEmpty());
         assertEquals("someValue", attributeInfo.get().getName());
     }
 
     @Test
-    void testVisitMultipleAttributes_withoutModifiers() throws IOException {
+    void testVisitMultipleAttributesWithoutModifiers() {
         String classBody = """
                 public class Example {
                     int someValue = 12;
@@ -121,10 +121,10 @@ class JavaAttributeVisitorTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<AttributeInfo> attributes = visitor.visitAttribute(classFound.get());
-        AttributeInfo attribute1 = attributes.get(0);
-        AttributeInfo attribute2 = attributes.get(1);
-        AttributeInfo attribute3 = attributes.get(2);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classFound.get());
+        AttributeInformation attribute1 = attributes.get(0);
+        AttributeInformation attribute2 = attributes.get(1);
+        AttributeInformation attribute3 = attributes.get(2);
 
         assertEquals("someValue", attribute1.getName());
         assertEquals("int", attribute1.getType());
@@ -140,7 +140,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withPrivateModifier() throws IOException {
+    void testVisitAttributeWithPrivateModifier() {
         String classBody = """
                 public class Example {
                     private int someValue = 12;
@@ -148,8 +148,8 @@ class JavaAttributeVisitorTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<AttributeInfo> attributes = visitor.visitAttribute(classFound.get());
-        AttributeInfo attribute = attributes.get(0);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classFound.get());
+        AttributeInformation attribute = attributes.get(0);
 
         assertEquals(1, attributes.size());
         assertEquals("someValue", attribute.getName());
@@ -158,7 +158,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withFinalModifier() throws IOException {
+    void testVisitAttributeWithFinalModifier() {
         String classBody = """
                 public class Example {
                     public final int VALUE = 42;
@@ -166,8 +166,8 @@ class JavaAttributeVisitorTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<AttributeInfo> attributes = visitor.visitAttribute(classFound.get());
-        AttributeInfo attribute = attributes.get(0);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classFound.get());
+        AttributeInformation attribute = attributes.get(0);
 
         assertEquals("VALUE", attribute.getName());
         assertEquals("int", attribute.getType());
@@ -175,7 +175,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withMultipleModifiers() throws IOException {
+    void testVisitAttributeWithMultipleModifiers() {
         String classBody = """
                 public class Example {
                     public static final String VALUE = "value";
@@ -183,8 +183,8 @@ class JavaAttributeVisitorTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<AttributeInfo> attributes = visitor.visitAttribute(classFound.get());
-        AttributeInfo attribute = attributes.get(0);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classFound.get());
+        AttributeInformation attribute = attributes.get(0);
 
         assertEquals("VALUE", attribute.getName());
         assertEquals("String", attribute.getType());
@@ -192,7 +192,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withTwoAttributesAndModifiers() throws IOException {
+    void testVisitAttributeWithTwoAttributesAndModifiers() {
         String classBody = """
                 public class Example {
                     private int id;
@@ -202,9 +202,9 @@ class JavaAttributeVisitorTest {
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
 
-        List<AttributeInfo> attributes = visitor.visitAttribute(classFound.get());
-        AttributeInfo attribute1 = attributes.get(0);
-        AttributeInfo attribute2 = attributes.get(1);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classFound.get());
+        AttributeInformation attribute1 = attributes.get(0);
+        AttributeInformation attribute2 = attributes.get(1);
 
         assertEquals(2, attributes.size());
         assertEquals("id", attribute1.getName());
@@ -217,7 +217,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitAttribute_withTwoAttributesAndMultipleModifiers() throws IOException {
+    void testVisitAttributeWithTwoAttributesAndMultipleModifiers() {
         String classBody = """
                 public class Example {
                     private static int id;
@@ -226,14 +226,14 @@ class JavaAttributeVisitorTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<AttributeInfo> attributes = visitor.visitAttribute(classFound.get());
-        AttributeInfo attribute1 = attributes.get(0);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classFound.get());
+        AttributeInformation attribute1 = attributes.get(0);
+        AttributeInformation attribute2 = attributes.get(1);
 
         assertEquals("id", attribute1.getName());
         assertEquals("int", attribute1.getType());
         assertEquals(List.of("private", "static"), attribute1.getModifiers());
 
-        AttributeInfo attribute2 = attributes.get(1);
         assertEquals("NAME", attribute2.getName());
         assertEquals("String", attribute2.getType());
         assertEquals(List.of("protected", "final"), attribute2.getModifiers());

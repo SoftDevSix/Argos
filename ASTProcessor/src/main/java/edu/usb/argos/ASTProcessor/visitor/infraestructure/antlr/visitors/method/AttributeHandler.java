@@ -1,49 +1,54 @@
 package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method;
 
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component("attributeHandlerOne")
 public class AttributeHandler {
 
-    public List<AttributeInfo> extractAttributesFromClassBody(JavaParser.ClassBodyContext ctx) {
-        List<AttributeInfo> attributes = new ArrayList<>();
+    public List<AttributeInformation> extractAttributesFromClassBody(JavaParser.ClassBodyContext ctx) {
+        List<AttributeInformation> attributes = new ArrayList<>();
 
         for (JavaParser.ClassBodyDeclarationContext bodyCtx : ctx.classBodyDeclaration()) {
             JavaParser.MemberDeclarationContext memberCtx = bodyCtx.memberDeclaration();
 
             if (memberCtx != null && memberCtx.fieldDeclaration() != null) {
-                AttributeInfo attributeInfo = extractFieldInfo(memberCtx.fieldDeclaration(), bodyCtx);
-                if (attributeInfo != null) {
-                    attributes.add(attributeInfo);
-                }
+                Optional<AttributeInformation> attributeInfo = extractFieldInfo(memberCtx.fieldDeclaration(), bodyCtx);
+                attributeInfo.ifPresent(attributes::add);
             }
         }
-
         return attributes;
     }
 
-    private AttributeInfo extractFieldInfo(JavaParser.FieldDeclarationContext fieldCtx, JavaParser.ClassBodyDeclarationContext bodyCtx) {
+    private Optional<AttributeInformation> extractFieldInfo(JavaParser.FieldDeclarationContext fieldCtx, JavaParser.ClassBodyDeclarationContext bodyCtx) {
         String fieldType = fieldCtx.typeType().getText();
         List<String> modifiers = extractModifiers(bodyCtx);
 
         for (JavaParser.VariableDeclaratorContext varCtx : fieldCtx.variableDeclarators().variableDeclarator()) {
             String varName = varCtx.variableDeclaratorId().getText();
-            return new AttributeInfo(varName, fieldType, modifiers);
+            AttributeInformation attributeInformation = AttributeInformation.builder()
+                    .name(varName)
+                    .type(fieldType)
+                    .modifiers(modifiers)
+                    .build();
+
+            return Optional.of(attributeInformation);
         }
-        return null;
+
+        return Optional.empty();
     }
 
     private List<String> extractModifiers(JavaParser.ClassBodyDeclarationContext ctx) {
         List<String> modifiers = new ArrayList<>();
+
         for (JavaParser.ModifierContext modCtx : ctx.modifier()) {
             modifiers.add(modCtx.getText());
         }
+
         return modifiers;
     }
-
 }

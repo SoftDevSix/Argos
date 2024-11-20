@@ -1,41 +1,36 @@
 package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method;
 
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor.IAttributeAnalyzer;
-
 import java.util.List;
-
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
 
 @Component("javaAttributeVisitor")
-public class JavaAttributeVisitor extends JavaParserBaseVisitor<List<AttributeInfo>> implements IAttributeAnalyzer<JavaParser.ClassBodyContext> {
+@AllArgsConstructor
+public class JavaAttributeVisitor extends JavaParserBaseVisitor<List<AttributeInformation>> implements IAttributeAnalyzer<JavaParser.ClassBodyContext> {
 
     private final AttributeHandler attributeHandler;
 
-    public JavaAttributeVisitor(AttributeHandler attributeHandler) {
-        this.attributeHandler = attributeHandler;
-    }
-
     @Override
-    public List<AttributeInfo> visitClassBody(JavaParser.ClassBodyContext context) {
+    public List<AttributeInformation> visitClassBody(JavaParser.ClassBodyContext context) {
         return attributeHandler.extractAttributesFromClassBody(context);
     }
 
     @Override
-    public List<AttributeInfo> visitAttribute(JavaParser.ClassBodyContext context) {
-        return visitClassBody(context);
+    public List<AttributeInformation> visitAttribute(JavaParser.ClassBodyContext classContext) {
+        return visitClassBody(classContext);
     }
 
     @Override
-    public List<String> getAttributeModifiers(AttributeInfo ctx) {
-        return ctx.getModifiers();
+    public List<String> getAttributeModifiers(AttributeInformation classContext) {
+        return classContext.getModifiers();
     }
 
     @Override
-    public String getAttributeType(AttributeInfo ctx) {
-        return ctx.getType();
+    public String getAttributeType(AttributeInformation classContext) {
+        return classContext.getType();
     }
 }

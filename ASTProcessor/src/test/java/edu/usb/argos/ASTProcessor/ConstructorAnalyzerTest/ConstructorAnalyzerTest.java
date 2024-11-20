@@ -5,11 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -17,7 +14,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.junit.jupiter.api.BeforeAll;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
 
 public class ConstructorAnalyzerTest {
@@ -29,7 +26,7 @@ public class ConstructorAnalyzerTest {
         visitor = new JavaConstructorVisitor();
     }
 
-    private Optional<JavaParser.ClassBodyContext> getClassFromText(String classBody) throws IOException {
+    private Optional<JavaParser.ClassBodyContext> getClassFromText(String classBody) {
         CharStream input = CharStreams.fromString(classBody);
         JavaLexer lexer = new JavaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -48,7 +45,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_withModifiers() throws IOException {
+    void testVisitConstructors_withModifiers() {
         String classBody = """
                     public class MyClass {
                         public MyClass() {}
@@ -58,7 +55,7 @@ public class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<ConstructorInfo<JavaParser.BlockStatementContext>> constructors = visitor
+        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
 
         assertEquals(3, constructors.size());
@@ -68,7 +65,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_withoutModifiers() throws IOException {
+    void testVisitConstructors_withoutModifiers() {
         String classBody = """
                     public class MyClass {
                         MyClass() {}
@@ -78,17 +75,17 @@ public class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<ConstructorInfo<JavaParser.BlockStatementContext>> constructors = visitor
+        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
 
         assertEquals(3, constructors.size());
-        for (ConstructorInfo<JavaParser.BlockStatementContext> constructor : constructors) {
+        for (ConstructorInformation<JavaParser.BlockStatementContext> constructor : constructors) {
             assertTrue(constructor.getModifiers().isEmpty());
         }
     }
 
     @Test
-    void testVisitConstructors_withParameters() throws IOException {
+    void testVisitConstructors_withParameters() {
         String classBody = """
                     public class MyClass {
                         public MyClass(String name, int age) {}
@@ -96,9 +93,9 @@ public class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<ConstructorInfo<JavaParser.BlockStatementContext>> constructors = visitor
+        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
-        ConstructorInfo<JavaParser.BlockStatementContext> constructor = constructors.get(0);
+        ConstructorInformation<JavaParser.BlockStatementContext> constructor = constructors.get(0);
 
         assertEquals(1, constructors.size());
         assertEquals("MyClass", constructor.getName());
@@ -108,7 +105,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_CalculatorClass() throws IOException {
+    void testVisitConstructors_CalculatorClass() {
         String classBody = """
                     public class Calculator {
                        private int num1;
@@ -121,9 +118,9 @@ public class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<ConstructorInfo<JavaParser.BlockStatementContext>> constructors = visitor
+        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
-        ConstructorInfo<JavaParser.BlockStatementContext> constructor = constructors.get(0);
+        ConstructorInformation<JavaParser.BlockStatementContext> constructor = constructors.get(0);
         List<JavaParser.BlockStatementContext> bodyStatements = constructor.getBodyStatements();
 
         assertEquals(1, constructors.size());
@@ -139,7 +136,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_CircleClass_WithDefaultConstructor() throws IOException {
+    void testVisitConstructors_CircleClass_WithDefaultConstructor() {
         String classBody = """
                     public class Circle {
                        private int ratio;
@@ -153,11 +150,11 @@ public class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<ConstructorInfo<JavaParser.BlockStatementContext>> constructors = visitor
+        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
-        ConstructorInfo<JavaParser.BlockStatementContext> parameterizedConstructor = constructors.get(0);
+        ConstructorInformation<JavaParser.BlockStatementContext> parameterizedConstructor = constructors.get(0);
         List<JavaParser.BlockStatementContext> bodyStatements = parameterizedConstructor.getBodyStatements();
-        ConstructorInfo<JavaParser.BlockStatementContext> parameterizedSecondConstructor = constructors.get(1);
+        ConstructorInformation<JavaParser.BlockStatementContext> parameterizedSecondConstructor = constructors.get(1);
         List<JavaParser.BlockStatementContext> secondBodyStatements = parameterizedSecondConstructor
                 .getBodyStatements();
 
@@ -174,7 +171,7 @@ public class ConstructorAnalyzerTest {
     }
 
     @Test
-    void testVisitConstructors_CircleClass_WithMethodCallInConstructor() throws IOException {
+    void testVisitConstructors_CircleClass_WithMethodCallInConstructor() {
         String classBody = """
                     public class Circle {
                        private int ratio;
@@ -191,9 +188,9 @@ public class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
-        List<ConstructorInfo<JavaParser.BlockStatementContext>> constructors = visitor
+        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
-        ConstructorInfo<JavaParser.BlockStatementContext> parameterizedConstructor = constructors.get(1);
+        ConstructorInformation<JavaParser.BlockStatementContext> parameterizedConstructor = constructors.get(1);
         List<JavaParser.BlockStatementContext> bodyStatements = parameterizedConstructor.getBodyStatements();
 
         assertEquals(2, constructors.size());

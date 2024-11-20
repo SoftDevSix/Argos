@@ -45,5 +45,4 @@ public class AttributeHandler {
         }
         return modifiers;
     }
-
 }

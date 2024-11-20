@@ -24,6 +24,8 @@ dependencies {
 	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)
 	antlr(libs.antlr)
+	compileOnly (libs.lombok)
+	annotationProcessor (libs.lombok)
 }
 
 tasks.withType<Test> {

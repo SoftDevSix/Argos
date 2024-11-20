@@ -1,8 +1,13 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
 public class AnnotationInfo {
 
     private String name;
@@ -10,21 +15,5 @@ public class AnnotationInfo {
 
     public AnnotationInfo() {
         this.attributes = new HashMap<>();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Map<String, String> attributes) {
-        this.attributes = attributes;
     }
 }

@@ -17,3 +17,4 @@ springboot-starter-test = { module = "org.springframework.boot:spring-boot-start
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
+lombok = { module = "org.projectlombok:lombok" }

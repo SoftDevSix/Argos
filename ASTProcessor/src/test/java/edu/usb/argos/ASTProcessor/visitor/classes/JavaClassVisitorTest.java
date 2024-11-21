@@ -2,7 +2,7 @@ package edu.usb.argos.ASTProcessor.visitor.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.*;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ExpressionCollector;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ModifierCollector;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.StatementCollector;
@@ -14,10 +14,15 @@ import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
-import org.antlr.v4.runtime.*;
+
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JavaClassVisitorTest {
 
@@ -52,7 +57,7 @@ public class JavaClassVisitorTest {
 
         JavaConstructorVisitor constructorVisitor = new JavaConstructorVisitor();
 
-        JavaClassIdentityCollector identityCollector = new JavaClassIdentityCollector(tokenStream);
+        JavaClassIdentityCollector identityCollector = new JavaClassIdentityCollector();
         JavaClassStructureCollector structureCollector = new JavaClassStructureCollector();
         JavaClassMemberCollector memberCollector = new JavaClassMemberCollector(
                 methodVisitor,
@@ -65,17 +70,17 @@ public class JavaClassVisitorTest {
         JavaParser.CompilationUnitContext context = parser.compilationUnit();
         JavaParser.ClassDeclarationContext classCtx = context.typeDeclaration(0).classDeclaration();
 
-        ClassInfo classInfo = visitor.visitClass(classCtx);
+        ClassInformation classInformation = visitor.visitClass(classCtx);
 
-        assertNotNull(classInfo);
-        assertEquals("TestClass", classInfo.getIdentity().getName());
-        assertEquals("com.example", classInfo.getIdentity().getPackageName());
-        assertTrue(classInfo.getIdentity().getModifiers().contains("public"));
-        assertEquals("BaseClass", classInfo.getStructure().getSuperClass());
-        assertTrue(classInfo.getStructure().getInterfaces().contains("InterfaceOne"));
-        assertTrue(classInfo.getStructure().getInterfaces().contains("InterfaceTwo"));
-        assertEquals(1, classInfo.getMembers().getAttributes().size());
-        assertEquals(1, classInfo.getMembers().getMethods().size());
-        assertEquals(2, classInfo.getMembers().getConstructors().size());
+        assertNotNull(classInformation);
+        assertEquals("TestClass", classInformation.getIdentity().getName());
+        assertEquals("com.example", classInformation.getIdentity().getPackageName());
+        assertTrue(classInformation.getIdentity().getModifiers().contains("public"));
+        assertEquals("BaseClass", classInformation.getStructure().getSuperClass());
+        assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceOne"));
+        assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceTwo"));
+        assertEquals(1, classInformation.getMembers().getAttributes().size());
+        assertEquals(1, classInformation.getMembers().getMethods().size());
+        assertEquals(2, classInformation.getMembers().getConstructors().size());
     }
 }

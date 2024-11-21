@@ -1,14 +1,18 @@
 package edu.usb.argos.ASTProcessor.visitor.classes;
 
+import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
+import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInfo;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassIdentityCollector;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.antlr.v4.runtime.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.*;
-import edu.usb.argos.ASTProcessor.antlr.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JavaClassIdentityCollectorTest {
     private JavaClassIdentityCollector classIdentityCollector;
@@ -34,7 +38,7 @@ public class JavaClassIdentityCollectorTest {
         tokenStream = new CommonTokenStream(lexer);
         parser = new JavaParser(tokenStream);
         compilationUnit = parser.compilationUnit();
-        classIdentityCollector = new JavaClassIdentityCollector(tokenStream);
+        classIdentityCollector = new JavaClassIdentityCollector();
     }
 
     @Test

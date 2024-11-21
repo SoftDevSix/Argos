@@ -1,0 +1,6 @@
+package edu.usb.argos.argos.exception;
+
+public class LineLengthException extends RuntimeException{
+    public LineLengthException (String message) {
+        super(message);}
+}

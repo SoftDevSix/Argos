@@ -1,8 +1,10 @@
 package com.softdevsix.argos.domain;
 
 import lombok.Builder;
+import lombok.Generated;
 import lombok.Value;
 
+@Generated
 @Value
 @Builder
 public class Rules {

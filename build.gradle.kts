@@ -1,3 +1,5 @@
+
+
 plugins {
 	application
 	id("org.springframework.boot") version "3.3.4"
@@ -18,6 +20,7 @@ java {
 }
 
 val springdocVersion = "2.6.0"
+val lombokVersion = "1.18.28"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -25,13 +28,13 @@ dependencies {
 	implementation("org.postgresql:postgresql")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
 	compileOnly ("org.projectlombok:lombok")
+	compileOnly("org.projectlombok:lombok:$lombokVersion")
 	annotationProcessor ("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.h2database:h2")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	compileOnly("org.projectlombok:lombok:1.18.28")
-	annotationProcessor("org.projectlombok:lombok:1.18.28")
 }
 
 application {
@@ -47,12 +50,12 @@ tasks.withType<Test> {
 }
 
 tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required = true
-        csv.required = false
+	dependsOn(tasks.test)
+	reports {
+		xml.required = true
+		csv.required = false
 		html.required = true
-    }
+	}
 }
 
 sonar {

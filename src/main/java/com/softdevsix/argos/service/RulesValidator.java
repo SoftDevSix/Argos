@@ -27,11 +27,10 @@ public class RulesValidator {
 
   private void validateAndSetCodeQuality(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
         if (rulesRequestMap.getCodeQuality() != null) {
-            CodeQuality codeQuality = rulesRequestMap.getCodeQuality();
-            if (codeQuality.isMaxLineLengthEnabled() && codeQuality.getMaxLineLengthLimit() <= 0) {
+            if (rulesRequestMap.getCodeQuality().isMaxLineLengthEnabled() && rulesRequestMap.getCodeQuality().getMaxLineLengthLimit() <= 0) {
                 throw new LineLengthException("The line length limit must be positive.");
             }
-            builder.codeQuality(codeQuality);
+            builder.codeQuality(rulesRequestMap.getCodeQuality());
         }
     }
 
@@ -43,20 +42,18 @@ public class RulesValidator {
 
     private void validateAndSetCodeSmells(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
         if (rulesRequestMap.getCodeSmells() != null) {
-            CodeSmells codeSmells = rulesRequestMap.getCodeSmells();
-            if (codeSmells.isMethodTooLongEnabled() && codeSmells.getMaxMethodLength() <= 0) {
+            if (rulesRequestMap.getCodeSmells().isMethodTooLongEnabled() && rulesRequestMap.getCodeSmells().getMaxMethodLength() <= 0) {
                 throw new LineLengthException("The line length limit must be positive.");
             }
-            builder.codeSmells(codeSmells);
+            builder.codeSmells(rulesRequestMap.getCodeSmells());
         }
     }
 
     private void validateAndSetCodeComplexity(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
         if (rulesRequestMap.getCodeComplexity() != null) {
-            CodeComplexity codeComplexity = rulesRequestMap.getCodeComplexity();
-            validateCyclomaticComplexity(codeComplexity);
-            validateNestingDepth(codeComplexity);
-            builder.codeComplexity(codeComplexity);
+            validateCyclomaticComplexity(rulesRequestMap.getCodeComplexity());
+            validateNestingDepth(rulesRequestMap.getCodeComplexity());
+            builder.codeComplexity(rulesRequestMap.getCodeComplexity());
         }
     }
 
@@ -80,11 +77,10 @@ public class RulesValidator {
 
     private void validateAndSetCoverage(RulesRequestMap rulesRequestMap, Rules.RulesBuilder builder) {
         if (rulesRequestMap.getCoverage() != null) {
-            Coverage coverage = rulesRequestMap.getCoverage();
-            if (coverage.isMinCoveragePercentageEnabled() && coverage.getCoverageThreshold() < 0) {
+            if (rulesRequestMap.getCoverage().isMinCoveragePercentageEnabled() && rulesRequestMap.getCoverage().getCoverageThreshold() < 0) {
                 throw new CoverageThresholdException("The coverage threshold must be non-negative.");
             }
-            builder.coverage(coverage);
+            builder.coverage(rulesRequestMap.getCoverage());
         }
     }
 }

@@ -5,7 +5,6 @@ import java.security.InvalidParameterException;
 import com.softdevsix.argos.domain.Project;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
-import com.softdevsix.argos.repository.ProjectRepository;
 import com.softdevsix.argos.repository.RulesRepoImpl;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +17,7 @@ public class RulesService {
 
   public RulesService(
       RulesRepoImpl rulesRepo,
-      ProjectRepository projectRepository,
-      ProjectValidator projectValidator,
-      RulesValidator rulesValidator) {
+      ProjectValidator projectValidator) {
         this.rulesRepo = rulesRepo;
         this.projectValidator = projectValidator;
         this.rulesValidator = new RulesValidator();

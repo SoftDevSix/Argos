@@ -1,7 +1,5 @@
 package com.softdevsix.argos;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import com.softdevsix.argos.domain.*;
 import com.softdevsix.argos.repository.ProjectRepository;
 import com.softdevsix.argos.repository.RulesRepoImpl;
@@ -9,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.softdevsix.argos.exception.RuleNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** RulesRepoTest */
 @SpringBootTest
@@ -41,5 +41,17 @@ class RulesRepoTest {
     Integer projectRuleId = rulesRepo.createRule(rules, project);
     Rules fetchedRule = rulesRepo.fetchRule(projectRuleId).orElseThrow(() -> new RuleNotFoundException("Rule not found"));
     assertNotNull(fetchedRule, "The fetched rule should not be null");
+  }
+  @Test
+  void verifyRuleNotFoundExceptionIsThrown() {
+    int invalidRuleId = -1;
+
+    assertThrows(
+            RuleNotFoundException.class,
+            () -> fetchRuleOrThrow(invalidRuleId)
+    );
+  }
+  private void fetchRuleOrThrow(int ruleId) {
+    rulesRepo.fetchRule(ruleId).orElseThrow(() -> new RuleNotFoundException("Rule not found"));
   }
 }

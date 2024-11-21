@@ -1,4 +1,4 @@
-package com.softdevsix.argos;
+package edu.usb.argos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

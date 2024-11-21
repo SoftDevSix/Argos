@@ -1,4 +1,4 @@
-package com.softdevsix.argos;
+package edu.usb.argos;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

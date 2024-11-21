@@ -6,7 +6,7 @@ plugins {
 	jacoco
 }
 
-group = "com.softdevsix"
+group = "edu.usb.argos"
 version = "0.0.1-SNAPSHOT"
 
 repositories {
@@ -26,7 +26,7 @@ dependencies {
 }
 
 application {
-	mainClass.set("com.softdevsix.argos.ArgosApplication")
+	mainClass.set("edu.usb.argos.ArgosApplication")
 }
 
 tasks.withType<Test> {

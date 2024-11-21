@@ -30,17 +30,27 @@ public class JavaClassStructureCollector implements IClassStructureCollector<Par
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
-                classCtx -> {
-                    List<String> interfaces = new ArrayList<>();
-                    if (classCtx.IMPLEMENTS() != null && classCtx.typeList() != null) {
-                        JavaParser.TypeListContext typeList = classCtx.typeList(0);
-                        for (JavaParser.TypeTypeContext typeType : typeList.typeType()) {
-                            interfaces.add(typeType.getText());
-                        }
-                    }
-                    return interfaces;
-                },
+                this::extractImplementedInterfaces,
                 new ArrayList<>()
         );
+    }
+
+    private List<String> extractImplementedInterfaces(JavaParser.ClassDeclarationContext classCtx) {
+        if (!hasImplementedInterfaces(classCtx)) {
+            return new ArrayList<>();
+        }
+        return collectInterfaceNames(classCtx.typeList(0));
+    }
+
+    private boolean hasImplementedInterfaces(JavaParser.ClassDeclarationContext classCtx) {
+        return classCtx.IMPLEMENTS() != null && classCtx.typeList() != null;
+    }
+
+    private List<String> collectInterfaceNames(JavaParser.TypeListContext typeList) {
+        List<String> interfaces = new ArrayList<>();
+        for (JavaParser.TypeTypeContext typeType : typeList.typeType()) {
+            interfaces.add(typeType.getText());
+        }
+        return interfaces;
     }
 }

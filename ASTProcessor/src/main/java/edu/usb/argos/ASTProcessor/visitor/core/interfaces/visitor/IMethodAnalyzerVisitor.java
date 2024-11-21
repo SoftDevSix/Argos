@@ -8,5 +8,5 @@ public interface IMethodAnalyzerVisitor<C, T> {
     T visitMethod(C ctx);
     List<String> getMethodModifiers(C ctx);
     String getReturnType(C ctx);
-    List<ParameterInfo> getParameters(C ctx);
+    List<ParameterInformation> getParameters(C ctx);
 }

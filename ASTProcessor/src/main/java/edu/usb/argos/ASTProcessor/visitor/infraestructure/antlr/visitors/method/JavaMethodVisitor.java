@@ -2,52 +2,48 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.*;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ParameterInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IExpressionCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IModifierCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IStatementCollector;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Expression;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Token;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor.IMethodAnalyzerVisitor;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IModifierCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.IStatementCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrExpressionAdapter;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrStatementAdapter;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrTokenAdapter;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
+@Value
 public class JavaMethodVisitor extends
-        JavaParserBaseVisitor<MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>>
+        JavaParserBaseVisitor<MethodInformation<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>>
         implements IMethodAnalyzerVisitor<ParserRuleContext,
-        MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>> {
+        MethodInformation<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>> {
 
-    private final CommonTokenStream tokenStream;
-    private final IStatementCollector<JavaParser.StatementContext, JavaParser.MethodDeclarationContext> statementCollector;
-    private final IExpressionCollector<JavaParser.ExpressionContext, JavaParser.MethodDeclarationContext> expressionCollector;
-    private final IModifierCollector<ParserRuleContext> modifierCollector;
-
-    public JavaMethodVisitor(
-            CommonTokenStream tokenStream,
-            IStatementCollector<JavaParser.StatementContext, JavaParser.MethodDeclarationContext>  statementCollector,
-            IExpressionCollector<JavaParser.ExpressionContext, JavaParser.MethodDeclarationContext> expressionCollector,
-            IModifierCollector<ParserRuleContext> modifierCollector) {
-        this.tokenStream = tokenStream;
-        this.statementCollector = statementCollector;
-        this.expressionCollector = expressionCollector;
-        this.modifierCollector = modifierCollector;
-    }
+    CommonTokenStream tokenStream;
+    IStatementCollector<JavaParser.StatementContext, JavaParser.MethodDeclarationContext> statementCollector;
+    IExpressionCollector<JavaParser.ExpressionContext, JavaParser.MethodDeclarationContext> expressionCollector;
+    IModifierCollector<ParserRuleContext> modifierCollector;
+    private static final String EMPTY_RETURN_TYPE = "";
 
     @Override
-    public MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream> visitMethod(ParserRuleContext ctx) {
+    public MethodInformation<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream> visitMethod(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.MethodDeclarationContext.class,
-                methodCtx -> buildMethodInfo(methodCtx),
+                this::buildMethodInfo,
                 null
         );
     }
@@ -62,61 +58,74 @@ public class JavaMethodVisitor extends
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.MethodDeclarationContext.class,
-                methodCtx -> methodCtx.typeTypeOrVoid().getText(),
-                ""
+                this::extractReturnType,
+                EMPTY_RETURN_TYPE
         );
+    }
+
+    private String extractReturnType(JavaParser.MethodDeclarationContext methodCtx) {
+        return methodCtx.typeTypeOrVoid().getText();
     }
 
     @Override
-    public List<ParameterInfo> getParameters(ParserRuleContext ctx) {
+    public List<ParameterInformation> getParameters(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.MethodDeclarationContext.class,
-                methodCtx -> {
-                    List<ParameterInfo> parameters = new ArrayList<>();
-                    if (methodCtx.formalParameters().formalParameterList() != null) {
-                        methodCtx.formalParameters()
-                                .formalParameterList()
-                                .formalParameter()
-                                .forEach(param -> {
-                                    String paramName = param.variableDeclaratorId().getText();
-                                    String paramType = param.typeType().getText();
-                                    parameters.add(new ParameterInfo(paramName, paramType));
-                                });
-                    }
-                    return parameters;
-                },
-                new ArrayList<>()
+                this::extractParameters,
+                Collections.emptyList()
         );
     }
 
-    private MethodInfo<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>
+    private List<ParameterInformation> extractParameters(JavaParser.MethodDeclarationContext methodCtx) {
+        return Optional.ofNullable(methodCtx.formalParameters().formalParameterList())
+                .map(this::processFormalParameters)
+                .orElse(Collections.emptyList());
+    }
+
+    private List<ParameterInformation> processFormalParameters(JavaParser.FormalParameterListContext parameterList) {
+        return parameterList.formalParameter().stream()
+                .map(this::createParameterInfo)
+                .collect(Collectors.toList());
+    }
+
+    private ParameterInformation createParameterInfo(JavaParser.FormalParameterContext param) {
+        return ParameterInformation.builder()
+                .name(param.variableDeclaratorId().getText())
+                .type(param.typeType().getText())
+                .build();
+    }
+
+    private MethodInformation<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>
     buildMethodInfo(JavaParser.MethodDeclarationContext methodCtx) {
-        List<Statement<JavaParser.StatementContext>> statements =
-                statementCollector.collectStatements(methodCtx).stream()
-                        .map(AntlrStatementAdapter::new)
-                        .collect(Collectors.toList());
-
-        List<Expression<JavaParser.ExpressionContext>> expressions =
-                expressionCollector.collectExpressions(methodCtx).stream()
-                        .map(AntlrExpressionAdapter::new)
-                        .collect(Collectors.toList());
-
-        Token<CommonTokenStream> tokenAdapter = new AntlrTokenAdapter(tokenStream);
-
-        return new MethodInfo<>(
-                getName(methodCtx),
-                getReturnType(methodCtx),
-                getMethodModifiers(methodCtx),
-                getParameters(methodCtx),
-                statements,
-                expressions,
-                tokenAdapter
-        );
+        return MethodInformation.<JavaParser.StatementContext, JavaParser.ExpressionContext, CommonTokenStream>builder()
+                .name(extractMethodName(methodCtx))
+                .returnType(getReturnType(methodCtx))
+                .modifiers(getMethodModifiers(methodCtx))
+                .parameters(getParameters(methodCtx))
+                .statements(collectMethodStatements(methodCtx))
+                .expressions(collectMethodExpressions(methodCtx))
+                .tokens(createTokenAdapter())
+                .build();
     }
 
-    private String getName(JavaParser.MethodDeclarationContext methodCtx) {
+    private String extractMethodName(JavaParser.MethodDeclarationContext methodCtx) {
         return methodCtx.identifier().getText();
     }
 
+    private List<Statement<JavaParser.StatementContext>> collectMethodStatements(JavaParser.MethodDeclarationContext methodCtx) {
+        return statementCollector.collectStatements(methodCtx).stream()
+                .map(AntlrStatementAdapter::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<Expression<JavaParser.ExpressionContext>> collectMethodExpressions(JavaParser.MethodDeclarationContext methodCtx) {
+        return expressionCollector.collectExpressions(methodCtx).stream()
+                .map(AntlrExpressionAdapter::new)
+                .collect(Collectors.toList());
+    }
+
+    private Token<CommonTokenStream> createTokenAdapter() {
+        return new AntlrTokenAdapter(tokenStream);
+    }
 }

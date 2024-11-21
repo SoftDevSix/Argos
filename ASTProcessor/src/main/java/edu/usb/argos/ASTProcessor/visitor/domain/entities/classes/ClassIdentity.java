@@ -10,9 +10,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ClassIdentity {
-
-    private String name;
-    private String packageName;
-    private List<String> modifiers;
-    private List<AnnotationInfo> annotations;
+    private final String name;
+    private final String packageName;
+    private final List<String> modifiers;
+    private final List<AnnotationInfo> annotations;
 }

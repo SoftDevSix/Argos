@@ -5,7 +5,8 @@ import edu.usb.argos.ASTProcessor.visitor.domain.interfaces.analyzers.classes.IC
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JavaClassStructureCollector implements IClassStructureCollector<ParserRuleContext> {
 

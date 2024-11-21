@@ -1,8 +1,8 @@
 package edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInfo;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInfo;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassMemberCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
@@ -11,7 +11,8 @@ import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JavaClassMemberCollector implements IClassMemberCollector<ParserRuleContext> {
     private final JavaMethodVisitor methodVisitor;
@@ -48,7 +49,7 @@ public class JavaClassMemberCollector implements IClassMemberCollector<ParserRul
         );
     }
 
-    public List<AttributeInfo> getClassAttributes(ParserRuleContext ctx) {
+    public List<AttributeInformation> getClassAttributes(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
@@ -58,8 +59,8 @@ public class JavaClassMemberCollector implements IClassMemberCollector<ParserRul
     }
 
     @Override
-    public List<ConstructorInfo> getClassConstructors(ParserRuleContext ctx) {
-        return (List<ConstructorInfo>) ContextValidator.validateAndExecute(
+    public List<ConstructorInformation> getClassConstructors(ParserRuleContext ctx) {
+        return (List<ConstructorInformation>) ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
                 classCtx -> constructorVisitor.visitConstructors(classCtx.classBody()),

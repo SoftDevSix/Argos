@@ -8,9 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ClassInfo {
-
     private final ClassIdentity identity;
     private final ClassStructure structure;
     private final ClassMembers members;
-
 }

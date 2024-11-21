@@ -7,14 +7,14 @@ import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JavaClassIdentityCollector implements IClassIdentityCollector<ParserRuleContext> {
-    private final CommonTokenStream tokenStream;
 
-    public JavaClassIdentityCollector(CommonTokenStream tokenStream) {
-        this.tokenStream = tokenStream;
-    }
+    private final String DEFAULT_VALUE = "";
 
     @Override
     public String getClassName(ParserRuleContext ctx) {
@@ -22,7 +22,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
                 classCtx -> classCtx.identifier().getText(),
-                ""
+                DEFAULT_VALUE
         );
     }
 
@@ -46,10 +46,10 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
                     ((JavaParser.CompilationUnitContext) compilationUnitContext).packageDeclaration(),
                     JavaParser.PackageDeclarationContext.class,
                     packageCtx -> packageCtx.qualifiedName().getText(),
-                    ""
+                    DEFAULT_VALUE
             );
         }
-        return "";
+        return DEFAULT_VALUE;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private String getModifierText(JavaParser.ClassOrInterfaceModifierContext mod) {
-        return mod.getText() != null ? mod.getText() : "";
+        return mod.getText() != null ? mod.getText() : DEFAULT_VALUE;
     }
 
     @Override
@@ -122,6 +122,6 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private String getAttributeValue(JavaParser.ElementValuePairContext pair) {
-        return pair.elementValue().getText().replace("\"", "");
+        return pair.elementValue().getText().replace("\"", DEFAULT_VALUE);
     }
 }

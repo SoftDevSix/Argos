@@ -5,9 +5,7 @@ import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.*;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Expression;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ExpressionCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ModifierCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.StatementCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.*;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -65,7 +63,7 @@ public class JavaMethodVisitorTest {
 
         var methodInfo = visitor.visitMethod(ctx);
 
-        List<ParameterInfo> params = methodInfo.getParameters();
+        List<ParameterInformation> params = methodInfo.getParameters();
         assertEquals(2, params.size());
 
         assertEquals("a", params.get(0).getName());
@@ -211,7 +209,7 @@ public class JavaMethodVisitorTest {
         String methodCode = "public void testMethod(String[] args) { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
-        List<ParameterInfo> parameters = visitor.getParameters(ctx);
+        List<ParameterInformation> parameters = visitor.getParameters(ctx);
 
         assertEquals(1, parameters.size());
         assertEquals("args", parameters.get(0).getName());

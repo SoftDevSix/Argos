@@ -1,14 +1,14 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 public class ClassIdentity {
     private final String name;
     private final String packageName;

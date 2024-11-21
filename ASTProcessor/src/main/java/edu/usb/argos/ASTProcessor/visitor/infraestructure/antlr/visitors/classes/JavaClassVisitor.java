@@ -2,7 +2,7 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classe
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassIdentity;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassMembers;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassStructure;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassAnalyzerVisitor;
@@ -11,7 +11,7 @@ import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.ICl
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassStructureCollector;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
+public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInformation>
         implements IClassAnalyzerVisitor<ParserRuleContext> {
 
     private final IClassIdentityCollector<ParserRuleContext> identityCollector;
@@ -28,28 +28,32 @@ public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInfo>
     }
 
     @Override
-    public ClassInfo visitClass(ParserRuleContext ctx) {
+    public ClassInformation visitClass(ParserRuleContext ctx) {
 
-        ClassIdentity identity = new ClassIdentity(
-                identityCollector.getClassName(ctx),
-                identityCollector.getPackageName(ctx),
-                identityCollector.getClassModifiers(ctx),
-                identityCollector.getClassAnnotations(ctx)
-        );
+        ClassIdentity identity = ClassIdentity.builder()
+                .name(identityCollector.getClassName(ctx))
+                .packageName(identityCollector.getPackageName(ctx))
+                .modifiers(identityCollector.getClassModifiers(ctx))
+                .annotations(identityCollector.getClassAnnotations(ctx))
+                .build();
 
-        ClassStructure structure = new ClassStructure(
-                structureCollector.getSuperClass(ctx),
-                structureCollector.getImplementedInterfaces(ctx)
-        );
+        ClassStructure structure = ClassStructure.builder()
+                .superClass(structureCollector.getSuperClass(ctx))
+                .interfaces(structureCollector.getImplementedInterfaces(ctx))
+                .build();
 
-        ClassMembers members = new ClassMembers(
-                memberCollector.getClassMethods(ctx),
-                memberCollector.getClassAttributes(ctx),
-                memberCollector.getClassConstructors(ctx)
-        );
+        ClassMembers members = ClassMembers.builder()
+                .methods(memberCollector.getClassMethods(ctx))
+                .attributes(memberCollector.getClassAttributes(ctx))
+                .constructors(memberCollector.getClassConstructors(ctx))
+                .build();
 
-        ClassInfo classInfo = new ClassInfo(identity, structure, members);
+        ClassInformation classInformation = ClassInformation.builder()
+                .identity(identity)
+                .structure(structure)
+                .members(members)
+                .build();
 
-        return classInfo;
+        return classInformation;
     }
 }

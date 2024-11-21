@@ -1,9 +1,9 @@
 package com.softdevsix.argos.repository;
 
-import com.softdevsix.argos.domain.Coverage_rules;
+import com.softdevsix.argos.domain.CoverageRules;
 import org.springframework.data.repository.CrudRepository;
 
 /**
  * CoverageRepository
  */
-public interface CoverageRepository extends CrudRepository<Coverage_rules, Integer> {}
+public interface CoverageRepository extends CrudRepository<CoverageRules, Integer> {}

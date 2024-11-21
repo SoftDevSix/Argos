@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class CodeComplexity_rules {
+public class CodeComplexityRules {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CodeComplexityTest {
     @Test
     void testCyclomaticComplexityLimitSetterAndGetter() {
-        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
+        CodeComplexityRules codeComplexity = new CodeComplexityRules();
 
         assertFalse(codeComplexity.isCyclomaticComplexityLimitEnabled());
 
@@ -17,7 +17,7 @@ class CodeComplexityTest {
 
     @Test
     void testMaxCyclomaticComplexitySetterAndGetter() {
-        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
+        CodeComplexityRules codeComplexity = new CodeComplexityRules();
 
         assertEquals(0, codeComplexity.getMaxCyclomaticComplexity());
 
@@ -27,7 +27,7 @@ class CodeComplexityTest {
 
     @Test
     void testNestingDepthLimitSetterAndGetter() {
-        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
+        CodeComplexityRules codeComplexity = new CodeComplexityRules();
 
         assertFalse(codeComplexity.isNestingDepthLimitEnabled());
 
@@ -37,7 +37,7 @@ class CodeComplexityTest {
 
     @Test
     void testMaxNestingDepthSetterAndGetter() {
-        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
+        CodeComplexityRules codeComplexity = new CodeComplexityRules();
 
         assertEquals(0, codeComplexity.getMaxNestingDepth());
 
@@ -47,7 +47,7 @@ class CodeComplexityTest {
 
     @Test
     void testMaxMethodCountInClassSetterAndGetter() {
-        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
+        CodeComplexityRules codeComplexity = new CodeComplexityRules();
 
         assertFalse(codeComplexity.isMaxMethodCountInClassEnabled());
 
@@ -57,7 +57,7 @@ class CodeComplexityTest {
 
     @Test
     void testMaxMethodsInClassSetterAndGetter() {
-        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
+        CodeComplexityRules codeComplexity = new CodeComplexityRules();
 
         assertEquals(0, codeComplexity.getMaxMethodsInClass());
 

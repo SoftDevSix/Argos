@@ -38,12 +38,12 @@ class RulesServiceTests {
         RulesRequestMap mockRequest = new RulesRequestMap();
         Integer projectId = 1;
 
-        BestPractices_rules bestPractices = new BestPractices_rules();
-        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
-        CodeQuality_rules codeQuality = new CodeQuality_rules();
-        CodeSmells_rules codeSmells = new CodeSmells_rules();
-        CodingStandards_rules codingStandards = new CodingStandards_rules();
-        Coverage_rules coverage = new Coverage_rules();
+        BestPracticesRules bestPractices = new BestPracticesRules();
+        CodeComplexityRules codeComplexity = new CodeComplexityRules();
+        CodeQualityRules codeQuality = new CodeQualityRules();
+        CodeSmellsRules codeSmells = new CodeSmellsRules();
+        CodingStandardsRules codingStandards = new CodingStandardsRules();
+        CoverageRules coverage = new CoverageRules();
 
         Rules mockRules = Rules.builder()
                 .bestPractices(bestPractices)

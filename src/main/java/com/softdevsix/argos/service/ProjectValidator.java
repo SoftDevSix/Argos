@@ -1,7 +1,7 @@
 package com.softdevsix.argos.service;
 
 import com.softdevsix.argos.domain.Project;
-import com.softdevsix.argos.domain.Project_rules;
+import com.softdevsix.argos.domain.ProjectRules;
 import com.softdevsix.argos.exception.ProjectNotFoundException;
 import com.softdevsix.argos.repository.ProjectRepository;
 import com.softdevsix.argos.repository.ProjectRulesRepository;
@@ -26,7 +26,7 @@ public class ProjectValidator {
   }
 
   private void validateProjectAvailability(Integer projectId) {
-    Optional<Project_rules> optional = projectRulesRepository.findById(projectId);
+    Optional<ProjectRules> optional = projectRulesRepository.findById(projectId);
     if (optional.isPresent()) {
         throw new IllegalArgumentException("Project already has rules");
     }

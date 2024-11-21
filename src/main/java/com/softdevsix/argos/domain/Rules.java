@@ -8,10 +8,10 @@ import lombok.Value;
 @Value
 @Builder
 public class Rules {
-  private BestPractices_rules bestPractices;
-  private CodeComplexity_rules codeComplexity;
-  private CodeQuality_rules codeQuality;
-  private CodeSmells_rules codeSmells;
-  private CodingStandards_rules codingStandards;
-  private Coverage_rules coverage;
+  private BestPracticesRules bestPractices;
+  private CodeComplexityRules codeComplexity;
+  private CodeQualityRules codeQuality;
+  private CodeSmellsRules codeSmells;
+  private CodingStandardsRules codingStandards;
+  private CoverageRules coverage;
 }

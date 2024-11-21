@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CoverageTest {
     @Test
     void testCoverageReviewRequiredSetterAndGetter() {
-        Coverage_rules coverage = new Coverage_rules();
+        CoverageRules coverage = new CoverageRules();
         assertFalse(coverage.isCoverageReviewRequired());
 
         coverage.setCoverageReviewRequired(true);
@@ -15,7 +15,7 @@ class CoverageTest {
 
     @Test
     void testMinCoveragePercentageSetterAndGetter() {
-        Coverage_rules coverage = new Coverage_rules();
+        CoverageRules coverage = new CoverageRules();
         assertFalse(coverage.isMinCoveragePercentageEnabled());
 
         coverage.setMinCoveragePercentage(true);
@@ -24,7 +24,7 @@ class CoverageTest {
 
     @Test
     void testCoverageThresholdSetterAndGetter() {
-        Coverage_rules coverage = new Coverage_rules();
+        CoverageRules coverage = new CoverageRules();
         assertEquals(0, coverage.getCoverageThreshold());
 
         coverage.setCoverageThreshold(80);
@@ -33,7 +33,7 @@ class CoverageTest {
 
     @Test
     void testRejectIfLowerSetterAndGetter() {
-        Coverage_rules coverage = new Coverage_rules();
+        CoverageRules coverage = new CoverageRules();
         assertFalse(coverage.isRejectIfLowerEnabled());
 
         coverage.setRejectIfLower(true);

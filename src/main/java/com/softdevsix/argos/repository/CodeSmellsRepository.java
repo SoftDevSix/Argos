@@ -1,9 +1,9 @@
 package com.softdevsix.argos.repository;
 
-import com.softdevsix.argos.domain.CodeSmells_rules;
+import com.softdevsix.argos.domain.CodeSmellsRules;
 import org.springframework.data.repository.CrudRepository;
 
 /**
  * CodeSmellsRepository
  */
-public interface CodeSmellsRepository extends CrudRepository<CodeSmells_rules, Integer> {}
+public interface CodeSmellsRepository extends CrudRepository<CodeSmellsRules, Integer> {}

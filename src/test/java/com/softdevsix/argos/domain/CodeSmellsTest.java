@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CodeSmellsTest {
     @Test
     void testNoDuplicatedCodeSetterAndGetter() {
-        CodeSmells_rules codeSmells = new CodeSmells_rules();
+        CodeSmellsRules codeSmells = new CodeSmellsRules();
         assertFalse(codeSmells.isNoDuplicatedCodeEnabled());
 
         codeSmells.setNoDuplicatedCode(true);
@@ -15,7 +15,7 @@ class CodeSmellsTest {
 
     @Test
     void testMethodTooLongSetterAndGetter() {
-        CodeSmells_rules codeSmells = new CodeSmells_rules();
+        CodeSmellsRules codeSmells = new CodeSmellsRules();
         assertFalse(codeSmells.isMethodTooLongEnabled());
 
         codeSmells.setMethodTooLong(true);
@@ -24,7 +24,7 @@ class CodeSmellsTest {
 
     @Test
     void testMaxMethodLengthSetterAndGetter() {
-        CodeSmells_rules codeSmells = new CodeSmells_rules();
+        CodeSmellsRules codeSmells = new CodeSmellsRules();
         assertEquals(0, codeSmells.getMaxMethodLength());
 
         codeSmells.setMaxMethodLength(50);
@@ -33,7 +33,7 @@ class CodeSmellsTest {
 
     @Test
     void testExcessiveParametersSetterAndGetter() {
-        CodeSmells_rules codeSmells = new CodeSmells_rules();
+        CodeSmellsRules codeSmells = new CodeSmellsRules();
         assertFalse(codeSmells.isExcessiveParametersEnabled());
 
         codeSmells.setExcessiveParameters(true);
@@ -42,7 +42,7 @@ class CodeSmellsTest {
 
     @Test
     void testMaxParametersSetterAndGetter() {
-        CodeSmells_rules codeSmells = new CodeSmells_rules();
+        CodeSmellsRules codeSmells = new CodeSmellsRules();
         assertEquals(0, codeSmells.getMaxParameters());
 
         codeSmells.setMaxParameters(5);
@@ -51,7 +51,7 @@ class CodeSmellsTest {
 
     @Test
     void testMagicNumbersSetterAndGetter() {
-        CodeSmells_rules codeSmells = new CodeSmells_rules();
+        CodeSmellsRules codeSmells = new CodeSmellsRules();
         assertFalse(codeSmells.isMagicNumbersEnabled());
 
         codeSmells.setMagicNumbers(true);

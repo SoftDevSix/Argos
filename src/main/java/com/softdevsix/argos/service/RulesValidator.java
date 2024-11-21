@@ -1,6 +1,6 @@
 package com.softdevsix.argos.service;
 
-import com.softdevsix.argos.domain.CodeComplexity_rules;
+import com.softdevsix.argos.domain.CodeComplexityRules;
 import com.softdevsix.argos.domain.Rules;
 import com.softdevsix.argos.domain.RulesRequestMap;
 import com.softdevsix.argos.exception.*;
@@ -54,13 +54,13 @@ public class RulesValidator {
         }
     }
 
-    private void validateCyclomaticComplexity(CodeComplexity_rules codeComplexity) {
+    private void validateCyclomaticComplexity(CodeComplexityRules codeComplexity) {
         if (codeComplexity.isCyclomaticComplexityLimitEnabled() && codeComplexity.getMaxCyclomaticComplexity() <= 0) {
             throw new CyclomaticComplexityException("The cyclomatic complexity limit must be positive.");
         }
     }
 
-    private void validateNestingDepth(CodeComplexity_rules codeComplexity) {
+    private void validateNestingDepth(CodeComplexityRules codeComplexity) {
         if (codeComplexity.isNestingDepthLimitEnabled() && codeComplexity.getMaxNestingDepth() <= 0) {
             throw new NestingDepthException("The nesting depth limit must be positive.");
         }

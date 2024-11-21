@@ -2,7 +2,9 @@ plugins {
 	application
 	alias(libs.plugins.springboot.web) apply true
 	alias(libs.plugins.dependency.management) apply true
+	id("org.sonarqube") version "5.1.0.4882"
 	antlr
+	jacoco
 }
 
 group = "edu.usb.argos"
@@ -46,4 +48,25 @@ val generateParserSource by tasks.registering(AntlrTask::class) {
 
 tasks.compileJava {
 	dependsOn(generateLexerSource, generateParserSource)
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		xml.required = true
+		csv.required = false
+		html.required = true
+	}
+}
+
+sonar {
+	val sonarProjectKey = System.getenv("SONAR_PROJECT_KEY") ?: ""
+	val sonarHostUrl = System.getenv("SONAR_HOST_URL") ?: ""
+	val sonarToken = System.getenv("SONAR_TOKEN") ?: ""
+	properties {
+		property("sonar.projectKey", sonarProjectKey)
+		property("sonar.host.url", sonarHostUrl)
+		property("sonar.token", sonarToken)
+		property("sonar.qualitygate.wait", "true")
+	}
 }

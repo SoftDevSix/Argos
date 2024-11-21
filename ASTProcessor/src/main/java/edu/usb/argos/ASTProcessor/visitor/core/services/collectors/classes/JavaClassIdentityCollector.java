@@ -5,7 +5,6 @@ import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInfo;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassIdentityCollector;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +65,8 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private List<String> extractModifiers(JavaParser.TypeDeclarationContext typeCtx) {
-        List<String> modifiers = new ArrayList<>();
+        List<String> modifiers;
+        modifiers = new ArrayList<>();
         for (JavaParser.ClassOrInterfaceModifierContext mod : getClassOrInterfaceModifiers(typeCtx)) {
             String modifierText = getModifierText(mod);
             if (!modifierText.isEmpty()) {
@@ -112,7 +112,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private Map<String, String> getAnnotationAttributes(JavaParser.ClassOrInterfaceModifierContext mod) {
-        Map<String, String> attributes = new HashMap<>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (mod.annotation().elementValuePairs() != null) {
             for (JavaParser.ElementValuePairContext pair : mod.annotation().elementValuePairs().elementValuePair()) {
                 attributes.put(pair.identifier().getText(), getAttributeValue(pair));

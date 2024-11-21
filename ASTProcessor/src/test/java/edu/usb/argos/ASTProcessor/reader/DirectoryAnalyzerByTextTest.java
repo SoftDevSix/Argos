@@ -3,12 +3,12 @@ package edu.usb.argos.ASTProcessor.reader;
 import edu.usb.argos.ASTProcessor.reader.application.services.DirectoryAnalyzerByText;
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
 import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;

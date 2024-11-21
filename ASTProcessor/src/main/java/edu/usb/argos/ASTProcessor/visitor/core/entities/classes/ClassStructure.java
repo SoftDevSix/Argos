@@ -10,8 +10,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ClassStructure {
-
     private final String superClass;
     private final List<String> interfaces;
-
 }

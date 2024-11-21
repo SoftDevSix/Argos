@@ -1,26 +1,23 @@
 package edu.usb.argos.ASTProcessor.visitor.core.services.collectors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ModifierType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class ModifierExtractor {
-    private static final Map<String, String> MODIFIER_MAP = Map.of(
-            "PUBLIC", "public",
-            "PRIVATE", "private",
-            "PROTECTED", "protected",
-            "STATIC", "static",
-            "FINAL", "final"
-    );
-
     public List<String> extractModifiers(JavaParser.ClassBodyDeclarationContext ctx) {
-        List<String> modifiers = new ArrayList<>();
+        return Optional.ofNullable(ctx)
+                .map(JavaParser.ClassBodyDeclarationContext::modifier)
+                .map(this::processModifierList)
+                .orElse(Collections.emptyList());
+    }
 
-        List<JavaParser.ModifierContext> modifierContexts = ctx.modifier();
-        if (modifierContexts == null) {
-            return modifiers;
-        }
+    private List<String> processModifierList(List<JavaParser.ModifierContext> modifierContexts) {
+        List<String> modifiers = new ArrayList<>();
 
         for (JavaParser.ModifierContext mod : modifierContexts) {
             processModifier(mod, modifiers);
@@ -30,19 +27,24 @@ public class ModifierExtractor {
     }
 
     private void processModifier(JavaParser.ModifierContext mod, List<String> modifiers) {
-        if (mod.classOrInterfaceModifier() == null) {
+        JavaParser.ClassOrInterfaceModifierContext classOrInterfaceModifier = mod.classOrInterfaceModifier();
+        if (classOrInterfaceModifier == null) {
             return;
         }
 
-        for (Map.Entry<String, String> entry : MODIFIER_MAP.entrySet()) {
-            if (hasModifier(mod.classOrInterfaceModifier(), entry.getKey())) {
-                modifiers.add(entry.getValue());
-                break;
+        checkAndAddModifiers(classOrInterfaceModifier, modifiers);
+    }
+
+    private void checkAndAddModifiers(JavaParser.ClassOrInterfaceModifierContext ctx, List<String> modifiers) {
+        for (ModifierType modifierType : ModifierType.values()) {
+            if (checkModifierExists(ctx, modifierType.getMethodName())) {
+                modifiers.add(modifierType.getKeyword());
+                return;
             }
         }
     }
 
-    private boolean hasModifier(JavaParser.ClassOrInterfaceModifierContext ctx, String modifierName) {
+    private boolean checkModifierExists(JavaParser.ClassOrInterfaceModifierContext ctx, String modifierName) {
         try {
             return ctx.getClass().getMethod(modifierName).invoke(ctx) != null;
         } catch (Exception e) {

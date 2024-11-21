@@ -2,7 +2,9 @@ package edu.usb.argos.ASTProcessor.reader.application.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ASTAnalysisException;
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
 import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IDirectoryAnalyzer;
 import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
@@ -21,20 +23,16 @@ public class DirectoryAnalyzerByText<TAst> implements IDirectoryAnalyzer<String[
     @Override
     public List<TAst> analyzeDirectory(String[] sourceCode) {
         List<TAst> astFiles = new ArrayList<>();
-        TAst ast;
+        Optional<TAst> ast;
 
         for (String code : sourceCode) {
-
             try {
                 ast = fileAnalyzer.readFile(code);
-                if (ast != null) {
-                    astFiles.add(ast);
-                }
+                ast.ifPresent(astFiles::add);
             } catch (FileAnalyzerException exception) {
                 String errorMessage = "Error getting AST from the source";
-                log.error(errorMessage, exception);
+                throw new ASTAnalysisException(errorMessage, exception);
             }
-
         }
 
         return astFiles;

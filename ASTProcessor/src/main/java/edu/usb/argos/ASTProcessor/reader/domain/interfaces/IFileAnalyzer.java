@@ -1,7 +1,9 @@
 package edu.usb.argos.ASTProcessor.reader.domain.interfaces;
 
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileReaderException;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
 
-public interface IFileAnalyzer<T, K> {
-    K readFile(T code) throws FileReaderException;
+import java.util.Optional;
+
+public interface IFileAnalyzer<T, F> {
+    Optional<F> readFile(T codePath) throws FileAnalyzerException;
 }

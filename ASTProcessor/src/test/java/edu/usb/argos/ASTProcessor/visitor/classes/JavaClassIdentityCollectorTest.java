@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,14 +45,15 @@ public class JavaClassIdentityCollectorTest {
     @Test
     void getClassName_ShouldReturnCorrectClassName() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
-        String className = classIdentityCollector.getClassName(ctx);
-        assertEquals("TestClass", className);
+        Optional<String> className = classIdentityCollector.getClassName(ctx);
+
+        assertEquals("TestClass", className.get());
     }
 
     @Test
     void getPackageName_ShouldReturnCorrectPackage() {
-        String packageName = classIdentityCollector.getPackageName(compilationUnit.packageDeclaration());
-        assertEquals("com.example", packageName);
+        Optional<String> packageName = classIdentityCollector.getPackageName(compilationUnit.packageDeclaration());
+        assertEquals("com.example", packageName.get());
     }
 
     @Test

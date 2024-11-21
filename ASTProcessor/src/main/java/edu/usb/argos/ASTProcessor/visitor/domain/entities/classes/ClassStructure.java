@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
 @Builder
 public class ClassStructure {
-    private final String superClass;
+    private final Optional<String> superClass;
     private final List<String> interfaces;
 }

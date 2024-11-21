@@ -73,10 +73,10 @@ public class JavaClassVisitorTest {
         ClassInformation classInformation = visitor.visitClass(classCtx);
 
         assertNotNull(classInformation);
-        assertEquals("TestClass", classInformation.getIdentity().getName());
-        assertEquals("com.example", classInformation.getIdentity().getPackageName());
+        assertEquals("TestClass", classInformation.getIdentity().getName().get());
+        assertEquals("com.example", classInformation.getIdentity().getPackageName().get());
         assertTrue(classInformation.getIdentity().getModifiers().contains("public"));
-        assertEquals("BaseClass", classInformation.getStructure().getSuperClass());
+        assertEquals("BaseClass", classInformation.getStructure().getSuperClass().get());
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceOne"));
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceTwo"));
         assertEquals(1, classInformation.getMembers().getAttributes().size());

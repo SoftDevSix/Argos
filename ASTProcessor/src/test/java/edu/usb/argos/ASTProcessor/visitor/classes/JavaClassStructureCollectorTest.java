@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,8 +40,8 @@ public class JavaClassStructureCollectorTest {
     @Test
     void getSuperClass_ShouldReturnCorrectSuperClass() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
-        String superClass = structureCollector.getSuperClass(ctx);
-        assertEquals("BaseClass", superClass);
+        Optional<String> superClass = structureCollector.getSuperClass(ctx);
+        assertEquals("BaseClass", superClass.get());
     }
 
     @Test

@@ -7,21 +7,22 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JavaClassStructureCollector implements IClassStructureCollector<ParserRuleContext> {
 
     @Override
-    public String getSuperClass(ParserRuleContext ctx) {
+    public Optional<String> getSuperClass(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
                 classCtx -> {
                     if (classCtx.EXTENDS() != null) {
-                        return classCtx.typeType().getText();
+                        return Optional.of(classCtx.typeType().getText());
                     }
-                    return null;
+                    return Optional.empty();
                 },
-                null
+                Optional.empty()
         );
     }
 

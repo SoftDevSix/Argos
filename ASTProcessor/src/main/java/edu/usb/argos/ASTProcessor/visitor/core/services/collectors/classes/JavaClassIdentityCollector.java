@@ -10,25 +10,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class JavaClassIdentityCollector implements IClassIdentityCollector<ParserRuleContext> {
 
     private final String DEFAULT_VALUE = "";
 
     @Override
-    public String getClassName(ParserRuleContext ctx) {
+    public Optional<String> getClassName(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
-                classCtx -> classCtx.identifier().getText(),
-                DEFAULT_VALUE
+                classCtx -> Optional.ofNullable(classCtx.identifier().getText()),
+                Optional.empty()
         );
     }
 
     @Override
-    public String getPackageName(ParserRuleContext ctx) {
-        ParserRuleContext compilationUnitContext = findCompilationUnitContext(ctx);
-        return extractPackageName(compilationUnitContext);
+    public Optional<String> getPackageName(ParserRuleContext ctx) {
+        return Optional.ofNullable(findCompilationUnitContext(ctx))
+                .flatMap(this::extractPackageName);
     }
 
     private ParserRuleContext findCompilationUnitContext(ParserRuleContext ctx) {
@@ -39,16 +40,16 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
         return current;
     }
 
-    private String extractPackageName(ParserRuleContext compilationUnitContext) {
+    private Optional<String> extractPackageName(ParserRuleContext compilationUnitContext) {
         if (compilationUnitContext instanceof JavaParser.CompilationUnitContext) {
             return ContextValidator.validateAndExecute(
                     ((JavaParser.CompilationUnitContext) compilationUnitContext).packageDeclaration(),
                     JavaParser.PackageDeclarationContext.class,
-                    packageCtx -> packageCtx.qualifiedName().getText(),
-                    DEFAULT_VALUE
+                    packageCtx -> Optional.ofNullable(packageCtx.qualifiedName().getText()),
+                    Optional.empty()
             );
         }
-        return DEFAULT_VALUE;
+        return Optional.empty();
     }
 
     @Override

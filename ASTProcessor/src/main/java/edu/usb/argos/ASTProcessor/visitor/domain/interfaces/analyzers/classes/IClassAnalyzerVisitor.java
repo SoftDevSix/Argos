@@ -1,8 +1,0 @@
-package edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes;
-
-import edu.usb.argos.ASTProcessor.visitor.domain.entities.classes.ClassInfo;
-
-public interface IClassAnalyzerVisitor<T> {
-
-    ClassInfo visitClass(T ctx);
-}

@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class CodeSmells {
+public class CodeSmells_rules {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

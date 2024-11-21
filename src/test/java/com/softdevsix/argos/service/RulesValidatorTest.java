@@ -23,20 +23,20 @@ class RulesValidatorTest {
 
     @Test
     void testValidate_withValidCodeQuality() {
-        CodeQuality codeQuality = new CodeQuality();
+        CodeQuality_rules codeQuality = new CodeQuality_rules();
         codeQuality.setMaxLineLength(true);
         codeQuality.setMaxLineLengthLimit(120);
         rulesRequestMap.setCodeQuality(codeQuality);
 
         Rules validatedRules = rulesValidator.validate(rulesRequestMap);
 
-        assertNotNull(validatedRules.getCodeQuality(), "CodeQuality should not be null");
+        assertNotNull(validatedRules.getCodeQuality(), "CodeQuality_rules should not be null");
         assertEquals(120, validatedRules.getCodeQuality().getMaxLineLengthLimit(), "Max line length should be 120");
     }
 
     @Test
     void testValidate_withInvalidCodeQuality() {
-        CodeQuality codeQuality = new CodeQuality();
+        CodeQuality_rules codeQuality = new CodeQuality_rules();
         codeQuality.setMaxLineLength(true);
         codeQuality.setMaxLineLengthLimit(-1); 
         rulesRequestMap.setCodeQuality(codeQuality);
@@ -47,32 +47,32 @@ class RulesValidatorTest {
 
     @Test
     void testValidate_withValidBestPractices() {
-        BestPractices bestPractices = new BestPractices();
+        BestPractices_rules bestPractices = new BestPractices_rules();
         bestPractices.setNoHardcodedValues(false);
         rulesRequestMap.setBestPractices(bestPractices);
 
         Rules validatedRules = rulesValidator.validate(rulesRequestMap);
 
-        assertNotNull(validatedRules.getBestPractices(), "BestPractices should not be null");
+        assertNotNull(validatedRules.getBestPractices(), "BestPractices_rules should not be null");
         assertEquals(false, validatedRules.getBestPractices().isNoHardcodedValuesEnabled(), "NoHardcodedValues should be false");
     }
 
     @Test
     void testValidate_withValidCodeSmells() {
-        CodeSmells codeSmells = new CodeSmells();
+        CodeSmells_rules codeSmells = new CodeSmells_rules();
         codeSmells.setMethodTooLong(true);
         codeSmells.setMaxMethodLength(50);
         rulesRequestMap.setCodeSmells(codeSmells);
 
         Rules validatedRules = rulesValidator.validate(rulesRequestMap);
 
-        assertNotNull(validatedRules.getCodeSmells(), "CodeSmells should not be null");
+        assertNotNull(validatedRules.getCodeSmells(), "CodeSmells_rules should not be null");
         assertEquals(50, validatedRules.getCodeSmells().getMaxMethodLength(), "Max method length should be 50");
     }
 
     @Test
     void testValidate_withInvalidCodeSmells() {
-        CodeSmells codeSmells = new CodeSmells();
+        CodeSmells_rules codeSmells = new CodeSmells_rules();
         codeSmells.setMethodTooLong(true);
         codeSmells.setMaxMethodLength(-10); 
         rulesRequestMap.setCodeSmells(codeSmells);
@@ -83,7 +83,7 @@ class RulesValidatorTest {
 
     @Test
     void testValidate_withValidCodeComplexity() {
-        CodeComplexity codeComplexity = new CodeComplexity();
+        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
         codeComplexity.setCyclomaticComplexityLimit(true);
         codeComplexity.setMaxCyclomaticComplexity(10);
         codeComplexity.setNestingDepthLimit(true);
@@ -92,14 +92,14 @@ class RulesValidatorTest {
 
         Rules validatedRules = rulesValidator.validate(rulesRequestMap);
 
-        assertNotNull(validatedRules.getCodeComplexity(), "CodeComplexity should not be null");
+        assertNotNull(validatedRules.getCodeComplexity(), "CodeComplexity_rules should not be null");
         assertEquals(10, validatedRules.getCodeComplexity().getMaxCyclomaticComplexity(), "Cyclomatic complexity should be 10");
         assertEquals(5, validatedRules.getCodeComplexity().getMaxNestingDepth(), "Nesting depth should be 5");
     }
 
     @Test
     void testValidate_withInvalidCyclomaticComplexity() {
-        CodeComplexity codeComplexity = new CodeComplexity();
+        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
         codeComplexity.setCyclomaticComplexityLimit(true);
         codeComplexity.setMaxCyclomaticComplexity(-5); 
         rulesRequestMap.setCodeComplexity(codeComplexity);
@@ -110,7 +110,7 @@ class RulesValidatorTest {
 
     @Test
     void testValidate_withInvalidNestingDepth() {
-        CodeComplexity codeComplexity = new CodeComplexity();
+        CodeComplexity_rules codeComplexity = new CodeComplexity_rules();
         codeComplexity.setNestingDepthLimit(true);
         codeComplexity.setMaxNestingDepth(-3); 
         rulesRequestMap.setCodeComplexity(codeComplexity);
@@ -121,20 +121,20 @@ class RulesValidatorTest {
 
     @Test
     void testValidate_withValidCoverage() {
-        Coverage coverage = new Coverage();
+        Coverage_rules coverage = new Coverage_rules();
         coverage.setMinCoveragePercentage(true);
         coverage.setCoverageThreshold(80);
         rulesRequestMap.setCoverage(coverage);
 
         Rules validatedRules = rulesValidator.validate(rulesRequestMap);
 
-        assertNotNull(validatedRules.getCoverage(), "Coverage should not be null");
-        assertEquals(80, validatedRules.getCoverage().getCoverageThreshold(), "Coverage threshold should be 80");
+        assertNotNull(validatedRules.getCoverage(), "Coverage_rules should not be null");
+        assertEquals(80, validatedRules.getCoverage().getCoverageThreshold(), "Coverage_rules threshold should be 80");
     }
 
     @Test
     void testValidate_withInvalidCoverage() {
-        Coverage coverage = new Coverage();
+        Coverage_rules coverage = new Coverage_rules();
         coverage.setMinCoveragePercentage(true);
         coverage.setCoverageThreshold(-10); 
         rulesRequestMap.setCoverage(coverage);

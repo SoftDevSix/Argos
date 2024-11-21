@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-public class ProjectRules {
+public class Project_rules {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
@@ -28,25 +28,25 @@ public class ProjectRules {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "bestPractices_id")
-  private BestPractices bestPractices;
+  private BestPractices_rules bestPractices;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "codeComplexity_Id")
-  private CodeComplexity codeComplexity;
+  private CodeComplexity_rules codeComplexity;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "codeQuality_id")
-  private CodeQuality codeQuality;
+  private CodeQuality_rules codeQuality;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "codeSmells_id")
-  private CodeSmells codeSmells;
+  private CodeSmells_rules codeSmells;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "codingStandards_id")
-  private CodingStandards codingStandards;
+  private CodingStandards_rules codingStandards;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "coverage_id")
-  private Coverage coverage;
+  private Coverage_rules coverage;
 }

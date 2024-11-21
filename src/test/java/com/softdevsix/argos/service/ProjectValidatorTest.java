@@ -1,7 +1,7 @@
 package com.softdevsix.argos.service;
 
 import com.softdevsix.argos.domain.Project;
-import com.softdevsix.argos.domain.ProjectRules;
+import com.softdevsix.argos.domain.Project_rules;
 import com.softdevsix.argos.exception.ProjectNotFoundException;
 import com.softdevsix.argos.repository.ProjectRepository;
 import com.softdevsix.argos.repository.ProjectRulesRepository;
@@ -54,7 +54,7 @@ class ProjectValidatorTests {
 
     @Test
     void testValidate_withExistingProjectRules() {
-        ProjectRules projectRules = ProjectRules.builder()
+        Project_rules projectRules = Project_rules.builder()
             .project(mockProject)
             .build();
         when(projectRulesRepository.findById(projectId)).thenReturn(Optional.of(projectRules));

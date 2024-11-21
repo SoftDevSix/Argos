@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Coverage {
+public class Coverage_rules {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;

@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class BestPractices {
+public class BestPractices_rules {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;

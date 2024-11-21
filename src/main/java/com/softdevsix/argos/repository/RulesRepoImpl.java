@@ -1,7 +1,7 @@
 package com.softdevsix.argos.repository;
 
 import com.softdevsix.argos.domain.Project;
-import com.softdevsix.argos.domain.ProjectRules;
+import com.softdevsix.argos.domain.Project_rules;
 import com.softdevsix.argos.domain.Rules;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,7 @@ public class RulesRepoImpl implements RulesRepo {
 
   @Override
   public Integer createRule(Rules rules, Project project) {
-    ProjectRules projectRules = ProjectRules.builder()
+    Project_rules projectRules = Project_rules.builder()
         .project(project)
         .bestPractices(rules.getBestPractices())
         .codeComplexity(rules.getCodeComplexity())
@@ -55,18 +55,18 @@ public class RulesRepoImpl implements RulesRepo {
     codingStandards.save(rules.getCodingStandards());
     coverage.save(rules.getCoverage());
 
-    ProjectRules savedProjecRules = projectRulesRepository.save(projectRules);
+    Project_rules savedProjecRules = projectRulesRepository.save(projectRules);
     return savedProjecRules.getId();
   }
 
   @Override
   public Optional<Rules> fetchRule(Integer repoId) {
-    Optional<ProjectRules> optional = projectRulesRepository.findById(repoId);
+    Optional<Project_rules> optional = projectRulesRepository.findById(repoId);
     if (optional.isEmpty()) {
       return Optional.empty();
     }
 
-    ProjectRules repositoryRules = optional.get();
+    Project_rules repositoryRules = optional.get();
 
     Rules rules = Rules.builder()
         .bestPractices(repositoryRules.getBestPractices())

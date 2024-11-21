@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CodingStandardsTest {
     @Test
     void testCamelCaseNamingSetterAndGetter() {
-        CodingStandards codingStandards = new CodingStandards();
+        CodingStandards_rules codingStandards = new CodingStandards_rules();
         assertFalse(codingStandards.isCamelCaseNamingEnabled());
 
         codingStandards.setCamelCaseNaming(true);
@@ -15,7 +15,7 @@ class CodingStandardsTest {
 
     @Test
     void testPascalCaseForClassesSetterAndGetter() {
-        CodingStandards codingStandards = new CodingStandards();
+        CodingStandards_rules codingStandards = new CodingStandards_rules();
         assertFalse(codingStandards.isPascalCaseForClassesEnabled());
 
         codingStandards.setPascalCaseForClasses(true);
@@ -24,7 +24,7 @@ class CodingStandardsTest {
 
     @Test
     void testBracesOnSameLineSetterAndGetter() {
-        CodingStandards codingStandards = new CodingStandards();
+        CodingStandards_rules codingStandards = new CodingStandards_rules();
         assertFalse(codingStandards.isBracesOnSameLineEnabled());
 
         codingStandards.setBracesOnSameLine(true);

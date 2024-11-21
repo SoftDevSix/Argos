@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BestPracticesTest {
     @Test
     void testNoHardcodedValuesSetterAndGetter() {
-        BestPractices bestPractices = new BestPractices();
+        BestPractices_rules bestPractices = new BestPractices_rules();
 
         assertFalse(bestPractices.isNoHardcodedValuesEnabled());
 

@@ -1,15 +1,19 @@
 package edu.usb.argos.ASTProcessor.visitor.classes;
 
+import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassStructureCollector;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.antlr.v4.runtime.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import edu.usb.argos.ASTProcessor.antlr.*;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JavaClassStructureCollectorTest {
     private JavaClassStructureCollector structureCollector;

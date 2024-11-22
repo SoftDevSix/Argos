@@ -1,5 +1,6 @@
-package edu.usb.argos.ASTProcessor.lexer;
+package edu.usb.argos.ASTProcessor.lexer.fileProcessor;
 
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import org.antlr.v4.runtime.Token;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LexerFileProcessorTest {
     private List<Token> getTokensFromFile(String input) throws IOException {
-        LexerFileProcessor processor = new LexerFileProcessor();
+        IFileProcessor<CommonTokenStream> processor = new LexerFileProcessor();
 
         Path tempFile = Files.createTempFile("testFile", ".java");
         Files.writeString(tempFile, input);

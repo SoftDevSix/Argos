@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.lexer;
+package edu.usb.argos.ASTProcessor.lexer.fileProcessor;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.lexer.errorHandler.ArgosErrorListener;
@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class LexerFileProcessor {
+public class LexerFileProcessor implements IFileProcessor<CommonTokenStream> {
     private final ArgosErrorListener errorListener;
 
     public LexerFileProcessor() {

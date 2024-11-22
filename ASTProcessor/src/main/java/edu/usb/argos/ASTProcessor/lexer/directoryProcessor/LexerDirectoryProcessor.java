@@ -1,7 +1,8 @@
-package edu.usb.argos.ASTProcessor.lexer;
+package edu.usb.argos.ASTProcessor.lexer.directoryProcessor;
 
-import org.antlr.v4.runtime.CommonTokenStream;
 import edu.usb.argos.ASTProcessor.lexer.errorHandler.exceptions.LexerFileProcessingException;
+import edu.usb.argos.ASTProcessor.lexer.fileProcessor.IFileProcessor;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,15 +14,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class LexerDirectoryProcessor {
-    private final LexerFileProcessor fileProcessor;
+public class LexerDirectoryProcessor implements IDirectoryProcessor<CommonTokenStream> {
+    private final IFileProcessor<CommonTokenStream> fileProcessor;
     private static final String JAVA_EXTENSION = ".java";
     private static final Logger logger = LoggerFactory.getLogger(LexerDirectoryProcessor.class);
 
-    public LexerDirectoryProcessor() {
-        this.fileProcessor = new LexerFileProcessor();
+    public LexerDirectoryProcessor(IFileProcessor<CommonTokenStream> fileProcessor) {
+        this.fileProcessor = fileProcessor;
     }
 
+    @Override
     public Map<String, CommonTokenStream> getTokensFromDirectoryByFile(String directoryPath) throws IOException {
         Map<String, CommonTokenStream> tokensByFile = new HashMap<>();
 

@@ -1,6 +1,8 @@
-package edu.usb.argos.ASTProcessor.lexer;
+package edu.usb.argos.ASTProcessor.lexer.directoryProcessor;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
+import edu.usb.argos.ASTProcessor.lexer.fileProcessor.IFileProcessor;
+import edu.usb.argos.ASTProcessor.lexer.fileProcessor.LexerFileProcessor;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,14 +18,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LexerDirectoryProcessorTest {
-    private LexerDirectoryProcessor directoryProcessor;
+    private IDirectoryProcessor<CommonTokenStream> directoryProcessor;
     private Path tempDirectory;
     private Path testFile1;
     private Path testFile2;
 
     @BeforeEach
     void setUp() throws IOException {
-        directoryProcessor = new LexerDirectoryProcessor();
+        IFileProcessor<CommonTokenStream> fileProcessor = new LexerFileProcessor();
+        directoryProcessor = new LexerDirectoryProcessor(fileProcessor);
         tempDirectory = Files.createTempDirectory("testDir");
 
         testFile1 = tempDirectory.resolve("TestFile1.java");

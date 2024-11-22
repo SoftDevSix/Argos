@@ -9,51 +9,51 @@ import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.ICl
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassIdentityCollector;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassMemberCollector;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassStructureCollector;
+import lombok.Value;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+@Value
 public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInformation>
         implements IClassAnalyzerVisitor<ParserRuleContext> {
 
-    private final IClassIdentityCollector<ParserRuleContext> identityCollector;
-    private final IClassStructureCollector<ParserRuleContext> structureCollector;
-    private final IClassMemberCollector<ParserRuleContext> memberCollector;
-
-    public JavaClassVisitor(
-            IClassIdentityCollector<ParserRuleContext> identityCollector,
-            IClassStructureCollector<ParserRuleContext> structureCollector,
-            IClassMemberCollector<ParserRuleContext> memberCollector) {
-        this.identityCollector = identityCollector;
-        this.structureCollector = structureCollector;
-        this.memberCollector = memberCollector;
-    }
+    IClassIdentityCollector<ParserRuleContext> identityCollector;
+    IClassStructureCollector<ParserRuleContext> structureCollector;
+    IClassMemberCollector<ParserRuleContext> memberCollector;
 
     @Override
     public ClassInformation visitClass(ParserRuleContext ctx) {
+        ClassIdentity identity = buildClassIdentity(ctx);
+        ClassStructure structure = buildClassStructure(ctx);
+        ClassMembers members = buildClassMembers(ctx);
 
-        ClassIdentity identity = ClassIdentity.builder()
+        return ClassInformation.builder()
+                .identity(identity)
+                .structure(structure)
+                .members(members)
+                .build();
+    }
+
+    private ClassIdentity buildClassIdentity(ParserRuleContext ctx) {
+        return ClassIdentity.builder()
                 .name(identityCollector.getClassName(ctx))
                 .packageName(identityCollector.getPackageName(ctx))
                 .modifiers(identityCollector.getClassModifiers(ctx))
                 .annotations(identityCollector.getClassAnnotations(ctx))
                 .build();
+    }
 
-        ClassStructure structure = ClassStructure.builder()
+    private ClassStructure buildClassStructure(ParserRuleContext ctx) {
+        return ClassStructure.builder()
                 .superClass(structureCollector.getSuperClass(ctx))
                 .interfaces(structureCollector.getImplementedInterfaces(ctx))
                 .build();
+    }
 
-        ClassMembers members = ClassMembers.builder()
+    private ClassMembers buildClassMembers(ParserRuleContext ctx) {
+        return ClassMembers.builder()
                 .methods(memberCollector.getClassMethods(ctx))
                 .attributes(memberCollector.getClassAttributes(ctx))
                 .constructors(memberCollector.getClassConstructors(ctx))
                 .build();
-
-        ClassInformation classInformation = ClassInformation.builder()
-                .identity(identity)
-                .structure(structure)
-                .members(members)
-                .build();
-
-        return classInformation;
     }
 }

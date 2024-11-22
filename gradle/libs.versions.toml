@@ -3,7 +3,7 @@ springboot = "3.3.4"
 dependencyManagement = "1.1.6"
 springDocVersion = "2.6.0"
 antlr = "4.13.2"
-sonarqube = "5.1.0.4882"
+sonarqube = "6.0.0.5145"
 slf4j = "2.0.9"
 
 [plugins]

@@ -17,24 +17,32 @@ public class JavaConstructorVisitor extends JavaParserBaseVisitor<List<Construct
         for (JavaParser.ClassBodyDeclarationContext bodyCtx : classContext.classBodyDeclaration()) {
             JavaParser.MemberDeclarationContext memberCtx = bodyCtx.memberDeclaration();
 
-            if (memberCtx != null && memberCtx.constructorDeclaration() != null) {
-                JavaParser.ConstructorDeclarationContext constructorCtx = memberCtx.constructorDeclaration();
-                String constructorName = constructorCtx.identifier().getText();
-                List<String> modifiers = getModifiers(bodyCtx);
-                List<String> parameters = getParameters(constructorCtx);
-                List<JavaParser.BlockStatementContext> bodyStatements = getBodyStatements(constructorCtx);
-                ConstructorInformation<JavaParser.BlockStatementContext> constructorInformation =
-                        ConstructorInformation.<JavaParser.BlockStatementContext>builder()
-                                .name(constructorName)
-                                .modifiers(modifiers)
-                                .parameters(parameters)
-                                .bodyStatements(bodyStatements)
-                                .build();
-                constructors.add(constructorInformation);
+            if (isConstructorDeclaration(memberCtx)) {
+                constructors.add(createConstructorInformation(memberCtx, bodyCtx));
             }
         }
 
         return constructors;
+    }
+
+    private boolean isConstructorDeclaration(JavaParser.MemberDeclarationContext memberCtx) {
+        return memberCtx != null && memberCtx.constructorDeclaration() != null;
+    }
+
+    private ConstructorInformation<JavaParser.BlockStatementContext> createConstructorInformation(
+            JavaParser.MemberDeclarationContext memberCtx, JavaParser.ClassBodyDeclarationContext bodyCtx) {
+        JavaParser.ConstructorDeclarationContext constructorCtx = memberCtx.constructorDeclaration();
+        String constructorName = constructorCtx.identifier().getText();
+        List<String> modifiers = getModifiers(bodyCtx);
+        List<String> parameters = getParameters(constructorCtx);
+        List<JavaParser.BlockStatementContext> bodyStatements = getBodyStatements(constructorCtx);
+
+        return ConstructorInformation.<JavaParser.BlockStatementContext>builder()
+                .name(constructorName)
+                .modifiers(modifiers)
+                .parameters(parameters)
+                .bodyStatements(bodyStatements)
+                .build();
     }
 
     private List<String> getModifiers(JavaParser.ClassBodyDeclarationContext classContext) {

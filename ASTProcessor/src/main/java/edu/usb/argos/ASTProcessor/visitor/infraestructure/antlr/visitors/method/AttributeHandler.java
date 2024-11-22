@@ -32,10 +32,14 @@ public class AttributeHandler {
 
         for (JavaParser.VariableDeclaratorContext varCtx : fieldContext.variableDeclarators().variableDeclarator()) {
             String varName = varCtx.variableDeclaratorId().getText();
+            Optional<String> value = Optional.ofNullable(varCtx.variableInitializer())
+                    .map(JavaParser.VariableInitializerContext::getText);
+
             AttributeInformation attributeInformation = AttributeInformation.builder()
                     .name(varName)
                     .type(fieldType)
                     .modifiers(modifiers)
+                    .value(value)
                     .build();
 
             return Optional.of(attributeInformation);
@@ -43,6 +47,7 @@ public class AttributeHandler {
 
         return Optional.empty();
     }
+
 
     private List<String> extractModifiers(JavaParser.ClassBodyDeclarationContext context) {
         List<String> modifiers = new ArrayList<>();

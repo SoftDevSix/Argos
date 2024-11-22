@@ -43,7 +43,7 @@ public class JavaClassIdentityCollectorTest {
     }
 
     @Test
-    void getClassName_ShouldReturnCorrectClassName() {
+    void getClassNameShouldReturnCorrectClassName() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         Optional<String> className = classIdentityCollector.getClassName(ctx);
 
@@ -51,20 +51,20 @@ public class JavaClassIdentityCollectorTest {
     }
 
     @Test
-    void getPackageName_ShouldReturnCorrectPackage() {
+    void getPackageNameShouldReturnCorrectPackage() {
         Optional<String> packageName = classIdentityCollector.getPackageName(compilationUnit.packageDeclaration());
         assertEquals("com.example", packageName.get());
     }
 
     @Test
-    void getClassModifiers_ShouldReturnCorrectModifiers() {
+    void getClassModifiersShouldReturnCorrectModifiers() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         List<String> modifiers = classIdentityCollector.getClassModifiers(ctx);
         assertTrue(modifiers.contains("public"));
     }
 
     @Test
-    void getClassAnnotations_ShouldReturnCorrectAnnotations() {
+    void getClassAnnotationsShouldReturnCorrectAnnotations() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         List<AnnotationInfo> annotations = classIdentityCollector.getClassAnnotations(ctx);
 

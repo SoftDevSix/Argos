@@ -1,14 +1,12 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
-@Getter
-@Setter
+@Value
 @Builder
 public class ClassInformation {
-    private final ClassIdentity identity;
-    private final ClassStructure structure;
-    private final ClassMembers members;
+    ClassIdentity identity;
+    ClassStructure structure;
+    ClassMembers members;
 }

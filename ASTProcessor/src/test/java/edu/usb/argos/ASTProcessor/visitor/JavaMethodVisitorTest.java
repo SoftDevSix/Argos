@@ -45,7 +45,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_SimpleMethod_ShouldParseCorrectly() {
+    void visitMethodSimpleMethodShouldParseCorrectly() {
         String methodCode = "public void testMethod() { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
@@ -59,7 +59,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_WithParameters_ShouldParseCorrectly() {
+    void visitMethodWithParametersShouldParseCorrectly() {
         String methodCode = "public int calculateSum(int a, String b) { return a; }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
@@ -76,7 +76,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_WithMultipleModifiers_ShouldParseCorrectly() {
+    void visitMethodWithMultipleModifiersShouldParseCorrectly() {
         String methodCode = "public static final void testMethod() { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
@@ -89,7 +89,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_WithStatements_ShouldParseCorrectly() {
+    void visitMethodWithStatementsShouldParseCorrectly() {
         String methodCode =
                 "public void testMethod() {\n" +
                         "    System.out.println(\"Hello\");\n" +
@@ -111,7 +111,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_WithExpressionStatement_ShouldParseCorrectly() {
+    void visitMethodWithExpressionStatementShouldParseCorrectly() {
         String methodCode =
                 "public void testMethod() {\n" +
                         "    System.out.println(\"Test\");\n" +
@@ -126,7 +126,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_WithIfStatement_ShouldParseCorrectly() {
+    void visitMethodWithIfStatementShouldParseCorrectly() {
         String methodCode =
                 "public void testMethod() {\n" +
                         "    if (true) {\n" +
@@ -143,7 +143,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_WithComplexStatements_ShouldParseCorrectly() {
+    void visitMethodWithComplexStatementsShouldParseCorrectly() {
         String methodCode =
                 "public void testMethod() {\n" +
                         "    if (true) {\n" +
@@ -161,7 +161,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_WithExpressions_ShouldParseCorrectly() {
+    void visitMethodWithExpressionsShouldParseCorrectly() {
         String methodCode =
                 "public void testMethod() {\n" +
                         "    System.out.println(\"Test\" + \"Hello\");\n" +
@@ -177,7 +177,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void visitMethod_VerifyTokenStream_ShouldBeAccessible() {
+    void visitMethodVerifyTokenStreamShouldBeAccessible() {
         String methodCode = "public void testMethod() { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
@@ -187,7 +187,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void getMethodModifiers_WithNoModifiers_ShouldReturnEmptyList() {
+    void getMethodModifiersWithNoModifiersShouldReturnEmptyList() {
         String methodCode = "void testMethod() { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
@@ -197,7 +197,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void getReturnType_ComplexType_ShouldParseCorrectly() {
+    void getReturnTypeComplexTypeShouldParseCorrectly() {
         String methodCode = "public List<String> testMethod() { return null; }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 
@@ -207,7 +207,7 @@ public class JavaMethodVisitorTest {
     }
 
     @Test
-    void getParameters_WithArrayParameter_ShouldParseCorrectly() {
+    void getParametersWithArrayParameterShouldParseCorrectly() {
         String methodCode = "public void testMethod(String[] args) { }";
         JavaParser.MethodDeclarationContext ctx = parseMethod(methodCode);
 

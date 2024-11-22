@@ -22,6 +22,6 @@ public class HardcodedValueMatcher {
     }
 
     public boolean isHardcoded(String value) {
-        return pattern.matcher(value).matches();
+        return pattern.matcher(value).find();
     }
 }

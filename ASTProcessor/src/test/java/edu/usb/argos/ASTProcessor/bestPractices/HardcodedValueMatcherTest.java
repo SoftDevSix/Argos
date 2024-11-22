@@ -49,6 +49,7 @@ public class HardcodedValueMatcherTest {
     @Test
     public void testCharacterLiteralIsHardcoded() {
         assertTrue(matcher.isHardcoded("'a'"));
+        assertTrue(matcher.isHardcoded("\"a\""));
     }
 
     @Test

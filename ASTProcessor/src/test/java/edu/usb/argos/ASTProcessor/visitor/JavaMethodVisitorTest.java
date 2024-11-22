@@ -2,10 +2,12 @@ package edu.usb.argos.ASTProcessor.visitor;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.*;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ParameterInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Expression;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.*;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ExpressionCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ModifierCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.StatementCollector;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

@@ -20,17 +20,15 @@ dependencies {
 	implementation(libs.springboot.starter.web)
 	implementation(libs.springdoc.openapi)
 	implementation(libs.antlr.runtime)
+	developmentOnly(libs.springboot.devtools)
 	compileOnly(libs.lombok)
 	annotationProcessor(libs.lombok)
-	developmentOnly(libs.springboot.devtools)
-	testImplementation(libs.springboot.starter.test)
-	testRuntimeOnly(libs.junit.launcher)
 	antlr(libs.antlr)
 	testImplementation(libs.logback)
-	compileOnly(libs.lombok)
-	annotationProcessor(libs.lombok)
 	testCompileOnly(libs.lombok)
 	testAnnotationProcessor(libs.lombok)
+	testImplementation(libs.springboot.starter.test)
+	testRuntimeOnly(libs.junit.launcher)
 }
 
 tasks.withType<Test> {

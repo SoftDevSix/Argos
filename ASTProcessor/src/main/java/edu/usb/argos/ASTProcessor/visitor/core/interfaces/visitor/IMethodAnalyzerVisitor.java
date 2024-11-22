@@ -1,8 +1,8 @@
 package edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor;
 
-import java.util.List;
-
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ParameterInformation;
+
+import java.util.List;
 
 public interface IMethodAnalyzerVisitor<C, T> {
     T visitMethod(C ctx);

@@ -55,12 +55,14 @@ public class JavaMethodVisitor extends
 
     @Override
     public String getReturnType(ParserRuleContext ctx) {
-        return ContextValidator.validateAndExecute(
-                ctx,
-                JavaParser.MethodDeclarationContext.class,
-                this::extractReturnType,
-                EMPTY_RETURN_TYPE
-        );
+        return Optional.ofNullable(ctx)
+                .map(context -> ContextValidator.validateAndExecute(
+                        context,
+                        JavaParser.MethodDeclarationContext.class,
+                        this::extractReturnType,
+                        EMPTY_RETURN_TYPE
+                ))
+                .orElse(EMPTY_RETURN_TYPE);
     }
 
     private String extractReturnType(JavaParser.MethodDeclarationContext methodCtx) {

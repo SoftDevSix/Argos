@@ -1,7 +1,9 @@
 package edu.usb.argos.ASTProcessor.lexer;
 
 import org.antlr.v4.runtime.CommonTokenStream;
-import edu.usb.argos.ASTProcessor.lexer.errorHandler.exceptions.LexerProcessingException;
+import edu.usb.argos.ASTProcessor.lexer.errorHandler.exceptions.LexerFileProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +16,7 @@ import java.util.stream.Stream;
 public class LexerDirectoryProcessor {
     private final LexerFileProcessor fileProcessor;
     private static final String JAVA_EXTENSION = ".java";
+    private static final Logger logger = LoggerFactory.getLogger(LexerDirectoryProcessor.class);
 
     public LexerDirectoryProcessor() {
         this.fileProcessor = new LexerFileProcessor();
@@ -36,7 +39,9 @@ public class LexerDirectoryProcessor {
             CommonTokenStream tokens = fileProcessor.getTokensFromFile(path.toString());
             tokensByFile.put(path.toString(), tokens);
         } catch (IOException e) {
-            throw new LexerProcessingException("Error processing file: " + path, e);
+            String errorMessage = "Error processing file: " + path + ", error: " + e.getMessage();
+            logger.error(errorMessage);
+            throw new LexerFileProcessingException(errorMessage, e);
         }
     }
 }

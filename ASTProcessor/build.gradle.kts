@@ -2,7 +2,7 @@ plugins {
 	application
 	alias(libs.plugins.springboot.web) apply true
 	alias(libs.plugins.dependency.management) apply true
-	id("org.sonarqube") version "5.1.0.4882"
+	alias(libs.plugins.sonarqube) apply true
 	antlr
 	jacoco
 }
@@ -25,8 +25,8 @@ dependencies {
 	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)
 	antlr(libs.antlr)
-	implementation("org.slf4j:slf4j-api:2.0.9")
-	implementation("org.slf4j:slf4j-simple:2.0.9")
+	implementation(libs.slf4j.api)
+	implementation(libs.slf4j.simple)
 }
 
 tasks.withType<Test> {

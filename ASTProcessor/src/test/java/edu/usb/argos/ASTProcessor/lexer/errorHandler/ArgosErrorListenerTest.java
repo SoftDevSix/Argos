@@ -11,7 +11,6 @@ import java.util.BitSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ArgosErrorListenerTest {
-
     private final ArgosErrorListener errorListener = new ArgosErrorListener();
 
     @Test

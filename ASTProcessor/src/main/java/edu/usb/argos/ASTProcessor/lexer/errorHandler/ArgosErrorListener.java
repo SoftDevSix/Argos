@@ -20,15 +20,14 @@ public class ArgosErrorListener implements ANTLRErrorListener {
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
                             int line, int charPositionInLine, String msg, RecognitionException e) {
         String errorMessage = "Syntax error at line " + line + ":" + charPositionInLine + " " + msg;
-        logger.error(errorMessage, e);
+        logger.error(errorMessage);
         throw new AntlrException(errorMessage);
     }
 
     @Override
     public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
                                 boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
-        String ambiguityMessage = "Ambiguity found in parser " + recognizer.getGrammarFileName() +
-                " at " + startIndex + ":" + stopIndex;
+        String ambiguityMessage = "Ambiguity found in " + recognizer + " at " + startIndex + ":" + stopIndex;
         logger.warn(ambiguityMessage);
         throw new AntlrException(ambiguityMessage);
     }
@@ -46,7 +45,7 @@ public class ArgosErrorListener implements ANTLRErrorListener {
     @Override
     public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex,
                                          int stopIndex, int prediction, ATNConfigSet configs) {
-        String sensitivityMessage = "Context sensitivity detected among indexes " + startIndex +
+        String sensitivityMessage = "Context sensitivity detected among the indexes " + startIndex +
                 " and " + stopIndex + ". Prediction: " + prediction;
         logger.info(sensitivityMessage);
         throw new AntlrException(sensitivityMessage);

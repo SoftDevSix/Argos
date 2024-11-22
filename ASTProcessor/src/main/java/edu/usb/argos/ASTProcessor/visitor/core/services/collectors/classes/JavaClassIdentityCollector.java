@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class JavaClassIdentityCollector implements IClassIdentityCollector<ParserRuleContext> {
 
-    private final String DEFAULT_VALUE = "";
+    private static final String DEFAULT_VALUE = "";
 
     @Override
     public Optional<String> getClassName(ParserRuleContext ctx) {
@@ -102,10 +102,10 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private AnnotationInfo createAnnotationInfo(JavaParser.ClassOrInterfaceModifierContext mod) {
-        AnnotationInfo annotation = new AnnotationInfo();
-        annotation.setName(getAnnotationName(mod));
-        annotation.setAttributes(getAnnotationAttributes(mod));
-        return annotation;
+        return AnnotationInfo.builder()
+                .name(getAnnotationName(mod))
+                .attributes(getAnnotationAttributes(mod))
+                .build();
     }
 
     private String getAnnotationName(JavaParser.ClassOrInterfaceModifierContext mod) {
@@ -113,7 +113,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private Map<String, String> getAnnotationAttributes(JavaParser.ClassOrInterfaceModifierContext mod) {
-        HashMap<String, String> attributes = new HashMap<>();
+        Map<String, String> attributes = new HashMap<>();
         if (mod.annotation().elementValuePairs() != null) {
             for (JavaParser.ElementValuePairContext pair : mod.annotation().elementValuePairs().elementValuePair()) {
                 attributes.put(pair.identifier().getText(), getAttributeValue(pair));

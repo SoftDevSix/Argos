@@ -38,14 +38,14 @@ public class JavaClassStructureCollectorTest {
     }
 
     @Test
-    void getSuperClass_ShouldReturnCorrectSuperClass() {
+    void getSuperClassShouldReturnCorrectSuperClass() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         Optional<String> superClass = structureCollector.getSuperClass(ctx);
         assertEquals("BaseClass", superClass.get());
     }
 
     @Test
-    void getImplementedInterfaces_ShouldReturnCorrectInterfaces() {
+    void getImplementedInterfacesShouldReturnCorrectInterfaces() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         List<String> interfaces = structureCollector.getImplementedInterfaces(ctx);
 

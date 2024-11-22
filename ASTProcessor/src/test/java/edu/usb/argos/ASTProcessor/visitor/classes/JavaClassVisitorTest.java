@@ -28,8 +28,15 @@ public class JavaClassVisitorTest {
 
     @Test
     void testVisitClassDeclaration() {
+        ClassInformation classInformation = extractClassInformation(getTestJavaSource());
+        assertNotNull(classInformation);
+        testClassIdentity(classInformation);
+        testClassStructure(classInformation);
+        testClassMembers(classInformation);
+    }
 
-        String javaSource = """
+    private String getTestJavaSource() {
+        return """
                 package com.example;
                 
                 public class TestClass extends BaseClass implements InterfaceOne, InterfaceTwo {
@@ -39,46 +46,82 @@ public class JavaClassVisitorTest {
                     public void method() {}
                 }
                 """;
+    }
 
+    private ClassInformation extractClassInformation(String javaSource) {
+        CommonTokenStream tokenStream = tokenize(javaSource);
+        JavaParser parser = createParser(tokenStream);
+        JavaClassVisitor visitor = createVisitor(tokenStream);
+        return visitClass(parser, visitor);
+    }
+
+    private CommonTokenStream tokenize(String javaSource) {
         CharStream charStream = CharStreams.fromString(javaSource);
         JavaLexer lexer = new JavaLexer(charStream);
-        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        JavaParser parser = new JavaParser(tokenStream);
+        return new CommonTokenStream(lexer);
+    }
 
-        JavaMethodVisitor methodVisitor = new JavaMethodVisitor(
-                tokenStream,
-                new ExpressionCollector(),
-                new StatementCollector(),
-                new ModifierCollector()
-        );
+    private JavaParser createParser(CommonTokenStream tokenStream) {
+        return new JavaParser(tokenStream);
+    }
 
-        AttributeHandler attributeHandler = new AttributeHandler();
-        JavaAttributeVisitor attributeVisitor = new JavaAttributeVisitor(attributeHandler);
-
+    private JavaClassVisitor createVisitor(CommonTokenStream tokenStream) {
+        JavaMethodVisitor methodVisitor = createMethodVisitor(tokenStream);
+        JavaAttributeVisitor attributeVisitor = createAttributeVisitor();
         JavaConstructorVisitor constructorVisitor = new JavaConstructorVisitor();
 
         JavaClassIdentityCollector identityCollector = new JavaClassIdentityCollector();
         JavaClassStructureCollector structureCollector = new JavaClassStructureCollector();
-        JavaClassMemberCollector memberCollector = new JavaClassMemberCollector(
+        JavaClassMemberCollector memberCollector = createMemberCollector(
                 methodVisitor,
                 attributeVisitor,
                 constructorVisitor
         );
 
-        JavaClassVisitor visitor = new JavaClassVisitor(identityCollector, structureCollector, memberCollector);
+        return new JavaClassVisitor(identityCollector, structureCollector, memberCollector);
+    }
 
+    private JavaMethodVisitor createMethodVisitor(CommonTokenStream tokenStream) {
+        return new JavaMethodVisitor(
+                tokenStream,
+                new ExpressionCollector(),
+                new StatementCollector(),
+                new ModifierCollector()
+        );
+    }
+
+    private JavaAttributeVisitor createAttributeVisitor() {
+        AttributeHandler attributeHandler = new AttributeHandler();
+        return new JavaAttributeVisitor(attributeHandler);
+    }
+
+    private JavaClassMemberCollector createMemberCollector(
+            JavaMethodVisitor methodVisitor,
+            JavaAttributeVisitor attributeVisitor,
+            JavaConstructorVisitor constructorVisitor
+    ) {
+        return new JavaClassMemberCollector(methodVisitor, attributeVisitor, constructorVisitor);
+    }
+
+    private ClassInformation visitClass(JavaParser parser, JavaClassVisitor visitor) {
         JavaParser.CompilationUnitContext context = parser.compilationUnit();
         JavaParser.ClassDeclarationContext classCtx = context.typeDeclaration(0).classDeclaration();
+        return visitor.visitClass(classCtx);
+    }
 
-        ClassInformation classInformation = visitor.visitClass(classCtx);
-
-        assertNotNull(classInformation);
+    private void testClassIdentity(ClassInformation classInformation) {
         assertEquals("TestClass", classInformation.getIdentity().getName().get());
         assertEquals("com.example", classInformation.getIdentity().getPackageName().get());
         assertTrue(classInformation.getIdentity().getModifiers().contains("public"));
+    }
+
+    private void testClassStructure(ClassInformation classInformation) {
         assertEquals("BaseClass", classInformation.getStructure().getSuperClass().get());
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceOne"));
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceTwo"));
+    }
+
+    private void testClassMembers(ClassInformation classInformation) {
         assertEquals(1, classInformation.getMembers().getAttributes().size());
         assertEquals(1, classInformation.getMembers().getMethods().size());
         assertEquals(2, classInformation.getMembers().getConstructors().size());

@@ -63,7 +63,7 @@ public class JavaClassMemberCollectorTest {
     }
 
     @Test
-    void getClassMethods_ShouldReturnCorrectMethods() {
+    void getClassMethodsShouldReturnCorrectMethods() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
 
         MethodInformation<
@@ -112,7 +112,7 @@ public class JavaClassMemberCollectorTest {
     }
 
     @Test
-    void getClassAttributes_ShouldReturnCorrectAttributes() {
+    void getClassAttributesShouldReturnCorrectAttributes() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         JavaParser.ClassBodyContext bodyCtx = ctx.classBody();
 
@@ -143,7 +143,7 @@ public class JavaClassMemberCollectorTest {
     }
 
     @Test
-    void getClassConstructors_ShouldReturnCorrectConstructors() {
+    void getClassConstructorsShouldReturnCorrectConstructors() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
 
         ConstructorInformation constructorOne = ConstructorInformation.builder()
@@ -173,4 +173,3 @@ public class JavaClassMemberCollectorTest {
         assertEquals(Arrays.asList("String"), constructors.get(1).getParameters());
     }
 }
-

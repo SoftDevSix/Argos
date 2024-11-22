@@ -9,24 +9,18 @@ import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
+import lombok.Value;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+@Value
 public class JavaClassMemberCollector implements IClassMemberCollector<ParserRuleContext> {
-    private final JavaMethodVisitor methodVisitor;
-    private final JavaAttributeVisitor attributeVisitor;
-    private final JavaConstructorVisitor constructorVisitor;
-
-    public JavaClassMemberCollector(
-            JavaMethodVisitor methodVisitor,
-            JavaAttributeVisitor attributeVisitor,
-            JavaConstructorVisitor constructorVisitor) {
-        this.methodVisitor = methodVisitor;
-        this.attributeVisitor = attributeVisitor;
-        this.constructorVisitor = constructorVisitor;
-    }
+    JavaMethodVisitor methodVisitor;
+    JavaAttributeVisitor attributeVisitor;
+    JavaConstructorVisitor constructorVisitor;
 
     @Override
     public List getClassMethods(ParserRuleContext ctx) {
@@ -34,7 +28,7 @@ public class JavaClassMemberCollector implements IClassMemberCollector<ParserRul
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
                 this::extractMethodsFromClassBody,
-                new ArrayList<>()
+                Collections.emptyList()
         );
     }
 
@@ -65,7 +59,7 @@ public class JavaClassMemberCollector implements IClassMemberCollector<ParserRul
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
                 classCtx -> attributeVisitor.visitClassBody(classCtx.classBody()),
-                new ArrayList<>()
+                Collections.emptyList()
         );
     }
 
@@ -75,7 +69,7 @@ public class JavaClassMemberCollector implements IClassMemberCollector<ParserRul
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
                 classCtx -> constructorVisitor.visitConstructors(classCtx.classBody()),
-                new ArrayList<>()
+                Collections.emptyList()
         );
     }
 }

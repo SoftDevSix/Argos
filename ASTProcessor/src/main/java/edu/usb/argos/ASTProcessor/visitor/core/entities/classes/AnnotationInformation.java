@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Value
 @Builder
-public class AnnotationInfo {
+public class AnnotationInformation {
     String name;
     Map<String, String> attributes;
 }

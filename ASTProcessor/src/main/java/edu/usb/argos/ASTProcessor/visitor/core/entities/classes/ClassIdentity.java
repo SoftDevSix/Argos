@@ -12,5 +12,5 @@ public class ClassIdentity {
     Optional<String> name;
     Optional<String> packageName;
     List<String> modifiers;
-    List<AnnotationInfo> annotations;
+    List<AnnotationInformation> annotations;
 }

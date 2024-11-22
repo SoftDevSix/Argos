@@ -2,7 +2,7 @@ package edu.usb.argos.ASTProcessor.visitor.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassIdentityCollector;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JavaClassIdentityCollectorTest {
     private JavaClassIdentityCollector classIdentityCollector;
@@ -66,7 +68,7 @@ public class JavaClassIdentityCollectorTest {
     @Test
     void getClassAnnotationsShouldReturnCorrectAnnotations() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
-        List<AnnotationInfo> annotations = classIdentityCollector.getClassAnnotations(ctx);
+        List<AnnotationInformation> annotations = classIdentityCollector.getClassAnnotations(ctx);
 
         assertFalse(annotations.isEmpty());
         assertEquals("TestAnnotation", annotations.get(0).getName());

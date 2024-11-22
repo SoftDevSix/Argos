@@ -1,16 +1,17 @@
 package edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInfo;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassIdentityCollector;
 import edu.usb.argos.ASTProcessor.visitor.shared.validation.ContextValidator;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 
 public class JavaClassIdentityCollector implements IClassIdentityCollector<ParserRuleContext> {
 
@@ -55,7 +56,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     @Override
     public List<String> getClassModifiers(ParserRuleContext ctx) {
         JavaParser.TypeDeclarationContext typeCtx = getTypeDeclarationContext(ctx);
-        return typeCtx != null ? extractModifiers(typeCtx) : new ArrayList<>();
+        return typeCtx != null ? extractModifiers(typeCtx) : Collections.emptyList();
     }
 
     private JavaParser.TypeDeclarationContext getTypeDeclarationContext(ParserRuleContext ctx) {
@@ -78,7 +79,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private List<JavaParser.ClassOrInterfaceModifierContext> getClassOrInterfaceModifiers(JavaParser.TypeDeclarationContext typeCtx) {
-        return typeCtx.classOrInterfaceModifier() != null ? typeCtx.classOrInterfaceModifier() : new ArrayList<>();
+        return typeCtx.classOrInterfaceModifier() != null ? typeCtx.classOrInterfaceModifier() : Collections.emptyList();
     }
 
     private String getModifierText(JavaParser.ClassOrInterfaceModifierContext mod) {
@@ -86,13 +87,13 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     @Override
-    public List<AnnotationInfo> getClassAnnotations(ParserRuleContext ctx) {
+    public List<AnnotationInformation> getClassAnnotations(ParserRuleContext ctx) {
         JavaParser.TypeDeclarationContext typeCtx = getTypeDeclarationContext(ctx);
-        return typeCtx != null ? extractAnnotations(typeCtx) : new ArrayList<>();
+        return typeCtx != null ? extractAnnotations(typeCtx) : Collections.emptyList();
     }
 
-    private List<AnnotationInfo> extractAnnotations(JavaParser.TypeDeclarationContext typeCtx) {
-        List<AnnotationInfo> annotations = new ArrayList<>();
+    private List<AnnotationInformation> extractAnnotations(JavaParser.TypeDeclarationContext typeCtx) {
+        List<AnnotationInformation> annotations = new ArrayList<>();
         for (JavaParser.ClassOrInterfaceModifierContext mod : getClassOrInterfaceModifiers(typeCtx)) {
             if (mod.annotation() != null) {
                 annotations.add(createAnnotationInfo(mod));
@@ -101,8 +102,8 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
         return annotations;
     }
 
-    private AnnotationInfo createAnnotationInfo(JavaParser.ClassOrInterfaceModifierContext mod) {
-        return AnnotationInfo.builder()
+    private AnnotationInformation createAnnotationInfo(JavaParser.ClassOrInterfaceModifierContext mod) {
+        return AnnotationInformation.builder()
                 .name(getAnnotationName(mod))
                 .attributes(getAnnotationAttributes(mod))
                 .build();

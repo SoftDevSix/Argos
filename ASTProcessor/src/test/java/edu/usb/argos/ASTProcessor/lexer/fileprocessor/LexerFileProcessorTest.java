@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.lexer.fileProcessor;
+package edu.usb.argos.ASTProcessor.lexer.fileprocessor;
 
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;

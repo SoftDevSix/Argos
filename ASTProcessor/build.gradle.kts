@@ -21,12 +21,12 @@ repositories {
 dependencies {
 	implementation(libs.springboot.starter.web)
 	implementation(libs.springdoc.openapi)
+	implementation(libs.slf4j.api)
+	implementation(libs.slf4j.simple)
 	developmentOnly(libs.springboot.devtools)
 	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)
 	antlr(libs.antlr)
-	implementation(libs.slf4j.api)
-	implementation(libs.slf4j.simple)
 }
 
 tasks.withType<Test> {

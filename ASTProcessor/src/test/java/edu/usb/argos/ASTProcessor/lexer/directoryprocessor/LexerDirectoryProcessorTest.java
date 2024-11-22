@@ -1,8 +1,8 @@
-package edu.usb.argos.ASTProcessor.lexer.directoryProcessor;
+package edu.usb.argos.ASTProcessor.lexer.directoryprocessor;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.lexer.fileProcessor.IFileProcessor;
-import edu.usb.argos.ASTProcessor.lexer.fileProcessor.LexerFileProcessor;
+import edu.usb.argos.ASTProcessor.lexer.fileprocessor.IFileProcessor;
+import edu.usb.argos.ASTProcessor.lexer.fileprocessor.LexerFileProcessor;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.BeforeEach;

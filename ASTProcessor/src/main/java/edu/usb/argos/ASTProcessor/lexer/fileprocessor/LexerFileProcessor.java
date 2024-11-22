@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.lexer.fileProcessor;
+package edu.usb.argos.ASTProcessor.lexer.fileprocessor;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.lexer.errorHandler.ArgosErrorListener;
+import edu.usb.argos.ASTProcessor.lexer.errorhandler.ArgosErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 

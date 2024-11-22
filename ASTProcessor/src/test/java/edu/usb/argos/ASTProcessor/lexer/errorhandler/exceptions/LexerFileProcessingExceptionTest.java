@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.lexer.errorHandler.exceptions;
+package edu.usb.argos.ASTProcessor.lexer.errorhandler.exceptions;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

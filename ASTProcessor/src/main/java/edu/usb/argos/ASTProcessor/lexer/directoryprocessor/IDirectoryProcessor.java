@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.lexer.directoryProcessor;
+package edu.usb.argos.ASTProcessor.lexer.directoryprocessor;
 
 import java.io.IOException;
 import java.util.Map;

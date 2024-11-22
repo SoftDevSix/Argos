@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.lexer.directoryProcessor;
+package edu.usb.argos.ASTProcessor.lexer.directoryprocessor;
 
-import edu.usb.argos.ASTProcessor.lexer.errorHandler.exceptions.LexerFileProcessingException;
-import edu.usb.argos.ASTProcessor.lexer.fileProcessor.IFileProcessor;
+import edu.usb.argos.ASTProcessor.lexer.errorhandler.exceptions.LexerFileProcessingException;
+import edu.usb.argos.ASTProcessor.lexer.fileprocessor.IFileProcessor;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

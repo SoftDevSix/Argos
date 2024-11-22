@@ -1,6 +1,6 @@
-package edu.usb.argos.ASTProcessor.lexer.errorHandler;
+package edu.usb.argos.ASTProcessor.lexer.errorhandler;
 
-import edu.usb.argos.ASTProcessor.lexer.errorHandler.exceptions.AntlrException;
+import edu.usb.argos.ASTProcessor.lexer.errorhandler.exceptions.AntlrException;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;

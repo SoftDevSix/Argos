@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.lexer.errorHandler.exceptions;
+package edu.usb.argos.ASTProcessor.lexer.errorhandler.exceptions;
 
 public class LexerFileProcessingException extends RuntimeException {
     public LexerFileProcessingException(String message) {

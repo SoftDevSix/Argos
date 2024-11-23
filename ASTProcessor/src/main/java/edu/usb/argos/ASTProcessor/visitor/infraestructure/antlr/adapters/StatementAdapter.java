@@ -5,7 +5,7 @@ import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import lombok.Value;
 
 @Value
-public class AntlrStatementAdapter implements Statement<JavaParser.StatementContext> {
+public class StatementAdapter implements Statement<JavaParser.StatementContext> {
     JavaParser.StatementContext node;
 
     @Override

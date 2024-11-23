@@ -12,5 +12,4 @@ public class ParameterInformation {
     String type;
     List<String> modifiers;
     boolean isVarArgs;
-    List<String> annotations;
 }

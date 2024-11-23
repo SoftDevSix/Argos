@@ -42,13 +42,16 @@ public class JavaMethodVisitorTest {
             JavaParser parser = new JavaParser(tokens);
             JavaParser.CompilationUnitContext compilationUnit = parser.compilationUnit();
 
-            return compilationUnit
+            JavaParser.MemberDeclarationContext memberDecl = compilationUnit
                     .typeDeclaration(0)
                     .classDeclaration()
                     .classBody()
                     .classBodyDeclaration(0)
-                    .memberDeclaration()
-                    .methodDeclaration();
+                    .memberDeclaration();
+
+            return memberDecl.genericMethodDeclaration() != null ?
+                    memberDecl.genericMethodDeclaration().methodDeclaration() :
+                    memberDecl.methodDeclaration();
         } catch (Exception e) {
             throw new RuntimeException("Error parsing Java code: " + e.getMessage(), e);
         }
@@ -263,5 +266,24 @@ public class JavaMethodVisitorTest {
         for (ParameterInformation param : parameters) {
             assertTrue(param.getModifiers().contains("final"));
         }
+    }
+
+    @Test
+    void testMethodWithGenericParameters() {
+        String code = """
+            class Test {
+                public <T extends Comparable<T>> void sort(List<T> list) {
+                    // Method body
+                }
+            }
+            """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertEquals(1, info.getParameters().size());
+        ParameterInformation param = info.getParameters().get(0);
+        assertEquals("list", param.getName());
+        assertEquals("List<T>", param.getType());
     }
 }

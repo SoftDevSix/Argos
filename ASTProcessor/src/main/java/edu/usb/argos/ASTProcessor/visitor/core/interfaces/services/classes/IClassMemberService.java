@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes;
+package edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.classes;
 
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
@@ -6,8 +6,8 @@ import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation
 
 import java.util.List;
 
-public interface IClassMemberCollector <T> {
-    List<MethodInformation> getClassMethods(T ctx);
+public interface IClassMemberService<T, S, R> {
+    List<MethodInformation<S>> getClassMethods(T ctx);
     List<AttributeInformation> getClassAttributes(T ctx);
-    List<ConstructorInformation> getClassConstructors(T ctx);
+    List<ConstructorInformation<R>> getClassConstructors(T ctx);
 }

@@ -5,7 +5,7 @@ import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassMemberCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassMemberService;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class JavaClassMemberCollectorTest {
+public class JavaClassMemberServiceTest {
     @Mock
     private JavaMethodVisitor methodVisitor;
     @Mock
@@ -35,7 +35,7 @@ public class JavaClassMemberCollectorTest {
     @Mock
     private JavaConstructorVisitor constructorVisitor;
 
-    private JavaClassMemberCollector memberCollector;
+    private JavaClassMemberService memberService;
     private JavaParser.CompilationUnitContext compilationUnit;
 
     @BeforeEach
@@ -58,57 +58,50 @@ public class JavaClassMemberCollectorTest {
         JavaParser parser = new JavaParser(tokens);
         compilationUnit = parser.compilationUnit();
 
-        memberCollector = new JavaClassMemberCollector(methodVisitor, attributeVisitor, constructorVisitor);
+        memberService = new JavaClassMemberService(methodVisitor, attributeVisitor, constructorVisitor);
     }
 
-    @Test
-    void getClassMethodsShouldReturnCorrectMethods() {
-        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+     @Test
+     void getClassMethodsShouldReturnCorrectMethods() {
+         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
 
-        MethodInformation<
-                JavaParser.StatementContext,
-                JavaParser.ExpressionContext,
-                CommonTokenStream>
-                method1 = MethodInformation.<
-                        JavaParser.StatementContext,
-                        JavaParser.ExpressionContext,
-                        CommonTokenStream>
-                        builder()
-                .name("method1")
-                .returnType("void")
-                .modifiers(new ArrayList<>())
-                .parameters(new ArrayList<>())
-                .statements(new ArrayList<>())
-                .expressions(new ArrayList<>())
-                .tokens(null)
-                .build();
+         MethodInformation<JavaParser.StatementContext>
+                 method1 = MethodInformation.<
+                         JavaParser.StatementContext>
+                         builder()
+                 .name("method1")
+                 .returnType("void")
+                 .modifiers(new ArrayList<>())
+                 .parameters(new ArrayList<>())
+                 .statements(new ArrayList<>())
+                 .throwsExceptions(new ArrayList<>())
+                 .annotations(new ArrayList<>())
+                 .isVarArgs(false)
+                 .build();
 
-        MethodInformation<
-                JavaParser.StatementContext,
-                JavaParser.ExpressionContext,
-                CommonTokenStream>
-                method2 = MethodInformation.<
-                        JavaParser.StatementContext,
-                        JavaParser.ExpressionContext,
-                        CommonTokenStream>
-                        builder()
-                .name("method2")
-                .returnType("String")
-                .modifiers(new ArrayList<>())
-                .parameters(new ArrayList<>())
-                .statements(new ArrayList<>())
-                .expressions(new ArrayList<>())
-                .tokens(null)
-                .build();
+         MethodInformation<
+                 JavaParser.StatementContext>
+                 method2 = MethodInformation.<
+                         JavaParser.StatementContext>
+                         builder()
+                 .name("method2")
+                 .returnType("String")
+                 .modifiers(new ArrayList<>())
+                 .parameters(new ArrayList<>())
+                 .statements(new ArrayList<>())
+                 .throwsExceptions(new ArrayList<>())
+                 .annotations(new ArrayList<>())
+                 .isVarArgs(false)
+                 .build();
 
-        when(methodVisitor.visitMethod(any())).thenReturn(method1).thenReturn(method2);
+         when(methodVisitor.visitMethodDeclaration(any())).thenReturn(method1).thenReturn(method2);
 
-        List<MethodInformation<Void, Void, Void>> methods = memberCollector.getClassMethods(ctx);
+         List<MethodInformation<JavaParser.StatementContext>> methods = memberService.getClassMethods(ctx);
 
-        assertEquals(2, methods.size());
-        assertEquals("method1", methods.get(0).getName());
-        assertEquals("method2", methods.get(1).getName());
-    }
+         assertEquals(2, methods.size());
+         assertEquals("method1", methods.get(0).getName());
+         assertEquals("method2", methods.get(1).getName());
+     }
 
     @Test
     void getClassAttributesShouldReturnCorrectAttributes() {
@@ -134,7 +127,7 @@ public class JavaClassMemberCollectorTest {
 
         when(attributeVisitor.visitClassBody(bodyCtx)).thenReturn(expectedAttributes);
 
-        List<AttributeInformation> attributes = memberCollector.getClassAttributes(ctx);
+        List<AttributeInformation> attributes = memberService.getClassAttributes(ctx);
 
         assertEquals(2, attributes.size());
         assertEquals("field1", attributes.get(0).getName());
@@ -147,28 +140,28 @@ public class JavaClassMemberCollectorTest {
 
         ConstructorInformation constructorOne = ConstructorInformation.builder()
                 .name("TestClass")
-                .modifiers(Arrays.asList("public"))
+                .modifiers(List.of("public"))
                 .parameters(new ArrayList<>())
                 .build();
 
         ConstructorInformation constructorTwo = ConstructorInformation.builder()
                 .name("TestClass")
-                .modifiers(Arrays.asList("public"))
-                .parameters(Arrays.asList("String"))
+                .modifiers(List.of("public"))
+                .parameters(List.of("String"))
                 .build();
 
         when(constructorVisitor.visitConstructors(any())).thenReturn(Arrays.asList(constructorOne, constructorTwo));
 
-        List<ConstructorInformation> constructors = memberCollector.getClassConstructors(ctx);
+        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = memberService.getClassConstructors(ctx);
 
         assertEquals(2, constructors.size());
 
         assertEquals("TestClass", constructors.get(0).getName());
-        assertEquals(Arrays.asList("public"), constructors.get(0).getModifiers());
+        assertEquals(List.of("public"), constructors.get(0).getModifiers());
         assertTrue(constructors.get(0).getParameters().isEmpty());
 
         assertEquals("TestClass", constructors.get(1).getName());
-        assertEquals(Arrays.asList("public"), constructors.get(1).getModifiers());
-        assertEquals(Arrays.asList("String"), constructors.get(1).getParameters());
+        assertEquals(List.of("public"), constructors.get(1).getModifiers());
+        assertEquals(List.of("String"), constructors.get(1).getParameters());
     }
 }

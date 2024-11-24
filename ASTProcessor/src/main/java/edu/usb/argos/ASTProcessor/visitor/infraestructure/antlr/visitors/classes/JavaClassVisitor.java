@@ -5,20 +5,22 @@ import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassIdentity;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassMembers;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassStructure;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassAnalyzerVisitor;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassIdentityCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassMemberCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.collectors.classes.IClassStructureCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor.IClassAnalyzerVisitor;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.classes.IClassIdentityService;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.classes.IClassMemberService;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.classes.IClassStructureService;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+@EqualsAndHashCode(callSuper = true)
 @Value
 public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInformation>
         implements IClassAnalyzerVisitor<ParserRuleContext> {
 
-    IClassIdentityCollector<ParserRuleContext> identityCollector;
-    IClassStructureCollector<ParserRuleContext> structureCollector;
-    IClassMemberCollector<ParserRuleContext> memberCollector;
+    IClassIdentityService<ParserRuleContext> identityCollector;
+    IClassStructureService<ParserRuleContext> structureCollector;
+    IClassMemberService<ParserRuleContext, Object, Object> memberCollector;
 
     @Override
     public ClassInformation visitClass(ParserRuleContext ctx) {

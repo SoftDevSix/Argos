@@ -1,7 +1,7 @@
 package edu.usb.argos.ASTProcessor.visitor.classes;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassStructureCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassStructureService;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,8 +16,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JavaClassStructureCollectorTest {
-    private JavaClassStructureCollector structureCollector;
+public class JavaClassStructureServiceTest {
+    private JavaClassStructureService structureService;
     private JavaParser.CompilationUnitContext compilationUnit;
 
     @BeforeEach
@@ -34,20 +34,20 @@ public class JavaClassStructureCollectorTest {
         JavaParser parser = new JavaParser(tokens);
         compilationUnit = parser.compilationUnit();
 
-        structureCollector = new JavaClassStructureCollector();
+        structureService = new JavaClassStructureService();
     }
 
     @Test
     void getSuperClassShouldReturnCorrectSuperClass() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
-        Optional<String> superClass = structureCollector.getSuperClass(ctx);
+        Optional<String> superClass = structureService.getSuperClass(ctx);
         assertEquals("BaseClass", superClass.get());
     }
 
     @Test
     void getImplementedInterfacesShouldReturnCorrectInterfaces() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
-        List<String> interfaces = structureCollector.getImplementedInterfaces(ctx);
+        List<String> interfaces = structureService.getImplementedInterfaces(ctx);
 
         assertEquals(2, interfaces.size());
         assertTrue(interfaces.contains("Interface1"));

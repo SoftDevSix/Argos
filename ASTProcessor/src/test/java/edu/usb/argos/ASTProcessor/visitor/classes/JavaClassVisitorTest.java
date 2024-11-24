@@ -3,12 +3,13 @@ package edu.usb.argos.ASTProcessor.visitor.classes;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ExpressionCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ModifierCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.StatementCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassIdentityCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassMemberCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassStructureCollector;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.classes.IClassMemberService;
+import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassIdentityService;
+import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassMemberService;
+import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassStructureService;
+import edu.usb.argos.ASTProcessor.visitor.core.services.method.AnnotationService;
+import edu.usb.argos.ASTProcessor.visitor.core.services.method.ModifierService;
+import edu.usb.argos.ASTProcessor.visitor.core.services.method.ParameterService;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaClassVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
@@ -38,7 +39,7 @@ public class JavaClassVisitorTest {
     private String getTestJavaSource() {
         return """
                 package com.example;
-                
+
                 public class TestClass extends BaseClass implements InterfaceOne, InterfaceTwo {
                     private int attribute;
                     public TestClass() {}
@@ -70,23 +71,22 @@ public class JavaClassVisitorTest {
         JavaAttributeVisitor attributeVisitor = createAttributeVisitor();
         JavaConstructorVisitor constructorVisitor = new JavaConstructorVisitor();
 
-        JavaClassIdentityCollector identityCollector = new JavaClassIdentityCollector();
-        JavaClassStructureCollector structureCollector = new JavaClassStructureCollector();
-        JavaClassMemberCollector memberCollector = createMemberCollector(
+        JavaClassIdentityService identityService = new JavaClassIdentityService();
+        JavaClassStructureService structureService = new JavaClassStructureService();
+        IClassMemberService memberService = createMemberService(
                 methodVisitor,
                 attributeVisitor,
                 constructorVisitor
         );
 
-        return new JavaClassVisitor(identityCollector, structureCollector, memberCollector);
+        return new JavaClassVisitor(identityService, structureService, memberService);
     }
 
     private JavaMethodVisitor createMethodVisitor(CommonTokenStream tokenStream) {
         return new JavaMethodVisitor(
-                tokenStream,
-                new ExpressionCollector(),
-                new StatementCollector(),
-                new ModifierCollector()
+                new ModifierService(),
+                new ParameterService(),
+                new AnnotationService()
         );
     }
 
@@ -95,12 +95,12 @@ public class JavaClassVisitorTest {
         return new JavaAttributeVisitor(attributeHandler);
     }
 
-    private JavaClassMemberCollector createMemberCollector(
+    private JavaClassMemberService createMemberService(
             JavaMethodVisitor methodVisitor,
             JavaAttributeVisitor attributeVisitor,
             JavaConstructorVisitor constructorVisitor
     ) {
-        return new JavaClassMemberCollector(methodVisitor, attributeVisitor, constructorVisitor);
+        return new JavaClassMemberService(methodVisitor, attributeVisitor, constructorVisitor);
     }
 
     private ClassInformation visitClass(JavaParser parser, JavaClassVisitor visitor) {

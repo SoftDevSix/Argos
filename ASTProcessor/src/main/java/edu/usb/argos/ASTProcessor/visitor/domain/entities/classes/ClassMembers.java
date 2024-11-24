@@ -10,7 +10,7 @@ import java.util.List;
 @Value
 @Builder
 public class ClassMembers {
-    List<MethodInformation> methods;
+    List<MethodInformation<Object>> methods;
     List<AttributeInformation> attributes;
-    List<ConstructorInformation> constructors;
+    List<ConstructorInformation<Object>> constructors;
 }

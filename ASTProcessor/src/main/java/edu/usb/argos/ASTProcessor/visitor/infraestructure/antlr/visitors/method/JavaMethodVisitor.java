@@ -1,0 +1,155 @@
+package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method;
+
+import edu.usb.argos.ASTProcessor.antlr.JavaParser;
+import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
+import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ParameterInformation;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.IAnnotationExtractor;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.IModifierExtractor;
+import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.IParameterExtractor;
+import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.StatementAdapter;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+@EqualsAndHashCode(callSuper = true)
+@Value
+public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<JavaParser.StatementContext>> {
+    IModifierExtractor<JavaParser.ClassBodyDeclarationContext> modifierService;
+    IParameterExtractor<JavaParser.FormalParameterContext, JavaParser.LastFormalParameterContext> parameterService;
+    IAnnotationExtractor<JavaParser.ClassBodyDeclarationContext> annotationService;
+
+    @Override
+    public MethodInformation<JavaParser.StatementContext> visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
+        return MethodInformation.<JavaParser.StatementContext>builder()
+                .name(ctx.identifier().getText())
+                .returnType(getReturnType(ctx))
+                .modifiers(getMethodModifiers(ctx))
+                .parameters(getParameters(ctx))
+                .statements(getStatements(ctx))
+                .throwsExceptions(getThrowsExceptions(ctx))
+                .annotations(getAnnotations(ctx))
+                .isVarArgs(hasVarArgs(ctx))
+                .build();
+    }
+
+    private boolean hasVarArgs(JavaParser.MethodDeclarationContext ctx) {
+        if (ctx.formalParameters() == null) {
+            return false;
+        }
+
+        JavaParser.FormalParameterListContext paramList = ctx.formalParameters().formalParameterList();
+        if (paramList == null) {
+            return false;
+        }
+
+        return paramList.lastFormalParameter() != null;
+    }
+
+    private String getReturnType(JavaParser.MethodDeclarationContext ctx) {
+        return ctx.typeTypeOrVoid().getText();
+    }
+
+    private List<String> getMethodModifiers(JavaParser.MethodDeclarationContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(this::findClassBodyDeclarationContext)
+                .map(modifierService::extractModifiers)
+                .orElse(Collections.emptyList());
+    }
+
+    private List<ParameterInformation> getParameters(JavaParser.MethodDeclarationContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(JavaParser.MethodDeclarationContext::formalParameters)
+                .map(JavaParser.FormalParametersContext::formalParameterList)
+                .map(this::processParameterList)
+                .orElse(Collections.emptyList());
+    }
+
+    private List<ParameterInformation> processParameterList(JavaParser.FormalParameterListContext paramList) {
+        List<ParameterInformation> parameters = new ArrayList<>();
+        addRegularParameters(paramList, parameters);
+        addVarArgsParameter(paramList, parameters);
+        return Collections.unmodifiableList(parameters);
+    }
+
+    private void addRegularParameters(JavaParser.FormalParameterListContext paramList, List<ParameterInformation> parameters) {
+        if (paramList.formalParameter() != null) {
+            for (JavaParser.FormalParameterContext param : paramList.formalParameter()) {
+                parameters.add(parameterService.createRegularParameter(param));
+            }
+        }
+    }
+
+    private void addVarArgsParameter(JavaParser.FormalParameterListContext paramList, List<ParameterInformation> parameters) {
+        if (paramList.lastFormalParameter() != null) {
+            parameters.add(parameterService.createVarArgsParameter(paramList.lastFormalParameter()));
+        }
+    }
+
+    private List<Statement<JavaParser.StatementContext>> getStatements(JavaParser.MethodDeclarationContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(JavaParser.MethodDeclarationContext::methodBody)
+                .map(JavaParser.MethodBodyContext::block)
+                .map(this::processBlockStatements)
+                .orElse(Collections.emptyList());
+    }
+
+    private List<Statement<JavaParser.StatementContext>> processBlockStatements(JavaParser.BlockContext block) {
+        List<Statement<JavaParser.StatementContext>> statements = new ArrayList<>();
+        for (JavaParser.BlockStatementContext blockStmt : block.blockStatement()) {
+            addStatement(blockStmt, statements);
+        }
+        return Collections.unmodifiableList(statements);
+    }
+
+    private void addStatement(JavaParser.BlockStatementContext blockStmt, List<Statement<JavaParser.StatementContext>> statements) {
+        if (blockStmt.statement() != null) {
+            statements.add(new StatementAdapter(blockStmt.statement()));
+        } else if (blockStmt.localVariableDeclaration() != null) {
+            statements.add(createLocalVariableStatement(blockStmt));
+        }
+    }
+
+    private Statement<JavaParser.StatementContext> createLocalVariableStatement(JavaParser.BlockStatementContext blockStmt) {
+        JavaParser.StatementContext statementCtx = new JavaParser.StatementContext(blockStmt, 0);
+        statementCtx.statementExpression = blockStmt.localVariableDeclaration().getParent()
+                .getRuleContext(JavaParser.ExpressionContext.class, 0);
+        return new StatementAdapter(statementCtx);
+    }
+
+    private List<String> getThrowsExceptions(JavaParser.MethodDeclarationContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(JavaParser.MethodDeclarationContext::qualifiedNameList)
+                .map(this::processQualifiedNames)
+                .orElse(Collections.emptyList());
+    }
+
+    private List<String> processQualifiedNames(JavaParser.QualifiedNameListContext qualifiedList) {
+        List<String> exceptions = new ArrayList<>();
+        for (JavaParser.QualifiedNameContext name : qualifiedList.qualifiedName()) {
+            exceptions.add(name.getText());
+        }
+        return Collections.unmodifiableList(exceptions);
+    }
+
+    private List<String> getAnnotations(JavaParser.MethodDeclarationContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(this::findClassBodyDeclarationContext)
+                .map(annotationService::extractAnnotation)
+                .orElse(Collections.emptyList());
+    }
+
+    private JavaParser.ClassBodyDeclarationContext findClassBodyDeclarationContext(JavaParser.MethodDeclarationContext ctx) {
+        ParseTree current = ctx;
+        while (current != null && !(current instanceof JavaParser.ClassBodyDeclarationContext)) {
+            current = current.getParent();
+        }
+        return (JavaParser.ClassBodyDeclarationContext) current;
+    }
+}

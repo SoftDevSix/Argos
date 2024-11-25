@@ -1,19 +1,6 @@
 package edu.usb.argos.ASTProcessor.bestPractices;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.bestPractices.HardcodedValueDetector;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ExpressionCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.ModifierCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.StatementCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassIdentityCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassMemberCollector;
-import edu.usb.argos.ASTProcessor.visitor.core.services.collectors.classes.JavaClassStructureCollector;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaClassVisitor;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -33,6 +20,7 @@ public class HarcodedValueDetectorTest {
                 public class TestClass {
                     private int attribute;
                     private String text;
+                    private String harcoded = "Text";
                     
                     public TestClass() {
                         attribute = 40;
@@ -52,35 +40,11 @@ public class HarcodedValueDetectorTest {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokenStream);
 
-        JavaMethodVisitor methodVisitor = new JavaMethodVisitor(
-                tokenStream,
-                new ExpressionCollector(),
-                new StatementCollector(),
-                new ModifierCollector()
-        );
-
-        AttributeHandler attributeHandler = new AttributeHandler();
-        JavaAttributeVisitor attributeVisitor = new JavaAttributeVisitor(attributeHandler);
-
-        JavaConstructorVisitor constructorVisitor = new JavaConstructorVisitor();
-
-        JavaClassIdentityCollector identityCollector = new JavaClassIdentityCollector();
-        JavaClassStructureCollector structureCollector = new JavaClassStructureCollector();
-        JavaClassMemberCollector memberCollector = new JavaClassMemberCollector(
-                methodVisitor,
-                attributeVisitor,
-                constructorVisitor
-        );
-
-        JavaClassVisitor visitor = new JavaClassVisitor(identityCollector, structureCollector, memberCollector);
-
         JavaParser.CompilationUnitContext context = parser.compilationUnit();
         JavaParser.ClassDeclarationContext classCtx = context.typeDeclaration(0).classDeclaration();
 
-        ClassInformation classInformation = visitor.visitClass(classCtx);
-
-        HardcodedValueDetector detector = new HardcodedValueDetector();
-        detector.detectHardcodedValues(classInformation);
+        HardcodedValueDetector detector = new HardcodedValueDetector(classCtx);
+        detector.detectHardcodedValues();
 
 //        assertEquals(4, detector.getHardcodedValues().size());
         System.out.println(detector.getHardcodedValues());

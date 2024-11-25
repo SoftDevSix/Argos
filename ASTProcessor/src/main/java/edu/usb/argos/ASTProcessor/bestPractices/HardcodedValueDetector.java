@@ -1,68 +1,136 @@
 package edu.usb.argos.ASTProcessor.bestPractices;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrExpressionAdapter;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.AntlrStatementAdapter;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class HardcodedValueDetector {
     private final HardcodedValueMatcher hardcodedValueMatcher;
     private final List<String> hardcodedValues;
+    private JavaParser.ClassDeclarationContext classContext;
 
-    public HardcodedValueDetector() {
+    public HardcodedValueDetector(JavaParser.ClassDeclarationContext classContext) {
+        this.classContext = classContext;
         this.hardcodedValueMatcher = HardcodedValueMatcher.getInstance();
         this.hardcodedValues = new ArrayList<>();
     }
 
-    public void detectHardcodedValues(ClassInformation classInformation) {
-        detectHardcodedValuesInAttributes(classInformation.getMembers().getAttributes());
-        detectHardcodedValuesInMethods(classInformation.getMembers().getMethods());
-        detectHardcodedValuesInConstructors(classInformation.getMembers().getConstructors());
-    }
-
-    private void detectHardcodedValuesInAttributes(List<AttributeInformation> attributes) {
-        for (AttributeInformation attribute : attributes) {
-            System.out.println(attribute.getName());
+    public void detectHardcodedValues() {
+        for (JavaParser.ClassBodyDeclarationContext member : classContext.classBody().classBodyDeclaration()) {
+            analyzeAttributes(member);
+            analyzeConstructors(member);
+            analyzeMethods(member);
         }
     }
 
-    private void detectHardcodedValuesInConstructors(List<ConstructorInformation> constructors) {
-        for (ConstructorInformation constructor : constructors) {
-            constructor.getBodyStatements().forEach(statement -> {
-                JavaParser.BlockStatementContext statementContext = (JavaParser.BlockStatementContext) statement;
-                String statementText = statementContext.getText();
-                if (hardcodedValueMatcher.isHardcoded(statementText)) {
-                    hardcodedValues.add(statementText);
-                }
-            });
+    public void analyzeAttributes(JavaParser.ClassBodyDeclarationContext member){
+        if (member.memberDeclaration() != null &&
+                member.memberDeclaration().fieldDeclaration() != null) {
+
+            JavaParser.FieldDeclarationContext field = member.memberDeclaration().fieldDeclaration();
+            detectHardcodedValueInAttribute(field, member.modifier());
         }
     }
 
-    private void detectHardcodedValuesInMethods(List<MethodInformation> methods) {
-        for (MethodInformation method : methods) {
-            method.getStatements().forEach(st -> {
-                JavaParser.StatementContext statementContext = ((AntlrStatementAdapter) st).getNode();
-                String statementText = statementContext.getText();
-                System.out.println(statementText);
-                if (hardcodedValueMatcher.isHardcoded(statementText)) {
-                    hardcodedValues.add(statementText);
+    private void detectHardcodedValueInAttribute(JavaParser.FieldDeclarationContext field,
+                                                  List<JavaParser.ModifierContext> modifiers) {
+        String type = field.typeType().getText();
+
+        String mods = modifiers.stream()
+                .map(JavaParser.ModifierContext::getText)
+                .collect(Collectors.joining(" "));
+
+        for (JavaParser.VariableDeclaratorContext declarator :
+                field.variableDeclarators().variableDeclarator()) {
+
+            System.out.println("Field:");
+            System.out.println("  Modifiers: " + mods);
+            System.out.println("  Type: " + type);
+            System.out.println("  Name: " + declarator.variableDeclaratorId().getText());
+
+            if (declarator.variableInitializer() != null) {
+                System.out.println("  Initial Value: " +
+                        declarator.variableInitializer().getText());
+            }
+            System.out.println("  Line: " + declarator.getStart().getLine());
+            System.out.println();
+        }
+    }
+
+    private void analyzeConstructors(JavaParser.ClassBodyDeclarationContext member){
+        if (member.memberDeclaration() != null &&
+                member.memberDeclaration().constructorDeclaration() != null) {
+
+            System.out.println("\nConstructor Analysis:");
+            JavaParser.ConstructorDeclarationContext constructor =
+                    member.memberDeclaration().constructorDeclaration();
+            detectHardcodedValuesInConstructors(constructor);
+        }
+    }
+
+    private void detectHardcodedValuesInConstructors(JavaParser.ConstructorDeclarationContext constructor) {
+        System.out.println("Constructor: " + constructor.identifier().getText());
+
+        if (constructor.block() != null) {
+            for (JavaParser.BlockStatementContext stmt : constructor.block().blockStatement()) {
+                if (stmt.statement() != null && stmt.statement().expression() != null) {
+                    System.out.println("  Assignment: " + stmt.statement().getText());
+                    System.out.println("  Line: " + stmt.getStart().getLine());
                 }
-            });
-            method.getExpressions().forEach(expression -> {
-                JavaParser.ExpressionContext expressionContext = ((AntlrExpressionAdapter) expression).getNode();
-                String expressionText = expressionContext.getText();
-                if (hardcodedValueMatcher.isHardcoded(expressionText)) {
-                    hardcodedValues.add(expressionText);
+            }
+        }
+    }
+
+    private void analyzeMethods(JavaParser.ClassBodyDeclarationContext member) {
+        if (member.memberDeclaration() != null &&
+                member.memberDeclaration().methodDeclaration() != null) {
+
+            System.out.println("\nMethod Analysis:");
+            JavaParser.MethodDeclarationContext method =
+                    member.memberDeclaration().methodDeclaration();
+            detectHardcodedValuesInMethods(method);
+        }
+    }
+
+    private void detectHardcodedValuesInMethods(JavaParser.MethodDeclarationContext method) {
+        System.out.println("Method: " + method.identifier().getText());
+        System.out.println("Return Type: " + method.typeTypeOrVoid().getText());
+
+        if (method.methodBody().block() != null) {
+            for (JavaParser.BlockStatementContext stmt :
+                    method.methodBody().block().blockStatement()) {
+
+                if (stmt.localVariableDeclaration() != null) {
+                    JavaParser.LocalVariableDeclarationContext varDecl =
+                            stmt.localVariableDeclaration();
+
+                    System.out.println("  Local Variable:");
+                    System.out.println("    Type: " + varDecl.typeType().getText());
+
+                    for (JavaParser.VariableDeclaratorContext declarator :
+                            varDecl.variableDeclarators().variableDeclarator()) {
+
+                        System.out.println("    Name: " +
+                                declarator.variableDeclaratorId().getText());
+
+                        if (declarator.variableInitializer() != null) {
+                            System.out.println("    Initial Value: " +
+                                    declarator.variableInitializer().getText());
+                        }
+                        System.out.println("    Line: " + declarator.getStart().getLine());
+                    }
                 }
-            });
+
+                if (stmt.statement() != null && stmt.statement().expression() != null) {
+                    System.out.println("  Expression: " +
+                            stmt.statement().expression().getClass().getSimpleName());
+                    System.out.println("  Line: " + stmt.getStart().getLine());
+                }
+            }
         }
     }
 }

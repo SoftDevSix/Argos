@@ -2,14 +2,11 @@ server:
   port: '8082'
 
 spring:
-  config:
-    import: 'optional:file:.env[.properties]'
-
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: '${DB_PROD_URL}'
-    username: '${DB_PROD_USERNAME}'
-    password: '${DB_PROD_PASSWORD}'
+    url: '${PROD_DB_URL}'
+    username: '${PROD_DB_USERNAME}'
+    password: '${PROD_DB_PASSWORD}'
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 20
@@ -21,6 +18,7 @@ spring:
   jpa:
     show-sql: false
     generate-ddl: false
+
     hibernate:
       ddl-auto: none
 

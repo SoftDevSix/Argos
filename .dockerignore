@@ -27,4 +27,4 @@ Dockerfile.prod
 .dockerignore
 docker-compose.yml
 
-.env.*
+.env

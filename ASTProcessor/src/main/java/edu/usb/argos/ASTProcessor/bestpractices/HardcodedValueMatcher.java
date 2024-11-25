@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.bestPractices;
+package edu.usb.argos.ASTProcessor.bestpractices;
 
 import java.util.regex.Pattern;
 

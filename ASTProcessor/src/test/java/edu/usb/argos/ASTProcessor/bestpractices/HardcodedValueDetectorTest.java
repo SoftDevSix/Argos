@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.bestPractices;
+package edu.usb.argos.ASTProcessor.bestpractices;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 

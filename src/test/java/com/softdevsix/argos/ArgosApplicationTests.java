@@ -1,5 +1,6 @@
 package com.softdevsix.argos;
 
+import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
@@ -17,10 +18,13 @@ class ArgosApplicationTests {
 	void contextLoads() {
 		assertNotNull(context, "The application context should have loaded.");
 	}
-
 	@Test
-	void main() {
-		ArgosApplication.main(new String[] {});
+	void testMainMethod() {
+		try {
+			ArgosApplication.main(new String[] {});
+		} catch (Exception e) {
+			fail("Main method threw an exception: " + e.getMessage());
+		}
 	}
 
 	@Test

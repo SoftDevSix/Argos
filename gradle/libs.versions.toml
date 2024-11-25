@@ -5,19 +5,27 @@ springDocVersion = "2.6.0"
 antlr = "4.13.2"
 sonarqube = "6.0.0.5145"
 slf4j = "2.0.9"
+lombok = "1.18.36"
+h2database = "2.3.232"
+postgresql = "42.7.4"
 
 [plugins]
-springboot-web = { id = "org.springframework.boot", version.ref = "springboot" }
+springboot-framework = { id = "org.springframework.boot", version.ref = "springboot" }
 dependency-management = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
+lombok = { id = "io.freefair.lombok", version = "8.11" }
 
 [libraries]
 springboot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 springboot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springboot" }
-springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springDocVersion" }
+springboot-starter-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+springdoc-openapi-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springDocVersion" }
 springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
 springboot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
+sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "sonarqube" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+h2database = { module = "com.h2database:h2", version.ref = "h2database" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }

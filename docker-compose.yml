@@ -1,6 +1,6 @@
 services:
   argos_dev:
-    image: argos-app:dev
+    image: argos-dev-app
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -20,9 +20,9 @@ services:
 
   postgres_dev:
     container_name: postgres_dev_db
-    image: postgres:12.20-alpine3.20
+    image: postgres:latest
     environment:
-      POSTGRES_DB: ${DEV_DB_URL}
+      POSTGRES_DB: ${DEV_PSQL_DB_URL}
       POSTGRES_USER: ${DEV_DB_USERNAME}
       POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
     ports:
@@ -33,7 +33,7 @@ services:
       - development
 
   argos_stage:
-    image: argos-app:stage
+    image: argos-stage-app
     build:
       context: .
       dockerfile: Dockerfile.stage
@@ -53,9 +53,9 @@ services:
 
   postgres_stage:
     container_name: postgres_stage_db
-    image: postgres:12.20-alpine3.20
+    image: postgres:latest
     environment:
-      POSTGRES_DB: ${STAGE_DB_URL}
+      POSTGRES_DB: ${STAGE_PSQL_DB_URL}
       POSTGRES_USER: ${STAGE_DB_USERNAME}
       POSTGRES_PASSWORD: ${STAGE_DB_PASSWORD}
     ports:
@@ -66,7 +66,7 @@ services:
       - stage
 
   argos_prod:
-    image: argos-app:prod
+    image: argos-prod-app
     build:
       context: .
       dockerfile: Dockerfile.prod
@@ -86,9 +86,9 @@ services:
 
   postgres_prod:
     container_name: postgres_prod_db
-    image: postgres:12.20-alpine3.20
+    image: postgres:latest
     environment:
-      POSTGRES_DB: ${PROD_DB_URL}
+      POSTGRES_DB: ${PROD_PSQL_DB_URL}
       POSTGRES_USER: ${PROD_DB_USERNAME}
       POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
     ports:

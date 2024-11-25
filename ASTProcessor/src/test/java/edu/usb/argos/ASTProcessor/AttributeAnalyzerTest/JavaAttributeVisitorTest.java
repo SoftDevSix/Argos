@@ -238,4 +238,53 @@ class JavaAttributeVisitorTest {
         assertEquals("String", attribute2.getType());
         assertEquals(List.of("protected", "final"), attribute2.getModifiers());
     }
+
+    @Test
+    void testVisitAttributeWithInitialValues() {
+        String classBody = """
+                public class Example {
+                    private final int someValue = 12;
+                    public String name = "John";
+                    protected double ratio = 3.14;
+                }
+                """;
+        Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
+
+        assertTrue(classFound.isPresent());
+        List<AttributeInformation> attributesInfo = visitor.visitAttribute(classFound.get());
+
+        assertFalse(attributesInfo.isEmpty());
+        for (AttributeInformation attributeInfo : attributesInfo) {
+            if (attributeInfo.getName().equals("someValue")) {
+                assertEquals("12", attributeInfo.getValue().orElse(""));
+            }
+            if (attributeInfo.getName().equals("name")) {
+                assertEquals("\"John\"", attributeInfo.getValue().orElse(""));
+            }
+            if (attributeInfo.getName().equals("ratio")) {
+                assertEquals("3.14", attributeInfo.getValue().orElse(""));
+            }
+        }
+    }
+
+    @Test
+    void testVisitAttributeWithoutInitialValues() {
+        String classBody = """
+                public class Example {
+                    int someValue;
+                    String name;
+                    double ratio;
+                }
+                """;
+        Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
+
+        assertTrue(classFound.isPresent());
+        List<AttributeInformation> attributesInfo = visitor.visitAttribute(classFound.get());
+
+        assertFalse(attributesInfo.isEmpty());
+        for (AttributeInformation attributeInfo : attributesInfo) {
+            assertTrue(attributeInfo.getValue().isEmpty());
+        }
+    }
+
 }

@@ -12,17 +12,16 @@ import java.util.List;
 
 @Getter
 public class HardcodedValueDetector {
-    private final HardcodedValueMatcher hardcodedValueMatcher;
-    private final List<String> hardcodedValues = new ArrayList<>();
+    private final List<HardcodedDetection> hardcodedValues;
     private final JavaParser.ClassDeclarationContext classContext;
 
     public HardcodedValueDetector(JavaParser.ClassDeclarationContext classContext) {
         this.classContext = classContext;
-        this.hardcodedValueMatcher = HardcodedValueMatcher.getInstance();
+        hardcodedValues = new ArrayList<>();
     }
 
     public void detectHardcodedValues() {
-        DetectorStrategyContext strategyContext = new DetectorStrategyContext(hardcodedValueMatcher, hardcodedValues);
+        DetectorStrategyContext strategyContext = new DetectorStrategyContext(hardcodedValues);
 
         for (JavaParser.ClassBodyDeclarationContext member : classContext.classBody().classBodyDeclaration()) {
             strategyContext.execute(new AttributeDetectionStrategy(), member);

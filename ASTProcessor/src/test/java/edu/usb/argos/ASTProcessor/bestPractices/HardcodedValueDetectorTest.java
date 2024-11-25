@@ -9,28 +9,30 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-public class HarcodedValueDetectorTest {
+public class HardcodedValueDetectorTest {
     @Test
     void testDetectHardcodedValuesInClass() {
-
         String javaSource = """
                 package com.example;
                 
                 public class TestClass {
                     private int attribute;
                     private String text;
-                    private String harcoded = "Text";
+                    private String hardcoded = "Text";
                     
                     public TestClass() {
                         attribute = 40;
                         text = "Hardcoded String Constructor";
+                        method("hola");
+                        method(1, 2);
                     }
                     
                     public void method() {
                         int number = 100;
                         int x = attribute + 1;
                         System.out.println("Hardcoded Message");
+                        methodCall(1, 2, 3);
+                        callMethod();
                     }
                 }
                 """;

@@ -2,16 +2,17 @@ package edu.usb.argos.ASTProcessor.bestPractices;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import lombok.Getter;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 public class HardcodedValueDetector {
     private final HardcodedValueMatcher hardcodedValueMatcher;
     private final List<String> hardcodedValues;
-    private JavaParser.ClassDeclarationContext classContext;
+    private final JavaParser.ClassDeclarationContext classContext;
 
     public HardcodedValueDetector(JavaParser.ClassDeclarationContext classContext) {
         this.classContext = classContext;
@@ -30,7 +31,6 @@ public class HardcodedValueDetector {
     public void analyzeAttributes(JavaParser.ClassBodyDeclarationContext member){
         if (member.memberDeclaration() != null &&
                 member.memberDeclaration().fieldDeclaration() != null) {
-
             JavaParser.FieldDeclarationContext field = member.memberDeclaration().fieldDeclaration();
             detectHardcodedValueInAttribute(field, member.modifier());
         }
@@ -38,34 +38,26 @@ public class HardcodedValueDetector {
 
     private void detectHardcodedValueInAttribute(JavaParser.FieldDeclarationContext field,
                                                   List<JavaParser.ModifierContext> modifiers) {
-        String type = field.typeType().getText();
-
-        String mods = modifiers.stream()
-                .map(JavaParser.ModifierContext::getText)
-                .collect(Collectors.joining(" "));
+        Stream<String> mods = modifiers.stream()
+                .map(JavaParser.ModifierContext::getText);
 
         for (JavaParser.VariableDeclaratorContext declarator :
                 field.variableDeclarators().variableDeclarator()) {
 
-            System.out.println("Field:");
-            System.out.println("  Modifiers: " + mods);
-            System.out.println("  Type: " + type);
-            System.out.println("  Name: " + declarator.variableDeclaratorId().getText());
-
             if (declarator.variableInitializer() != null) {
-                System.out.println("  Initial Value: " +
-                        declarator.variableInitializer().getText());
+                String attributeValue = declarator.variableInitializer().getText();
+                if(mods.noneMatch(mod -> mod.equals("final")) &&
+                        hardcodedValueMatcher.isHardcoded(attributeValue)){
+                    System.out.println("Hardcoded value at line " + declarator.getStart().getLine() + " " + attributeValue);
+                    hardcodedValues.add(attributeValue);
+                }
             }
-            System.out.println("  Line: " + declarator.getStart().getLine());
-            System.out.println();
         }
     }
 
     private void analyzeConstructors(JavaParser.ClassBodyDeclarationContext member){
         if (member.memberDeclaration() != null &&
                 member.memberDeclaration().constructorDeclaration() != null) {
-
-            System.out.println("\nConstructor Analysis:");
             JavaParser.ConstructorDeclarationContext constructor =
                     member.memberDeclaration().constructorDeclaration();
             detectHardcodedValuesInConstructors(constructor);
@@ -73,13 +65,36 @@ public class HardcodedValueDetector {
     }
 
     private void detectHardcodedValuesInConstructors(JavaParser.ConstructorDeclarationContext constructor) {
-        System.out.println("Constructor: " + constructor.identifier().getText());
-
         if (constructor.block() != null) {
             for (JavaParser.BlockStatementContext stmt : constructor.block().blockStatement()) {
                 if (stmt.statement() != null && stmt.statement().expression() != null) {
-                    System.out.println("  Assignment: " + stmt.statement().getText());
-                    System.out.println("  Line: " + stmt.getStart().getLine());
+                    for (JavaParser.ExpressionContext expressionContext : stmt.statement().expression()){
+                        var assignmentTree = expressionContext.getChild(2);
+                        if(assignmentTree != null){
+                            String assignmentValue = assignmentTree.getText();
+                            if(
+                                    hardcodedValueMatcher.isHardcoded(assignmentValue)
+                            ){
+                                System.out.println("Hardcoded value at line " + stmt.getStart().getLine() + " " + assignmentValue);
+                                hardcodedValues.add(assignmentValue);
+                            }
+                        }
+
+                        var methodCall = expressionContext.methodCall();
+
+                        if(expressionContext.methodCall() != null && !methodCall.arguments().isEmpty()){
+                            String methodArgumentValue =
+                                    expressionContext.methodCall().arguments().getChild(1).getText();
+                            String[] arguments = methodArgumentValue.split("\\s*,\\s*");
+
+                            for (String argument : arguments) {
+                                if(hardcodedValueMatcher.isHardcoded(argument)){
+                                    System.out.println("Hardcoded value at line " + stmt.getStart().getLine() + " " + argument);
+                                    hardcodedValues.add(argument);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -88,8 +103,6 @@ public class HardcodedValueDetector {
     private void analyzeMethods(JavaParser.ClassBodyDeclarationContext member) {
         if (member.memberDeclaration() != null &&
                 member.memberDeclaration().methodDeclaration() != null) {
-
-            System.out.println("\nMethod Analysis:");
             JavaParser.MethodDeclarationContext method =
                     member.memberDeclaration().methodDeclaration();
             detectHardcodedValuesInMethods(method);
@@ -97,38 +110,43 @@ public class HardcodedValueDetector {
     }
 
     private void detectHardcodedValuesInMethods(JavaParser.MethodDeclarationContext method) {
-        System.out.println("Method: " + method.identifier().getText());
-        System.out.println("Return Type: " + method.typeTypeOrVoid().getText());
-
         if (method.methodBody().block() != null) {
             for (JavaParser.BlockStatementContext stmt :
                     method.methodBody().block().blockStatement()) {
 
-                if (stmt.localVariableDeclaration() != null) {
-                    JavaParser.LocalVariableDeclarationContext varDecl =
-                            stmt.localVariableDeclaration();
+                if(stmt.statement() != null) {
+                    for (JavaParser.ExpressionContext expressionContext : stmt.statement().expression()){
+                        var methodCall = expressionContext.methodCall();
 
-                    System.out.println("  Local Variable:");
-                    System.out.println("    Type: " + varDecl.typeType().getText());
+                        if(expressionContext.methodCall() != null && !methodCall.arguments().isEmpty()) {
+                            JavaParser.ArgumentsContext methodArguments = expressionContext.methodCall().arguments();
+                            String methodArgumentValue = methodArguments.getChild(1).getText();
+                            String[] arguments = methodArgumentValue.split("\\s*,\\s*");
 
-                    for (JavaParser.VariableDeclaratorContext declarator :
-                            varDecl.variableDeclarators().variableDeclarator()) {
-
-                        System.out.println("    Name: " +
-                                declarator.variableDeclaratorId().getText());
-
-                        if (declarator.variableInitializer() != null) {
-                            System.out.println("    Initial Value: " +
-                                    declarator.variableInitializer().getText());
+                            for (String argument : arguments) {
+                                if(hardcodedValueMatcher.isHardcoded(argument)){
+                                    System.out.println("Hardcoded value at line " + stmt.getStart().getLine() + " " + argument);
+                                    hardcodedValues.add(argument);
+                                }
+                            }
                         }
-                        System.out.println("    Line: " + declarator.getStart().getLine());
                     }
                 }
 
-                if (stmt.statement() != null && stmt.statement().expression() != null) {
-                    System.out.println("  Expression: " +
-                            stmt.statement().expression().getClass().getSimpleName());
-                    System.out.println("  Line: " + stmt.getStart().getLine());
+                if (stmt.localVariableDeclaration() != null) {
+                    JavaParser.LocalVariableDeclarationContext varDeclaration =
+                            stmt.localVariableDeclaration();
+
+                    for (JavaParser.VariableDeclaratorContext declarator :
+                            varDeclaration.variableDeclarators().variableDeclarator()) {
+                        if (declarator.variableInitializer() != null) {
+                            String variableValue = declarator.variableInitializer().getText();
+                            if(getHardcodedValueMatcher().isHardcoded(variableValue)){
+                                System.out.println("Hardcoded value at line " + declarator.getStart().getLine() + " " + variableValue);
+                                hardcodedValues.add(variableValue);
+                            }
+                        }
+                    }
                 }
             }
         }

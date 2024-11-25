@@ -6,7 +6,7 @@ public class HardcodedValueMatcher {
     private static HardcodedValueMatcher instance;
 
     private static final String HARD_CODED_REGEX =
-            "\\s*(\\\"(\\\\.|[^\\\"])*\\\"|-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?|true|false|null|'.')\\s*";
+            "\\s*(\"(\\\\.|[^\"])*\"|-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?|true|false|null|'.')\\s*";
 
     private Pattern pattern;
 
@@ -22,6 +22,6 @@ public class HardcodedValueMatcher {
     }
 
     public boolean isHardcoded(String value) {
-        return pattern.matcher(value).find();
+        return pattern.matcher(value).matches();
     }
 }

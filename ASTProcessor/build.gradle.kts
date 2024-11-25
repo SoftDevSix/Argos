@@ -15,7 +15,7 @@ java {
 repositories {
 	mavenCentral()
 }
-
+	
 dependencies {
 	implementation(libs.springboot.starter.web)
 	implementation(libs.springdoc.openapi)

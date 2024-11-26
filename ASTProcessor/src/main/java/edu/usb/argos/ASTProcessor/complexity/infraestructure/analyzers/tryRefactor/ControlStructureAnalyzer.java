@@ -2,148 +2,134 @@ package edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefac
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
-import edu.usb.argos.ASTProcessor.complexity.core.enums.ComplexityType;
+import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
-public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<JavaParser.StatementContext, ComplexityLocation> {
+public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<ControlStructureAnalysis, JavaParser.StatementContext> {
     @Override
-    public int analyze(JavaParser.StatementContext node) {
-        if (node == null) return 0;
-        int complexity = 0;
+    public ControlStructureAnalysis analyze(JavaParser.StatementContext node) {
+        if (Optional.ofNullable(node).isEmpty()) {
+            return ControlStructureAnalysis.builder()
+                    .totalComplexity(0)
+                    .locations(new ArrayList<>())
+                    .build();
+        }
 
-        complexity += analyzeIfStatement(node);
-        complexity += analyzeLoops(node);
-        complexity += analyzeSwitchStatement(node);
-        complexity += analyzeTryCatch(node);
-
-        return complexity;
+        return analyzeControlStructures(node);
     }
 
-    private int analyzeIfStatement(JavaParser.StatementContext node) {
+    private ControlStructureAnalysis analyzeControlStructures(JavaParser.StatementContext node) {
+        List<ComplexityLocation> locations = new ArrayList<>();
         int complexity = 0;
-        if (node.IF() != null) {
+
+        complexity += performAnalysis(node, this::analyzeIfStatement, locations);
+        complexity += performAnalysis(node, this::analyzeLoops, locations);
+        complexity += performAnalysis(node, this::analyzeSwitchStatement, locations);
+        complexity += performAnalysis(node, this::analyzeTryCatch, locations);
+
+        return ControlStructureAnalysis.builder()
+                .totalComplexity(complexity)
+                .locations(locations)
+                .build();
+    }
+
+    private int performAnalysis(JavaParser.StatementContext node,
+                                Function<JavaParser.StatementContext, ControlStructureAnalysis> analysisFunction,
+                                List<ComplexityLocation> locations) {
+        ControlStructureAnalysis analysisResult = analysisFunction.apply(node);
+        locations.addAll(analysisResult.getLocations());
+        return analysisResult.getTotalComplexity();
+    }
+
+    private ControlStructureAnalysis analyzeIfStatement(JavaParser.StatementContext node) {
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        if (StructureVerifier.hasIfStatement(node)) {
+            return buildAnalysis(complexity, locations);
+        }
+
+        complexity++;
+        locations.add(ComplexityLocationFactory.createIfLocation(node));
+
+        if (StructureVerifier.hasElseIfStatement(node)) {
             complexity++;
-            if (node.ELSE() != null && node.statement(1) != null && node.statement(1).IF() != null) {
-                complexity++;
+            locations.add(ComplexityLocationFactory.createElseIfLocation(node));
+        }
+
+        return buildAnalysis(complexity, locations);
+    }
+
+    private ControlStructureAnalysis analyzeLoops(JavaParser.StatementContext node) {
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        if (StructureVerifier.hasForLoop(node)) {
+            complexity++;
+            locations.add(ComplexityLocationFactory.createForLoopLocation(node));
+        }
+
+        if (StructureVerifier.hasWhileLoop(node)) {
+            complexity++;
+            locations.add(ComplexityLocationFactory.createWhileLoopLocation(node));
+        }
+
+        if (StructureVerifier.hasDoWhileLoop(node)) {
+            complexity++;
+            locations.add(ComplexityLocationFactory.createDoWhileLoopLocation(node));
+        }
+
+        return buildAnalysis(complexity, locations);
+    }
+
+    private ControlStructureAnalysis analyzeSwitchStatement(JavaParser.StatementContext node) {
+        if (StructureVerifier.hasSwitchStatement(node)) {
+            return buildEmptyAnalysis();
+        }
+
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        for (JavaParser.SwitchBlockStatementGroupContext group : node.switchBlockStatementGroup()) {
+            for (JavaParser.SwitchLabelContext label : group.switchLabel()) {
+                if (StructureVerifier.hasCaseLabel(label)) {
+                    complexity++;
+                    locations.add(ComplexityLocationFactory.createSwitchCaseLocation(label));
+                }
             }
         }
-        return complexity;
+
+        return buildAnalysis(complexity, locations);
     }
 
-    private int analyzeLoops(JavaParser.StatementContext node) {
-        int complexity = 0;
-        if (node.FOR() != null) complexity++;
-        if (node.WHILE() != null && node.DO() == null) complexity++;
-        if (node.DO() != null) complexity++;
-        return complexity;
-    }
-
-    private int analyzeSwitchStatement(JavaParser.StatementContext node) {
-        if (node.SWITCH() != null) {
-            return (int) node.switchBlockStatementGroup().stream()
-                    .flatMap(group -> group.switchLabel().stream())
-                    .filter(label -> label.CASE() != null)
-                    .count();
+    private ControlStructureAnalysis analyzeTryCatch(JavaParser.StatementContext node) {
+        if (StructureVerifier.hasTryBlock(node)) {
+            return buildEmptyAnalysis();
         }
-        return 0;
-    }
 
-    private int analyzeTryCatch(JavaParser.StatementContext node) {
-        if (node.TRY() != null) {
-            return node.catchClause().size();
-        }
-        return 0;
-    }
-
-    @Override
-    public List<ComplexityLocation> getComplexityLocations(JavaParser.StatementContext node) {
         List<ComplexityLocation> locations = new ArrayList<>();
-        if (node == null) return locations;
+        int complexity = 0;
 
-        collectIfLocations(node, locations);
-        collectLoopLocations(node, locations);
-        collectSwitchLocations(node, locations);
-        collectTryLocations(node, locations);
-
-        return locations;
-    }
-
-    private void collectIfLocations(JavaParser.StatementContext node, List<ComplexityLocation> locations) {
-        if (node.IF() == null) return;
-
-        locations.add(ComplexityLocation.builder()
-                .lineNumber(node.getStart().getLine())
-                .complexityType(ComplexityType.IF_STATEMENT)
-                .description("Conditional branch")
-                .contextInfo("if condition: " + node.parExpression().getText())
-                .build());
-
-        if (node.ELSE() != null && node.statement(1) != null && node.statement(1).IF() != null) {
-            locations.add(ComplexityLocation.builder()
-                    .lineNumber(node.statement(1).getStart().getLine())
-                    .complexityType(ComplexityType.IF_STATEMENT)
-                    .description("Else-if branch")
-                    .contextInfo("else-if condition: " + node.statement(1).parExpression().getText())
-                    .build());
-        }
-    }
-
-    private void collectLoopLocations(JavaParser.StatementContext node, List<ComplexityLocation> locations) {
-        if (node.FOR() != null) {
-            locations.add(ComplexityLocation.builder()
-                    .lineNumber(node.getStart().getLine())
-                    .complexityType(ComplexityType.LOOP)
-                    .description("For loop")
-                    .contextInfo("for loop with control: " + node.forControl().getText())
-                    .build());
+        for (JavaParser.CatchClauseContext catchClause : node.catchClause()) {
+            complexity++;
+            locations.add(ComplexityLocationFactory.createCatchLocation(catchClause));
         }
 
-        if (node.WHILE() != null && node.DO() == null) {
-            locations.add(ComplexityLocation.builder()
-                    .lineNumber(node.getStart().getLine())
-                    .complexityType(ComplexityType.LOOP)
-                    .description("While loop")
-                    .contextInfo("while condition: " + node.parExpression().getText())
-                    .build());
-        }
-
-        if (node.DO() != null) {
-            locations.add(ComplexityLocation.builder()
-                    .lineNumber(node.getStart().getLine())
-                    .complexityType(ComplexityType.LOOP)
-                    .description("Do-while loop")
-                    .contextInfo("do-while condition: " + node.parExpression().getText())
-                    .build());
-        }
+        return buildAnalysis(complexity, locations);
     }
 
-    private void collectSwitchLocations(JavaParser.StatementContext node, List<ComplexityLocation> locations) {
-        if (node.SWITCH() == null) return;
-
-        node.switchBlockStatementGroup().forEach(group ->
-                group.switchLabel().stream()
-                        .filter(label -> label.CASE() != null)
-                        .forEach(label -> locations.add(ComplexityLocation.builder()
-                                .lineNumber(label.getStart().getLine())
-                                .complexityType(ComplexityType.SWITCH_CASE)
-                                .description("Switch case")
-                                .contextInfo("case: " + label.getText())
-                                .build()))
-        );
+    private ControlStructureAnalysis buildAnalysis(int complexity, List<ComplexityLocation> locations) {
+        return ControlStructureAnalysis.builder()
+                .totalComplexity(complexity)
+                .locations(locations)
+                .build();
     }
 
-    private void collectTryLocations(JavaParser.StatementContext node, List<ComplexityLocation> locations) {
-        if (node.TRY() == null) return;
-
-        node.catchClause().forEach(catchClause ->
-                locations.add(ComplexityLocation.builder()
-                        .lineNumber(catchClause.getStart().getLine())
-                        .complexityType(ComplexityType.CATCH_BLOCK)
-                        .description("Exception handling")
-                        .contextInfo("catch block for: " + catchClause.catchType().getText())
-                        .build())
-        );
+    private ControlStructureAnalysis buildEmptyAnalysis() {
+        return buildAnalysis(0, new ArrayList<>());
     }
 }

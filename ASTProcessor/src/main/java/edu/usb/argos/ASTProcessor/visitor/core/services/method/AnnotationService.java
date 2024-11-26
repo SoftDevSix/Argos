@@ -12,10 +12,12 @@ import java.util.Optional;
 @Value
 public class AnnotationService implements IAnnotationExtractor<JavaParser.ClassBodyDeclarationContext> {
     @Override
-    public List<String> extractAnnotation(JavaParser.ClassBodyDeclarationContext bodyCtx) {
-        return Optional.ofNullable(bodyCtx)
-                .map(this::processModifiers)
-                .orElse(Collections.emptyList());
+    public Optional<List<String>> extractAnnotation(JavaParser.ClassBodyDeclarationContext bodyCtx) {
+        if (bodyCtx == null) {
+            return Optional.empty();
+        }
+        List<String> annotations = processModifiers(bodyCtx);
+        return Optional.of(annotations);
     }
 
     private List<String> processModifiers(JavaParser.ClassBodyDeclarationContext bodyCtx) {
@@ -27,10 +29,8 @@ public class AnnotationService implements IAnnotationExtractor<JavaParser.ClassB
     private List<String> extractAnnotationsFromModifiers(List<JavaParser.ModifierContext> modifiers) {
         List<String> annotations = new ArrayList<>();
         for (JavaParser.ModifierContext mod : modifiers) {
-            String annotation = extractAnnotationFromModifier(mod).orElse(null);
-            if (annotation != null) {
-                annotations.add(annotation);
-            }
+            extractAnnotationFromModifier(mod).
+                    ifPresent(annotations::add);
         }
         return Collections.unmodifiableList(annotations);
     }

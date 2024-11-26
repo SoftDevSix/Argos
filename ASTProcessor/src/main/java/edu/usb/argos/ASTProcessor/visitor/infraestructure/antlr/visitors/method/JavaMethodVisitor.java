@@ -26,15 +26,22 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
     @Override
     public MethodInformation<JavaParser.StatementContext> visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         return MethodInformation.<JavaParser.StatementContext>builder()
-                .name(ctx.identifier().getText())
-                .returnType(getReturnType(ctx))
-                .modifiers(getMethodModifiers(ctx))
+                .name(getName(ctx).get())
+                .returnType(getReturnType(ctx).get())
+                .modifiers(getMethodModifiers(ctx).orElse(Collections.emptyList()))
                 .parameters(getParameters(ctx))
                 .statements(getStatements(ctx))
                 .throwsExceptions(getThrowsExceptions(ctx))
-                .annotations(getAnnotations(ctx))
+                .annotations(getAnnotations(ctx).orElse(Collections.emptyList()))
                 .isVarArgs(hasVarArgs(ctx))
                 .build();
+    }
+
+    private Optional<String> getName(JavaParser.MethodDeclarationContext ctx) {
+        if (ctx == null || ctx.identifier() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(ctx.identifier().getText());
     }
 
     private boolean hasVarArgs(JavaParser.MethodDeclarationContext ctx) {
@@ -50,15 +57,16 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
         return paramList.lastFormalParameter() != null;
     }
 
-    private String getReturnType(JavaParser.MethodDeclarationContext ctx) {
-        return ctx.typeTypeOrVoid().getText();
+    private Optional<String> getReturnType(JavaParser.MethodDeclarationContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(JavaParser.MethodDeclarationContext::typeTypeOrVoid)
+                .map(JavaParser.TypeTypeOrVoidContext::getText);
     }
 
-    private List<String> getMethodModifiers(JavaParser.MethodDeclarationContext ctx) {
+    private Optional<List<String>> getMethodModifiers(JavaParser.MethodDeclarationContext ctx) {
         return Optional.ofNullable(ctx)
                 .map(this::findClassBodyDeclarationContext)
-                .map(modifierService::extractModifiers)
-                .orElse(Collections.emptyList());
+                .flatMap(modifierService::extractModifiers);
     }
 
     private List<ParameterInformation> getParameters(JavaParser.MethodDeclarationContext ctx) {
@@ -79,14 +87,16 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
     private void addRegularParameters(JavaParser.FormalParameterListContext paramList, List<ParameterInformation> parameters) {
         if (paramList.formalParameter() != null) {
             for (JavaParser.FormalParameterContext param : paramList.formalParameter()) {
-                parameters.add(parameterService.createRegularParameter(param));
+                parameterService.createRegularParameter(param)
+                        .ifPresent(parameters::add);
             }
         }
     }
 
     private void addVarArgsParameter(JavaParser.FormalParameterListContext paramList, List<ParameterInformation> parameters) {
         if (paramList.lastFormalParameter() != null) {
-            parameters.add(parameterService.createVarArgsParameter(paramList.lastFormalParameter()));
+            parameterService.createVarArgsParameter(paramList.lastFormalParameter())
+                    .ifPresent(parameters::add);
         }
     }
 
@@ -136,11 +146,10 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
         return Collections.unmodifiableList(exceptions);
     }
 
-    private List<String> getAnnotations(JavaParser.MethodDeclarationContext ctx) {
+    private Optional<List<String>> getAnnotations(JavaParser.MethodDeclarationContext ctx) {
         return Optional.ofNullable(ctx)
                 .map(this::findClassBodyDeclarationContext)
-                .map(annotationService::extractAnnotation)
-                .orElse(Collections.emptyList());
+                .flatMap(annotationService::extractAnnotation);
     }
 
     private JavaParser.ClassBodyDeclarationContext findClassBodyDeclarationContext(JavaParser.MethodDeclarationContext ctx) {

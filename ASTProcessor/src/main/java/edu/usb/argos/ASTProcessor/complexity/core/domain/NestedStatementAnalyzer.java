@@ -1,16 +1,18 @@
-package edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefactor;
+package edu.usb.argos.ASTProcessor.complexity.core.domain;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;
+import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.ComplexityAnalyzerStrategy;
 import edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.JavaStatementAnalyzer;
+import edu.usb.argos.ASTProcessor.complexity.infraestructure.utils.analyzers.AnalyzerUtils;
+import edu.usb.argos.ASTProcessor.complexity.infraestructure.utils.analyzers.StructureVerifier;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class NestedStatementAnalyzer implements ComplexityAnalyzerStrategy<ControlStructureAnalysis, JavaParser.StatementContext> {

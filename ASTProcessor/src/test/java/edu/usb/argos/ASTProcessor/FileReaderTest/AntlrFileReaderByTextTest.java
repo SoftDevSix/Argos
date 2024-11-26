@@ -1,14 +1,14 @@
-package test.java.edu.usb.argos.ASTProcessor.FileReaderTest;
+package edu.usb.argos.ASTProcessor.FileReaderTest;
 
 import edu.usb.argos.ASTProcessor.reader.application.services.FileReaderByText;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.CharStream;
 
 public class AntlrFileReaderByTextTest {
     private FileReaderByText fileReader;
@@ -21,8 +21,9 @@ public class AntlrFileReaderByTextTest {
     @Test
     void testReadFileWithValidContent() throws Exception {
         String content = "class Example {}";
-        ParseTree parseTree = fileReader.readFile(content);
-        assertNotNull(parseTree, "ParseTree should not be null for valid content");
+        Optional<ParseTree> parseTree = fileReader.readFile(content);
+        assertTrue(parseTree.isPresent());
+        assertNotNull(parseTree.get(), "ParseTree should not be null for valid content");
     }
 
     @Test
@@ -44,8 +45,9 @@ public class AntlrFileReaderByTextTest {
                 "        return a - b;\n" +
                 "    }\n" +
                 "}";
-        ParseTree parseContent = fileReader.readFile(content);
-        assertNotNull(parseContent, "ParseTree should not be null for valid content");
+        Optional<ParseTree> parseContent = fileReader.readFile(content);
+        assertTrue(parseContent.isPresent());
+        assertNotNull(parseContent.get(), "ParseTree should not be null for valid content");
     }
 
     @Test

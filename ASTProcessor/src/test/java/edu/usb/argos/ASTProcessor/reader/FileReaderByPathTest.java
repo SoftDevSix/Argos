@@ -13,8 +13,8 @@ import org.mockito.MockitoAnnotations;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,10 +41,10 @@ public class FileReaderByPathTest {
         Path validFile = createValidJavaFile();
         doNothing().when(mockValidationStrategy).validate(any());
 
-        ParseTree result = fileReader.readFile(validFile);
+        Optional<ParseTree> result = fileReader.readFile(validFile);
 
-        assertNotNull(result);
-        assertTrue(result.getText().contains("TestClass"));
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getText().contains("TestClass"));
         verify(mockValidationStrategy).validate(validFile);
     }
 
@@ -73,10 +73,10 @@ public class FileReaderByPathTest {
         Path complexFile = createComplexJavaFile();
         doNothing().when(mockValidationStrategy).validate(any());
 
-        ParseTree result = fileReader.readFile(complexFile);
+        Optional<ParseTree> result = fileReader.readFile(complexFile);
 
-        assertNotNull(result);
-        assertTrue(result.getText().contains("ComplexClass"));
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getText().contains("ComplexClass"));
         verify(mockValidationStrategy).validate(complexFile);
     }
 

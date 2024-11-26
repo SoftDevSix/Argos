@@ -2,12 +2,13 @@ package edu.usb.argos.ASTProcessor.reader;
 
 import edu.usb.argos.ASTProcessor.reader.application.services.DirectoryAnalyzerByPath;
 import edu.usb.argos.ASTProcessor.reader.application.services.FileReaderByPath;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ASTAnalysisException;
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
 import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileValidationStrategy;
 import edu.usb.argos.ASTProcessor.reader.infraestructure.utils.SourceTreeAnalyzer;
 import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.DirectoryPathValidator;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -86,19 +87,15 @@ class DirectoryAnalyzerByPathIntegrationTest {
     @Test
     void testAnalyzeDirectory_WithInvalidJavaFileInSubdirectory() throws Exception {
         Path subDir = Files.createDirectory(tempDir.resolve("subDir"));
-        Path invalidJavaFile = createJavaFile(subDir, "Invalid.java", "public class Invalid { syntax error here");
+        createJavaFile(subDir, "Invalid.java", "public class Invalid { syntax error here");
 
         doThrow(new FileAnalyzerException("Validation failed")).when(validationStrategy).validate(any());
 
-        List<ParseTree> result = directoryAnalyzer.analyzeDirectory(tempDir);
-
-        assertTrue(result.isEmpty());
-        verify(validationStrategy).validate(invalidJavaFile);
+        assertThrowsExactly(ASTAnalysisException.class, () -> directoryAnalyzer.analyzeDirectory(tempDir));
     }
 
-    private Path createJavaFile(Path dir, String fileName, String content) throws Exception {
+    private void createJavaFile(Path dir, String fileName, String content) throws Exception {
         Path javaFile = dir.resolve(fileName);
         Files.writeString(javaFile, content);
-        return javaFile;
     }
 }

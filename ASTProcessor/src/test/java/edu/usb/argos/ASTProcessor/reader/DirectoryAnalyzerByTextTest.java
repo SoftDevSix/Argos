@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+
 import static org.mockito.Mockito.*;
 
 class DirectoryAnalyzerByTextTest {

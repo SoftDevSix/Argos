@@ -24,15 +24,16 @@ public class JavaClassIdentityServiceTest {
     @BeforeEach
     void setUp() {
         String testClass =
-                "package com.example;\n" +
-                        "\n" +
-                        "import java.util.List;\n" +
-                        "\n" +
-                        "@TestAnnotation(value = \"test\")\n" +
-                        "public class TestClass extends BaseClass implements Interface1, Interface2 {\n" +
-                        "    private String field;\n" +
-                        "    public void method() {}\n" +
-                        "}";
+                """
+                        package com.example;
+                        
+                        import java.util.List;
+                        
+                        @TestAnnotation(value = "test")
+                        public class TestClass extends BaseClass implements Interface1, Interface2 {
+                            private String field;
+                            public void method() {}
+                        }""";
 
         CharStream input = CharStreams.fromString(testClass);
         JavaLexer lexer = new JavaLexer(input);
@@ -47,12 +48,15 @@ public class JavaClassIdentityServiceTest {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         Optional<String> className = classIdentityService.getClassName(ctx);
 
+        assertTrue(className.isPresent());
         assertEquals("TestClass", className.get());
     }
 
     @Test
     void getPackageNameShouldReturnCorrectPackage() {
         Optional<String> packageName = classIdentityService.getPackageName(compilationUnit.packageDeclaration());
+
+        assertTrue(packageName.isPresent());
         assertEquals("com.example", packageName.get());
     }
 

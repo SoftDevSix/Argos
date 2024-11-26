@@ -52,7 +52,7 @@ public class JavaClassVisitorTest {
     private ClassInformation extractClassInformation(String javaSource) {
         CommonTokenStream tokenStream = tokenize(javaSource);
         JavaParser parser = createParser(tokenStream);
-        JavaClassVisitor visitor = createVisitor(tokenStream);
+        JavaClassVisitor visitor = createVisitor();
         return visitClass(parser, visitor);
     }
 
@@ -66,8 +66,8 @@ public class JavaClassVisitorTest {
         return new JavaParser(tokenStream);
     }
 
-    private JavaClassVisitor createVisitor(CommonTokenStream tokenStream) {
-        JavaMethodVisitor methodVisitor = createMethodVisitor(tokenStream);
+    private JavaClassVisitor createVisitor() {
+        JavaMethodVisitor methodVisitor = createMethodVisitor();
         JavaAttributeVisitor attributeVisitor = createAttributeVisitor();
         JavaConstructorVisitor constructorVisitor = new JavaConstructorVisitor();
 
@@ -82,7 +82,7 @@ public class JavaClassVisitorTest {
         return new JavaClassVisitor(identityService, structureService, memberService);
     }
 
-    private JavaMethodVisitor createMethodVisitor(CommonTokenStream tokenStream) {
+    private JavaMethodVisitor createMethodVisitor() {
         return new JavaMethodVisitor(
                 new ModifierService(),
                 new ParameterService(),
@@ -110,12 +110,15 @@ public class JavaClassVisitorTest {
     }
 
     private void testClassIdentity(ClassInformation classInformation) {
+        assertTrue(classInformation.getIdentity().getName().isPresent());
+        assertTrue(classInformation.getIdentity().getPackageName().isPresent());
         assertEquals("TestClass", classInformation.getIdentity().getName().get());
         assertEquals("com.example", classInformation.getIdentity().getPackageName().get());
         assertTrue(classInformation.getIdentity().getModifiers().contains("public"));
     }
 
     private void testClassStructure(ClassInformation classInformation) {
+        assertTrue(classInformation.getStructure().getSuperClass().isPresent());
         assertEquals("BaseClass", classInformation.getStructure().getSuperClass().get());
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceOne"));
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceTwo"));

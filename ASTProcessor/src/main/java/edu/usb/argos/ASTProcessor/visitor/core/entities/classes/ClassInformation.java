@@ -5,8 +5,8 @@ import lombok.Value;
 
 @Value
 @Builder
-public class ClassInformation {
+public class ClassInformation<T> {
     ClassIdentity identity;
     ClassStructure structure;
-    ClassMembers members;
+    ClassMembers<T> members;
 }

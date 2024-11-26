@@ -23,10 +23,11 @@ public class JavaClassStructureServiceTest {
     @BeforeEach
     void setUp() {
         String testClass =
-                "public class TestClass extends BaseClass implements Interface1, Interface2 {\n" +
-                        "    private String field;\n" +
-                        "    public void method() {}\n" +
-                        "}";
+                """
+                        public class TestClass extends BaseClass implements Interface1, Interface2 {
+                            private String field;
+                            public void method() {}
+                        }""";
 
         CharStream input = CharStreams.fromString(testClass);
         JavaLexer lexer = new JavaLexer(input);
@@ -41,6 +42,8 @@ public class JavaClassStructureServiceTest {
     void getSuperClassShouldReturnCorrectSuperClass() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
         Optional<String> superClass = structureService.getSuperClass(ctx);
+
+        assertTrue(superClass.isPresent());
         assertEquals("BaseClass", superClass.get());
     }
 

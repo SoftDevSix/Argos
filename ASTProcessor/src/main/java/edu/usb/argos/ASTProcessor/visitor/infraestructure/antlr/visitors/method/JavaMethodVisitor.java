@@ -4,11 +4,9 @@ import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ParameterInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.IAnnotationExtractor;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.IModifierExtractor;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.services.IParameterExtractor;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.StatementAdapter;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -92,7 +90,7 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
         }
     }
 
-    private List<Statement<JavaParser.StatementContext>> getStatements(JavaParser.MethodDeclarationContext ctx) {
+    private List<JavaParser.StatementContext> getStatements(JavaParser.MethodDeclarationContext ctx) {
         return Optional.ofNullable(ctx)
                 .map(JavaParser.MethodDeclarationContext::methodBody)
                 .map(JavaParser.MethodBodyContext::block)
@@ -100,27 +98,27 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
                 .orElse(Collections.emptyList());
     }
 
-    private List<Statement<JavaParser.StatementContext>> processBlockStatements(JavaParser.BlockContext block) {
-        List<Statement<JavaParser.StatementContext>> statements = new ArrayList<>();
+    private List<JavaParser.StatementContext> processBlockStatements(JavaParser.BlockContext block) {
+        List<JavaParser.StatementContext> statements = new ArrayList<>();
         for (JavaParser.BlockStatementContext blockStmt : block.blockStatement()) {
             addStatement(blockStmt, statements);
         }
         return Collections.unmodifiableList(statements);
     }
 
-    private void addStatement(JavaParser.BlockStatementContext blockStmt, List<Statement<JavaParser.StatementContext>> statements) {
+    private void addStatement(JavaParser.BlockStatementContext blockStmt, List<JavaParser.StatementContext> statements) {
         if (blockStmt.statement() != null) {
-            statements.add(new StatementAdapter(blockStmt.statement()));
+            statements.add(blockStmt.statement());
         } else if (blockStmt.localVariableDeclaration() != null) {
             statements.add(createLocalVariableStatement(blockStmt));
         }
     }
 
-    private Statement<JavaParser.StatementContext> createLocalVariableStatement(JavaParser.BlockStatementContext blockStmt) {
+    private JavaParser.StatementContext createLocalVariableStatement(JavaParser.BlockStatementContext blockStmt) {
         JavaParser.StatementContext statementCtx = new JavaParser.StatementContext(blockStmt, 0);
         statementCtx.statementExpression = blockStmt.localVariableDeclaration().getParent()
                 .getRuleContext(JavaParser.ExpressionContext.class, 0);
-        return new StatementAdapter(statementCtx);
+        return statementCtx;
     }
 
     private List<String> getThrowsExceptions(JavaParser.MethodDeclarationContext ctx) {

@@ -2,119 +2,131 @@ package edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefac
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
-import edu.usb.argos.ASTProcessor.complexity.core.enums.ComplexityType;
+import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
-public class LogicalOperatorAnalyzer implements ComplexityAnalyzerStrategy<JavaParser.StatementContext, ComplexityLocation> {
+public class LogicalOperatorAnalyzer implements ComplexityAnalyzerStrategy<ControlStructureAnalysis, JavaParser.StatementContext> {
     @Override
-    public int analyze(JavaParser.StatementContext node) {
-        if (node == null) return 0;
-
-        int complexity = 0;
-        complexity += analyzeParenthesisExpression(node);
-        complexity += analyzeDoWhileExpression(node);
-        complexity += analyzeGeneralExpressions(node);
-
-        return complexity;
-    }
-
-    private int analyzeParenthesisExpression(JavaParser.StatementContext node) {
-        if (node.parExpression() != null && node.parExpression().expression() != null) {
-            return countLogicalOperators(node.parExpression().expression().getText());
+    public ControlStructureAnalysis analyze(JavaParser.StatementContext node) {
+        if (Optional.ofNullable(node).isEmpty()) {
+            return buildEmptyAnalysis();
         }
-        return 0;
+
+        return analyzeExpressions(node);
     }
 
-    private int analyzeDoWhileExpression(JavaParser.StatementContext node) {
-        if (node.DO() != null && node.parExpression() != null) {
-            return countLogicalOperators(node.parExpression().expression().getText());
-        }
-        return 0;
-    }
-
-    private int analyzeGeneralExpressions(JavaParser.StatementContext node) {
-        int complexity = 0;
-        if (node.expression() != null) {
-            for (JavaParser.ExpressionContext expr : node.expression()) {
-                complexity += countLogicalOperators(expr.getText());
-            }
-        }
-        return complexity;
-    }
-
-    private int countLogicalOperators(String text) {
-        return (text.split("&&").length - 1) + (text.split("\\|\\|").length - 1);
-    }
-
-    @Override
-    public List<ComplexityLocation> getComplexityLocations(JavaParser.StatementContext node) {
+    private ControlStructureAnalysis analyzeExpressions(JavaParser.StatementContext node) {
         List<ComplexityLocation> locations = new ArrayList<>();
-        if (node == null) return locations;
+        int complexity = 0;
 
-        collectParenthesisExpressionLocations(node, locations);
-        collectDoWhileExpressionLocations(node, locations);
-        collectGeneralExpressionLocations(node, locations);
+        complexity += performAnalysis(node, this::analyzeParenthesisExpression, locations);
+        complexity += performAnalysis(node, this::analyzeDoWhileExpression, locations);
+        complexity += performAnalysis(node, this::analyzeGeneralExpressions, locations);
 
-        return locations;
+        return buildAnalysis(complexity, locations);
     }
 
-    private void collectParenthesisExpressionLocations(JavaParser.StatementContext node, List<ComplexityLocation> locations) {
-        if (node.parExpression() == null || node.parExpression().expression() == null) return;
-        collectOperatorsFromExpression(
-                node.parExpression().expression(),
-                node.parExpression().getStart().getLine(),
-                locations
-        );
+    private int performAnalysis(JavaParser.StatementContext node,
+                                Function<JavaParser.StatementContext, ControlStructureAnalysis> analysisFunction,
+                                List<ComplexityLocation> locations) {
+        ControlStructureAnalysis analysisResult = analysisFunction.apply(node);
+        locations.addAll(analysisResult.getLocations());
+        return analysisResult.getTotalComplexity();
     }
 
-    private void collectDoWhileExpressionLocations(JavaParser.StatementContext node, List<ComplexityLocation> locations) {
-        if (node.DO() == null || node.parExpression() == null) return;
-        collectOperatorsFromExpression(
-                node.parExpression().expression(),
-                node.parExpression().getStart().getLine(),
-                locations
-        );
+    private ControlStructureAnalysis analyzeParenthesisExpression(JavaParser.StatementContext node) {
+        if (!StructureVerifier.hasValidParenthesisExpression(node)) {
+            return buildEmptyAnalysis();
+        }
+
+        String expressionText = node.parExpression().expression().getText();
+        return analyzeOperatorsInExpression(expressionText, node.parExpression().getStart().getLine());
     }
 
-    private void collectGeneralExpressionLocations(JavaParser.StatementContext node, List<ComplexityLocation> locations) {
-        if (node.expression() == null) return;
-        node.expression().forEach(expr ->
-                collectOperatorsFromExpression(expr, expr.getStart().getLine(), locations)
-        );
+    private ControlStructureAnalysis analyzeDoWhileExpression(JavaParser.StatementContext node) {
+        if (!StructureVerifier.hasValidDoWhileExpression(node)) {
+            return buildEmptyAnalysis();
+        }
+
+        String expressionText = node.parExpression().expression().getText();
+        return analyzeOperatorsInExpression(expressionText, node.parExpression().getStart().getLine());
     }
 
-    private void collectOperatorsFromExpression(JavaParser.ExpressionContext expr, int lineNumber,
-                                                List<ComplexityLocation> locations) {
-        String text = expr.getText();
-        collectAndOperators(text, lineNumber, locations);
-        collectOrOperators(text, lineNumber, locations);
+    private ControlStructureAnalysis analyzeGeneralExpressions(JavaParser.StatementContext node) {
+        if (!StructureVerifier.hasExpressions(node)) {
+            return buildEmptyAnalysis();
+        }
+
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        for (JavaParser.ExpressionContext expr : node.expression()) {
+            ControlStructureAnalysis expressionAnalysis = analyzeOperatorsInExpression(
+                    expr.getText(),
+                    expr.getStart().getLine()
+            );
+            complexity += expressionAnalysis.getTotalComplexity();
+            locations.addAll(expressionAnalysis.getLocations());
+        }
+
+        return buildAnalysis(complexity, locations);
     }
 
-    private void collectAndOperators(String text, int lineNumber, List<ComplexityLocation> locations) {
+    private ControlStructureAnalysis analyzeOperatorsInExpression(String text, int lineNumber) {
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        ControlStructureAnalysis andAnalysis = analyzeAndOperators(text, lineNumber);
+        complexity += andAnalysis.getTotalComplexity();
+        locations.addAll(andAnalysis.getLocations());
+
+        ControlStructureAnalysis orAnalysis = analyzeOrOperators(text, lineNumber);
+        complexity += orAnalysis.getTotalComplexity();
+        locations.addAll(orAnalysis.getLocations());
+
+        return buildAnalysis(complexity, locations);
+    }
+
+    private ControlStructureAnalysis analyzeAndOperators(String text, int lineNumber) {
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
         int lastIndex = 0;
-        while ((lastIndex = text.indexOf("&&", lastIndex)) != -1) {
-            locations.add(ComplexityLocation.builder()
-                    .lineNumber(lineNumber)
-                    .complexityType(ComplexityType.LOGICAL_AND)
-                    .description("Logical AND operator")
-                    .contextInfo("in expression: " + text)
-                    .build());
+
+        while ((lastIndex = text.indexOf(MessagesAnalyzer.Operators.AND, lastIndex)) != -1) {
+            complexity++;
+            locations.add(ComplexityLocationFactory.createLogicalAndLocation(lineNumber, text));
             lastIndex += 2;
         }
+
+        return buildAnalysis(complexity, locations);
     }
 
-    private void collectOrOperators(String text, int lineNumber, List<ComplexityLocation> locations) {
+    private ControlStructureAnalysis analyzeOrOperators(String text, int lineNumber) {
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
         int lastIndex = 0;
-        while ((lastIndex = text.indexOf("||", lastIndex)) != -1) {
-            locations.add(ComplexityLocation.builder()
-                    .lineNumber(lineNumber)
-                    .complexityType(ComplexityType.LOGICAL_OR)
-                    .description("Logical OR operator")
-                    .contextInfo("in expression: " + text)
-                    .build());
+
+        while ((lastIndex = text.indexOf(MessagesAnalyzer.Operators.OR, lastIndex)) != -1) {
+            complexity++;
+            locations.add(ComplexityLocationFactory.createLogicalOrLocation(lineNumber, text));
             lastIndex += 2;
         }
+
+        return buildAnalysis(complexity, locations);
+    }
+
+    private ControlStructureAnalysis buildAnalysis(int complexity, List<ComplexityLocation> locations) {
+        return ControlStructureAnalysis.builder()
+                .totalComplexity(complexity)
+                .locations(locations)
+                .build();
+    }
+
+    private ControlStructureAnalysis buildEmptyAnalysis() {
+        return buildAnalysis(0, new ArrayList<>());
     }
 }

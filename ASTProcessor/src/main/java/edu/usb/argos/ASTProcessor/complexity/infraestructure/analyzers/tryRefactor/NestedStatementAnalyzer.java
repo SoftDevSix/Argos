@@ -2,89 +2,107 @@ package edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefac
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
+import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;
 import edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.JavaStatementAnalyzer;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.function.Function;
 
 @RequiredArgsConstructor
-public class NestedStatementAnalyzer implements ComplexityAnalyzerStrategy<JavaParser.StatementContext, ComplexityLocation> {
+public class NestedStatementAnalyzer implements ComplexityAnalyzerStrategy<ControlStructureAnalysis, JavaParser.StatementContext> {
     private final JavaStatementAnalyzer mainAnalyzer;
 
     @Override
-    public int analyze(JavaParser.StatementContext node) {
-        if (node == null) return 0;
+    public ControlStructureAnalysis analyze(JavaParser.StatementContext node) {
+        if (Optional.ofNullable(node).isEmpty()) {
+            return buildEmptyAnalysis();
+        }
 
-        return analyzeBlockStatements(node) +
-                analyzeSwitchBlockStatements(node) +
-                analyzeRegularStatements(node);
+        return analyzeNestedStatements(node);
     }
 
-    private int analyzeBlockStatements(JavaParser.StatementContext node) {
-        if (node.block() == null) return 0;
-
-        return node.block().blockStatement().stream()
-                .filter(stmt -> stmt.statement() != null)
-                .mapToInt(stmt -> mainAnalyzer.analyzeNode(stmt.statement()))
-                .sum();
-    }
-
-    private int analyzeSwitchBlockStatements(JavaParser.StatementContext node) {
-        if (node.SWITCH() == null) return 0;
-
-        return node.switchBlockStatementGroup().stream()
-                .flatMap(group -> group.blockStatement().stream())
-                .filter(stmt -> stmt.statement() != null)
-                .mapToInt(stmt -> mainAnalyzer.analyzeNode(stmt.statement()))
-                .sum();
-    }
-
-    private int analyzeRegularStatements(JavaParser.StatementContext node) {
-        return node.statement().stream()
-                .filter(stmt -> !(node.ELSE() != null && stmt.IF() != null))
-                .mapToInt(mainAnalyzer::analyzeNode)
-                .sum();
-    }
-
-    @Override
-    public List<ComplexityLocation> getComplexityLocations(JavaParser.StatementContext node) {
+    private ControlStructureAnalysis analyzeNestedStatements(JavaParser.StatementContext node) {
         List<ComplexityLocation> locations = new ArrayList<>();
-        if (node == null) return locations;
+        int complexity = 0;
 
-        Stream.of(
-                collectBlockLocations(node),
-                collectSwitchBlockLocations(node),
-                collectRegularStatementLocations(node)
-        ).forEach(locations::addAll);
+        complexity += performAnalysis(node, this::analyzeBlockStatements, locations);
+        complexity += performAnalysis(node, this::analyzeSwitchBlockStatements, locations);
+        complexity += performAnalysis(node, this::analyzeRegularStatements, locations);
 
-        return locations;
+        return buildAnalysis(complexity, locations);
     }
 
-    private List<ComplexityLocation> collectBlockLocations(JavaParser.StatementContext node) {
-        if (node.block() == null) return new ArrayList<>();
-
-        return node.block().blockStatement().stream()
-                .filter(stmt -> stmt.statement() != null)
-                .flatMap(stmt -> mainAnalyzer.getComplexityLocation(stmt.statement()).stream())
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    private int performAnalysis(JavaParser.StatementContext node,
+                                Function<JavaParser.StatementContext, ControlStructureAnalysis> analysisFunction,
+                                List<ComplexityLocation> locations) {
+        ControlStructureAnalysis analysisResult = analysisFunction.apply(node);
+        locations.addAll(analysisResult.getLocations());
+        return analysisResult.getTotalComplexity();
     }
 
-    private List<ComplexityLocation> collectSwitchBlockLocations(JavaParser.StatementContext node) {
-        if (node.SWITCH() == null) return new ArrayList<>();
+    private ControlStructureAnalysis analyzeBlockStatements(JavaParser.StatementContext node) {
+        if (!StructureVerifier.hasBlockStatements(node)) {
+            return buildEmptyAnalysis();
+        }
 
-        return node.switchBlockStatementGroup().stream()
-                .flatMap(group -> group.blockStatement().stream())
-                .filter(stmt -> stmt.statement() != null)
-                .flatMap(stmt -> mainAnalyzer.getComplexityLocation(stmt.statement()).stream())
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        for (JavaParser.BlockStatementContext blockStmt : node.block().blockStatement()) {
+            if (blockStmt.statement() != null) {
+                complexity += mainAnalyzer.analyzeNode(blockStmt.statement());
+                locations.addAll(mainAnalyzer.getComplexityLocation(blockStmt.statement()));
+            }
+        }
+
+        return buildAnalysis(complexity, locations);
     }
 
-    private List<ComplexityLocation> collectRegularStatementLocations(JavaParser.StatementContext node) {
-        return node.statement().stream()
-                .filter(stmt -> !(node.ELSE() != null && stmt.IF() != null))
-                .flatMap(stmt -> mainAnalyzer.getComplexityLocation(stmt).stream())
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    private ControlStructureAnalysis analyzeSwitchBlockStatements(JavaParser.StatementContext node) {
+        if (StructureVerifier.hasSwitchStatement(node)) {
+            return buildEmptyAnalysis();
+        }
+
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        for (JavaParser.SwitchBlockStatementGroupContext group : node.switchBlockStatementGroup()) {
+            for (JavaParser.BlockStatementContext blockStmt : group.blockStatement()) {
+                if (blockStmt.statement() != null) {
+                    complexity += mainAnalyzer.analyzeNode(blockStmt.statement());
+                    locations.addAll(mainAnalyzer.getComplexityLocation(blockStmt.statement()));
+                }
+            }
+        }
+
+        return buildAnalysis(complexity, locations);
+    }
+
+    private ControlStructureAnalysis analyzeRegularStatements(JavaParser.StatementContext node) {
+        List<ComplexityLocation> locations = new ArrayList<>();
+        int complexity = 0;
+
+        for (JavaParser.StatementContext stmt : node.statement()) {
+            if (!StructureVerifier.isElseIfStatement(node, stmt)) {
+                complexity += mainAnalyzer.analyzeNode(stmt);
+                locations.addAll(mainAnalyzer.getComplexityLocation(stmt));
+            }
+        }
+
+        return buildAnalysis(complexity, locations);
+    }
+
+    private ControlStructureAnalysis buildAnalysis(int complexity, List<ComplexityLocation> locations) {
+        return ControlStructureAnalysis.builder()
+                .totalComplexity(complexity)
+                .locations(locations)
+                .build();
+    }
+
+    private ControlStructureAnalysis buildEmptyAnalysis() {
+        return buildAnalysis(0, new ArrayList<>());
     }
 }

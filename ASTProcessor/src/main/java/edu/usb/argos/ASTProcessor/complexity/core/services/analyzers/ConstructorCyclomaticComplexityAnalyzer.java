@@ -6,9 +6,8 @@ import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityResult;
 import edu.usb.argos.ASTProcessor.complexity.core.enums.ComplexityLevel;
 import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.CodeElementAdapter;
 import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.CyclomaticComplexityAnalyzer;
-import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.NodeAnalyzer;
 import edu.usb.argos.ASTProcessor.complexity.core.services.rules.ComplexityRulesManager;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
+import edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.JavaStatementAnalyzer;
 import lombok.Builder;
 import lombok.Value;
 
@@ -18,10 +17,10 @@ import java.util.List;
 @Value
 @Builder
 public class ConstructorCyclomaticComplexityAnalyzer
-        implements CyclomaticComplexityAnalyzer<JavaParser.StatementContext, ComplexityResult> {
-    CodeElementAdapter<JavaParser.StatementContext> target;
+        implements CyclomaticComplexityAnalyzer<JavaParser.BlockStatementContext, ComplexityResult> {
+    CodeElementAdapter<JavaParser.BlockStatementContext> target;
     ComplexityRulesManager rulesManager;
-    NodeAnalyzer<JavaParser.StatementContext> statementAnalyzer;
+    JavaStatementAnalyzer statementAnalyzer;
 
     @Override
     public ComplexityResult analyze() {
@@ -45,8 +44,8 @@ public class ConstructorCyclomaticComplexityAnalyzer
     public int calculateComplexityScore() {
         int complexity = 1;
 
-        for (Statement<JavaParser.StatementContext> statement : target.getStatements()) {
-            complexity += statementAnalyzer.analyzeNode(statement.getNode());
+        for (JavaParser.BlockStatementContext statement : target.getStatements()) {
+            complexity += statementAnalyzer.analyzeNode(statement.statement());
         }
 
         return complexity;
@@ -65,10 +64,11 @@ public class ConstructorCyclomaticComplexityAnalyzer
     private List<ComplexityLocation> calculateComplexityLocations() {
         List<ComplexityLocation> locations = new ArrayList<>();
 
-        for (Statement<JavaParser.StatementContext> statement : target.getStatements()) {
-            locations.addAll(statementAnalyzer.getComplexityLocation(statement.getNode()));
+        for (JavaParser.BlockStatementContext statement : target.getStatements()) {
+            locations.addAll(statementAnalyzer.getComplexityLocation(statement.statement()));
         }
 
         return locations;
     }
 }
+

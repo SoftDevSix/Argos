@@ -6,7 +6,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import java.io.IOException;
 
 import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileReaderException;

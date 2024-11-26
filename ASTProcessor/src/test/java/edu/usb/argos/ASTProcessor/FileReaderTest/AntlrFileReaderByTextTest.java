@@ -1,6 +1,6 @@
 package test.java.edu.usb.argos.ASTProcessor.FileReaderTest;
 
-import main.java.edu.usb.argos.ASTProcessor.FileReaderByText.FileReader.FileReaderByText;
+import edu.usb.argos.ASTProcessor.reader.application.services.FileReaderByText;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;

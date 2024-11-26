@@ -8,7 +8,6 @@ import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.CodeEleme
 import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.CyclomaticComplexityAnalyzer;
 import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.NodeAnalyzer;
 import edu.usb.argos.ASTProcessor.complexity.core.services.rules.ComplexityRulesManager;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import lombok.Builder;
 import lombok.Value;
 
@@ -45,8 +44,8 @@ public class MethodCyclomaticComplexityAnalyzer
     public int calculateComplexityScore() {
         int complexity = 1;
 
-        for (Statement<JavaParser.StatementContext> statement : target.getStatements()) {
-            complexity += statementNodeAnalyzer.analyzeNode(statement.getNode());
+        for (JavaParser.StatementContext statement : target.getStatements()) {
+            complexity += statementNodeAnalyzer.analyzeNode(statement);
         }
 
         return complexity;
@@ -65,8 +64,8 @@ public class MethodCyclomaticComplexityAnalyzer
     private List<ComplexityLocation> calculateComplexityLocations() {
         List<ComplexityLocation> allLocations = new ArrayList<>();
 
-        for (Statement<JavaParser.StatementContext> statement : target.getStatements()) {
-            allLocations.addAll(statementNodeAnalyzer.getComplexityLocation(statement.getNode()));
+        for (JavaParser.StatementContext statement : target.getStatements()) {
+            allLocations.addAll(statementNodeAnalyzer.getComplexityLocation(statement));
         }
 
         return allLocations;

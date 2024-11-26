@@ -7,6 +7,7 @@ import edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.JavaState
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -18,34 +19,19 @@ public class NestedStatementAnalyzer implements ComplexityAnalyzerStrategy<Contr
     @Override
     public ControlStructureAnalysis analyze(JavaParser.StatementContext node) {
         if (Optional.ofNullable(node).isEmpty()) {
-            return buildEmptyAnalysis();
+            return AnalyzerUtils.buildEmptyAnalysis();
         }
 
-        return analyzeNestedStatements(node);
-    }
-
-    private ControlStructureAnalysis analyzeNestedStatements(JavaParser.StatementContext node) {
-        List<ComplexityLocation> locations = new ArrayList<>();
-        int complexity = 0;
-
-        complexity += performAnalysis(node, this::analyzeBlockStatements, locations);
-        complexity += performAnalysis(node, this::analyzeSwitchBlockStatements, locations);
-        complexity += performAnalysis(node, this::analyzeRegularStatements, locations);
-
-        return buildAnalysis(complexity, locations);
-    }
-
-    private int performAnalysis(JavaParser.StatementContext node,
-                                Function<JavaParser.StatementContext, ControlStructureAnalysis> analysisFunction,
-                                List<ComplexityLocation> locations) {
-        ControlStructureAnalysis analysisResult = analysisFunction.apply(node);
-        locations.addAll(analysisResult.getLocations());
-        return analysisResult.getTotalComplexity();
+        return AnalyzerUtils.analyzeStructures(node, Arrays.asList(
+                this::analyzeBlockStatements,
+                this::analyzeSwitchBlockStatements,
+                this::analyzeRegularStatements
+        ));
     }
 
     private ControlStructureAnalysis analyzeBlockStatements(JavaParser.StatementContext node) {
         if (!StructureVerifier.hasBlockStatements(node)) {
-            return buildEmptyAnalysis();
+            return AnalyzerUtils.buildEmptyAnalysis();
         }
 
         List<ComplexityLocation> locations = new ArrayList<>();
@@ -58,12 +44,12 @@ public class NestedStatementAnalyzer implements ComplexityAnalyzerStrategy<Contr
             }
         }
 
-        return buildAnalysis(complexity, locations);
+        return AnalyzerUtils.buildAnalysis(complexity, locations);
     }
 
     private ControlStructureAnalysis analyzeSwitchBlockStatements(JavaParser.StatementContext node) {
         if (StructureVerifier.hasSwitchStatement(node)) {
-            return buildEmptyAnalysis();
+            return AnalyzerUtils.buildEmptyAnalysis();
         }
 
         List<ComplexityLocation> locations = new ArrayList<>();
@@ -78,7 +64,7 @@ public class NestedStatementAnalyzer implements ComplexityAnalyzerStrategy<Contr
             }
         }
 
-        return buildAnalysis(complexity, locations);
+        return AnalyzerUtils.buildAnalysis(complexity, locations);
     }
 
     private ControlStructureAnalysis analyzeRegularStatements(JavaParser.StatementContext node) {
@@ -92,17 +78,6 @@ public class NestedStatementAnalyzer implements ComplexityAnalyzerStrategy<Contr
             }
         }
 
-        return buildAnalysis(complexity, locations);
-    }
-
-    private ControlStructureAnalysis buildAnalysis(int complexity, List<ComplexityLocation> locations) {
-        return ControlStructureAnalysis.builder()
-                .totalComplexity(complexity)
-                .locations(locations)
-                .build();
-    }
-
-    private ControlStructureAnalysis buildEmptyAnalysis() {
-        return buildAnalysis(0, new ArrayList<>());
+        return AnalyzerUtils.buildAnalysis(complexity, locations);
     }
 }

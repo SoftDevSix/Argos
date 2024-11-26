@@ -13,12 +13,12 @@ public class ComplexityLocationTest {
                 .lineNumber(10)
                 .complexityType(ComplexityType.IF_STATEMENT)
                 .description("If statement found")
-                .nodeType("IfStatement")
+                .contextInfo("If statement complexity")
                 .build();
 
         assertEquals(10, location.getLineNumber());
         assertEquals(ComplexityType.IF_STATEMENT, location.getComplexityType());
         assertEquals("If statement found", location.getDescription());
-        assertEquals("IfStatement", location.getNodeType());
+        assertEquals("If statement complexity", location.getContextInfo());
     }
 }

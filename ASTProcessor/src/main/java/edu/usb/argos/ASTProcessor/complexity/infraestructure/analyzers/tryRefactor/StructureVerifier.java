@@ -6,7 +6,7 @@ import lombok.experimental.UtilityClass;
 import java.util.Optional;
 
 @UtilityClass
-public class ControlStructureVerifier {
+public class StructureVerifier {
     public boolean hasIfStatement(JavaParser.StatementContext node) {
         return Optional.ofNullable(node.IF()).isEmpty();
     }
@@ -40,5 +40,30 @@ public class ControlStructureVerifier {
 
     public boolean hasCaseLabel(JavaParser.SwitchLabelContext label) {
         return Optional.ofNullable(label.CASE()).isPresent();
+    }
+
+    public boolean hasValidParenthesisExpression(JavaParser.StatementContext node) {
+        return Optional.ofNullable(node.parExpression())
+                .map(JavaParser.ParExpressionContext::expression)
+                .isPresent();
+    }
+
+    public boolean hasValidDoWhileExpression(JavaParser.StatementContext node) {
+        return Optional.ofNullable(node.DO()).isPresent() &&
+                Optional.ofNullable(node.parExpression()).isPresent();
+    }
+
+    public boolean hasExpressions(JavaParser.StatementContext node) {
+        return Optional.ofNullable(node.expression()).isPresent();
+    }
+
+    public boolean hasBlockStatements(JavaParser.StatementContext node) {
+        return Optional.ofNullable(node.block()).isPresent();
+    }
+
+    public boolean isElseIfStatement(JavaParser.StatementContext node,
+                                     JavaParser.StatementContext statement) {
+        return Optional.ofNullable(node.ELSE()).isPresent() &&
+                Optional.ofNullable(statement.IF()).isPresent();
     }
 }

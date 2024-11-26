@@ -11,8 +11,8 @@ public class ComplexityLocationFactory {
         return ComplexityLocation.builder()
                 .lineNumber(node.getStart().getLine())
                 .complexityType(ComplexityType.IF_STATEMENT)
-                .description(ControlStructureMessages.Descriptions.IF)
-                .contextInfo(String.format(ControlStructureMessages.ContextFormats.IF,
+                .description(MessagesAnalyzer.Descriptions.IF)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.IF,
                         node.parExpression().getText()))
                 .build();
     }
@@ -21,8 +21,8 @@ public class ComplexityLocationFactory {
         return ComplexityLocation.builder()
                 .lineNumber(node.statement(1).getStart().getLine())
                 .complexityType(ComplexityType.IF_STATEMENT)
-                .description(ControlStructureMessages.Descriptions.ELSE_IF)
-                .contextInfo(String.format(ControlStructureMessages.ContextFormats.ELSE_IF,
+                .description(MessagesAnalyzer.Descriptions.ELSE_IF)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.ELSE_IF,
                         node.statement(1).parExpression().getText()))
                 .build();
     }
@@ -31,8 +31,8 @@ public class ComplexityLocationFactory {
         return ComplexityLocation.builder()
                 .lineNumber(node.getStart().getLine())
                 .complexityType(ComplexityType.LOOP)
-                .description(ControlStructureMessages.Descriptions.FOR_LOOP)
-                .contextInfo(String.format(ControlStructureMessages.ContextFormats.FOR,
+                .description(MessagesAnalyzer.Descriptions.FOR_LOOP)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.FOR,
                         node.forControl().getText()))
                 .build();
     }
@@ -41,8 +41,8 @@ public class ComplexityLocationFactory {
         return ComplexityLocation.builder()
                 .lineNumber(node.getStart().getLine())
                 .complexityType(ComplexityType.LOOP)
-                .description(ControlStructureMessages.Descriptions.WHILE_LOOP)
-                .contextInfo(String.format(ControlStructureMessages.ContextFormats.WHILE,
+                .description(MessagesAnalyzer.Descriptions.WHILE_LOOP)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.WHILE,
                         node.parExpression().getText()))
                 .build();
     }
@@ -51,8 +51,8 @@ public class ComplexityLocationFactory {
         return ComplexityLocation.builder()
                 .lineNumber(node.getStart().getLine())
                 .complexityType(ComplexityType.LOOP)
-                .description(ControlStructureMessages.Descriptions.DO_WHILE)
-                .contextInfo(String.format(ControlStructureMessages.ContextFormats.DO_WHILE,
+                .description(MessagesAnalyzer.Descriptions.DO_WHILE)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.DO_WHILE,
                         node.parExpression().getText()))
                 .build();
     }
@@ -61,8 +61,8 @@ public class ComplexityLocationFactory {
         return ComplexityLocation.builder()
                 .lineNumber(label.getStart().getLine())
                 .complexityType(ComplexityType.SWITCH_CASE)
-                .description(ControlStructureMessages.Descriptions.SWITCH_CASE)
-                .contextInfo(String.format(ControlStructureMessages.ContextFormats.CASE,
+                .description(MessagesAnalyzer.Descriptions.SWITCH_CASE)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.CASE,
                         label.getText()))
                 .build();
     }
@@ -71,9 +71,27 @@ public class ComplexityLocationFactory {
         return ComplexityLocation.builder()
                 .lineNumber(catchClause.getStart().getLine())
                 .complexityType(ComplexityType.CATCH_BLOCK)
-                .description(ControlStructureMessages.Descriptions.EXCEPTION)
-                .contextInfo(String.format(ControlStructureMessages.ContextFormats.CATCH,
+                .description(MessagesAnalyzer.Descriptions.EXCEPTION)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.CATCH,
                         catchClause.catchType().getText()))
+                .build();
+    }
+
+    public ComplexityLocation createLogicalAndLocation(int lineNumber, String expression) {
+        return ComplexityLocation.builder()
+                .lineNumber(lineNumber)
+                .complexityType(ComplexityType.LOGICAL_AND)
+                .description(MessagesAnalyzer.Descriptions.LOGICAL_AND)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.EXPRESSION, expression))
+                .build();
+    }
+
+    public ComplexityLocation createLogicalOrLocation(int lineNumber, String expression) {
+        return ComplexityLocation.builder()
+                .lineNumber(lineNumber)
+                .complexityType(ComplexityType.LOGICAL_OR)
+                .description(MessagesAnalyzer.Descriptions.LOGICAL_OR)
+                .contextInfo(String.format(MessagesAnalyzer.ContextFormats.EXPRESSION, expression))
                 .build();
     }
 }

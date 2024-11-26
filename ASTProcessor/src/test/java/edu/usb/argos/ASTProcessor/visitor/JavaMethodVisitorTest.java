@@ -4,7 +4,6 @@ import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ParameterInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import edu.usb.argos.ASTProcessor.visitor.core.services.method.AnnotationService;
 import edu.usb.argos.ASTProcessor.visitor.core.services.method.ModifierService;
 import edu.usb.argos.ASTProcessor.visitor.core.services.method.ParameterService;
@@ -178,7 +177,7 @@ public class JavaMethodVisitorTest {
     @Test
     void testMethodWithComplexBody() {
         MethodInformation<JavaParser.StatementContext> info = parseAndVisitComplexMethod();
-        List<Statement<JavaParser.StatementContext>> statements = info.getStatements();
+        List<JavaParser.StatementContext> statements = info.getStatements();
 
         assertValidStatements(statements);
         assertStatementTypes(statements);
@@ -204,26 +203,25 @@ public class JavaMethodVisitorTest {
         return visitor.visitMethodDeclaration(ctx);
     }
 
-    private void assertValidStatements(List<Statement<JavaParser.StatementContext>> statements) {
+    private void assertValidStatements(List<JavaParser.StatementContext> statements) {
         assertNotNull(statements, "Statement list should not be null");
         assertFalse(statements.isEmpty(), "Should have statements");
 
         statements.forEach(stmt -> {
             assertNotNull(stmt, "Each statement should exist");
-            assertNotNull(stmt.getNode(), "Each statement should have a valid node");
+            assertNotNull(stmt, "Each statement should have a valid node");
         });
     }
 
-    private void assertStatementTypes(List<Statement<JavaParser.StatementContext>> statements) {
+    private void assertStatementTypes(List<JavaParser.StatementContext> statements) {
         boolean hasIf = false;
         boolean hasFor = false;
         boolean hasReturn = false;
 
-        for (Statement<JavaParser.StatementContext> stmt : statements) {
-            JavaParser.StatementContext node = stmt.getNode();
-            if (node.IF() != null) hasIf = true;
-            if (node.FOR() != null) hasFor = true;
-            if (node.RETURN() != null) hasReturn = true;
+        for (JavaParser.StatementContext stmt : statements) {
+            if (stmt.IF() != null) hasIf = true;
+            if (stmt.FOR() != null) hasFor = true;
+            if (stmt.RETURN() != null) hasReturn = true;
         }
 
         assertTrue(hasIf, "Should have an if statement");

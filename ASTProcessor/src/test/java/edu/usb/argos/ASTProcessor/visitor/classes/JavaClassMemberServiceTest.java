@@ -139,13 +139,15 @@ public class JavaClassMemberServiceTest {
     void getClassConstructorsShouldReturnCorrectConstructors() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
 
-        ConstructorInformation constructorOne = ConstructorInformation.builder()
+        ConstructorInformation<JavaParser.StatementContext> constructorOne =
+                ConstructorInformation.<JavaParser.StatementContext>builder()
                 .name("TestClass")
                 .modifiers(List.of("public"))
                 .parameters(new ArrayList<>())
                 .build();
 
-        ConstructorInformation constructorTwo = ConstructorInformation.builder()
+        ConstructorInformation<JavaParser.StatementContext> constructorTwo =
+                ConstructorInformation.<JavaParser.StatementContext>builder()
                 .name("TestClass")
                 .modifiers(List.of("public"))
                 .parameters(List.of("String"))
@@ -153,7 +155,7 @@ public class JavaClassMemberServiceTest {
 
         when(constructorVisitor.visitConstructors(any())).thenReturn(Arrays.asList(constructorOne, constructorTwo));
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = memberService.getClassConstructors(ctx);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = memberService.getClassConstructors(ctx);
 
         assertEquals(2, constructors.size());
 

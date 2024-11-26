@@ -19,6 +19,7 @@ import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,7 @@ public class JavaClassVisitorTest {
 
     @Test
     void testVisitClassDeclaration() {
-        ClassInformation classInformation = extractClassInformation(getTestJavaSource());
+        ClassInformation<JavaParser.StatementContext> classInformation = extractClassInformation(getTestJavaSource());
         assertNotNull(classInformation);
         testClassIdentity(classInformation);
         testClassStructure(classInformation);
@@ -49,7 +50,7 @@ public class JavaClassVisitorTest {
                 """;
     }
 
-    private ClassInformation extractClassInformation(String javaSource) {
+    private ClassInformation<JavaParser.StatementContext> extractClassInformation(String javaSource) {
         CommonTokenStream tokenStream = tokenize(javaSource);
         JavaParser parser = createParser(tokenStream);
         JavaClassVisitor visitor = createVisitor();
@@ -73,7 +74,7 @@ public class JavaClassVisitorTest {
 
         JavaClassIdentityService identityService = new JavaClassIdentityService();
         JavaClassStructureService structureService = new JavaClassStructureService();
-        IClassMemberService memberService = createMemberService(
+        IClassMemberService<ParserRuleContext, JavaParser.StatementContext> memberService = createMemberService(
                 methodVisitor,
                 attributeVisitor,
                 constructorVisitor
@@ -103,13 +104,13 @@ public class JavaClassVisitorTest {
         return new JavaClassMemberService(methodVisitor, attributeVisitor, constructorVisitor);
     }
 
-    private ClassInformation visitClass(JavaParser parser, JavaClassVisitor visitor) {
+    private ClassInformation<JavaParser.StatementContext> visitClass(JavaParser parser, JavaClassVisitor visitor) {
         JavaParser.CompilationUnitContext context = parser.compilationUnit();
         JavaParser.ClassDeclarationContext classCtx = context.typeDeclaration(0).classDeclaration();
         return visitor.visitClass(classCtx);
     }
 
-    private void testClassIdentity(ClassInformation classInformation) {
+    private void testClassIdentity(ClassInformation<JavaParser.StatementContext> classInformation) {
         assertTrue(classInformation.getIdentity().getName().isPresent());
         assertTrue(classInformation.getIdentity().getPackageName().isPresent());
         assertEquals("TestClass", classInformation.getIdentity().getName().get());
@@ -117,14 +118,14 @@ public class JavaClassVisitorTest {
         assertTrue(classInformation.getIdentity().getModifiers().contains("public"));
     }
 
-    private void testClassStructure(ClassInformation classInformation) {
+    private void testClassStructure(ClassInformation<JavaParser.StatementContext> classInformation) {
         assertTrue(classInformation.getStructure().getSuperClass().isPresent());
         assertEquals("BaseClass", classInformation.getStructure().getSuperClass().get());
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceOne"));
         assertTrue(classInformation.getStructure().getInterfaces().contains("InterfaceTwo"));
     }
 
-    private void testClassMembers(ClassInformation classInformation) {
+    private void testClassMembers(ClassInformation<JavaParser.StatementContext> classInformation) {
         assertEquals(1, classInformation.getMembers().getAttributes().size());
         assertEquals(1, classInformation.getMembers().getMethods().size());
         assertEquals(2, classInformation.getMembers().getConstructors().size());

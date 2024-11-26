@@ -1,16 +1,14 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
 import java.util.List;
 import java.util.Optional;
 
-@Getter
-@Setter
+@Value
 @Builder
 public class ClassStructure {
-    private final Optional<String> superClass;
-    private final List<String> interfaces;
+    Optional<String> superClass;
+    List<String> interfaces;
 }

@@ -1,7 +1,7 @@
 plugins {
 	application
-	alias(libs.plugins.springboot.web) apply true
-	alias(libs.plugins.dependency.management) apply true
+	id("org.springframework.boot") version "3.3.4"
+	id("io.spring.dependency-management") version "1.1.6"
 }
 
 group = "com.softdevsix"
@@ -16,11 +16,11 @@ java {
 }
 
 dependencies {
-	implementation(libs.springboot.starter.web)
-	implementation(libs.springdoc.openapi)
-	developmentOnly(libs.springboot.devtools)
-	testImplementation(libs.springboot.starter.test)
-	testRuntimeOnly(libs.junit.launcher)
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 application {

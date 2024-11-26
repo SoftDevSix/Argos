@@ -1,18 +1,16 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
 import java.util.List;
 import java.util.Optional;
 
-@Getter
-@Setter
+@Value
 @Builder
 public class ClassIdentity {
-    private final Optional<String> name;
-    private final Optional<String> packageName;
-    private final List<String> modifiers;
-    private final List<AnnotationInfo> annotations;
+    Optional<String> name;
+    Optional<String> packageName;
+    List<String> modifiers;
+    List<AnnotationInformation> annotations;
 }

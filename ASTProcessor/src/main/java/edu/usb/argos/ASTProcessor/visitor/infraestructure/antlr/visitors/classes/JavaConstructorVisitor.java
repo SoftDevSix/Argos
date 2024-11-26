@@ -6,9 +6,7 @@ import java.util.List;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor.IConstructorAnalyzer;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.adapters.StatementAdapter;
 
 public class JavaConstructorVisitor extends JavaParserBaseVisitor<List<ConstructorInformation<JavaParser.StatementContext>>>
         implements IConstructorAnalyzer<JavaParser.ClassBodyContext, JavaParser.StatementContext> {
@@ -38,7 +36,7 @@ public class JavaConstructorVisitor extends JavaParserBaseVisitor<List<Construct
         String constructorName = constructorCtx.identifier().getText();
         List<String> modifiers = getModifiers(bodyCtx);
         List<String> parameters = getParameters(constructorCtx);
-        List<Statement<JavaParser.StatementContext>> bodyStatements = getBodyStatements(constructorCtx);
+        List<JavaParser.StatementContext> bodyStatements = getBodyStatements(constructorCtx);
 
         return ConstructorInformation.<JavaParser.StatementContext>builder()
                 .name(constructorName)
@@ -72,13 +70,13 @@ public class JavaConstructorVisitor extends JavaParserBaseVisitor<List<Construct
         return parameters;
     }
 
-    private List<Statement<JavaParser.StatementContext>> getBodyStatements(JavaParser.ConstructorDeclarationContext constructorContext) {
-        List<Statement<JavaParser.StatementContext>> statements = new ArrayList<>();
+    private List<JavaParser.StatementContext> getBodyStatements(JavaParser.ConstructorDeclarationContext constructorContext) {
+        List<JavaParser.StatementContext> statements = new ArrayList<>();
 
         if (constructorContext.block() != null) {
             for (JavaParser.BlockStatementContext blockStmt : constructorContext.block().blockStatement()) {
                 if (blockStmt.statement() != null) {
-                    statements.add(new StatementAdapter(blockStmt.statement()));
+                    statements.add(blockStmt.statement());
                 }
             }
         }

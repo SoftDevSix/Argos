@@ -8,8 +8,8 @@ import java.util.Optional;
 @Value
 @Builder
 public class AttributeInformation {
-    private String name;
-    private String type;
-    private List<String> modifiers;
-    private Optional<String> value;
+    String name;
+    String type;
+    List<String> modifiers;
+    Optional<String> value;
 }

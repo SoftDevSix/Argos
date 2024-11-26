@@ -1,6 +1,5 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import lombok.Builder;
 import lombok.Value;
 import java.util.List;
@@ -8,8 +7,8 @@ import java.util.List;
 @Value
 @Builder
 public class ConstructorInformation<S> {
-    private String name;
-    private List<String> modifiers;
-    private List<String> parameters;
-    private List<Statement<S>> bodyStatements;
+    String name;
+    List<String> modifiers;
+    List<String> parameters;
+    List<S> bodyStatements;
 }

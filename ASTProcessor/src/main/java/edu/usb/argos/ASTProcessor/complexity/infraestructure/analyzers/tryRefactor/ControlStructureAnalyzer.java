@@ -5,44 +5,23 @@ import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<ControlStructureAnalysis, JavaParser.StatementContext> {
     @Override
     public ControlStructureAnalysis analyze(JavaParser.StatementContext node) {
         if (Optional.ofNullable(node).isEmpty()) {
-            return ControlStructureAnalysis.builder()
-                    .totalComplexity(0)
-                    .locations(new ArrayList<>())
-                    .build();
+            return AnalyzerUtils.buildEmptyAnalysis();
         }
 
-        return analyzeControlStructures(node);
-    }
-
-    private ControlStructureAnalysis analyzeControlStructures(JavaParser.StatementContext node) {
-        List<ComplexityLocation> locations = new ArrayList<>();
-        int complexity = 0;
-
-        complexity += performAnalysis(node, this::analyzeIfStatement, locations);
-        complexity += performAnalysis(node, this::analyzeLoops, locations);
-        complexity += performAnalysis(node, this::analyzeSwitchStatement, locations);
-        complexity += performAnalysis(node, this::analyzeTryCatch, locations);
-
-        return ControlStructureAnalysis.builder()
-                .totalComplexity(complexity)
-                .locations(locations)
-                .build();
-    }
-
-    private int performAnalysis(JavaParser.StatementContext node,
-                                Function<JavaParser.StatementContext, ControlStructureAnalysis> analysisFunction,
-                                List<ComplexityLocation> locations) {
-        ControlStructureAnalysis analysisResult = analysisFunction.apply(node);
-        locations.addAll(analysisResult.getLocations());
-        return analysisResult.getTotalComplexity();
+        return AnalyzerUtils.analyzeStructures(node, Arrays.asList(
+                this::analyzeIfStatement,
+                this::analyzeLoops,
+                this::analyzeSwitchStatement,
+                this::analyzeTryCatch
+        ));
     }
 
     private ControlStructureAnalysis analyzeIfStatement(JavaParser.StatementContext node) {
@@ -50,7 +29,7 @@ public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<Cont
         int complexity = 0;
 
         if (StructureVerifier.hasIfStatement(node)) {
-            return buildAnalysis(complexity, locations);
+            return AnalyzerUtils.buildAnalysis(complexity, locations);
         }
 
         complexity++;
@@ -61,7 +40,7 @@ public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<Cont
             locations.add(ComplexityLocationFactory.createElseIfLocation(node));
         }
 
-        return buildAnalysis(complexity, locations);
+        return AnalyzerUtils.buildAnalysis(complexity, locations);
     }
 
     private ControlStructureAnalysis analyzeLoops(JavaParser.StatementContext node) {
@@ -83,12 +62,12 @@ public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<Cont
             locations.add(ComplexityLocationFactory.createDoWhileLoopLocation(node));
         }
 
-        return buildAnalysis(complexity, locations);
+        return AnalyzerUtils.buildAnalysis(complexity, locations);
     }
 
     private ControlStructureAnalysis analyzeSwitchStatement(JavaParser.StatementContext node) {
         if (StructureVerifier.hasSwitchStatement(node)) {
-            return buildEmptyAnalysis();
+            return AnalyzerUtils.buildEmptyAnalysis();
         }
 
         List<ComplexityLocation> locations = new ArrayList<>();
@@ -103,12 +82,12 @@ public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<Cont
             }
         }
 
-        return buildAnalysis(complexity, locations);
+        return AnalyzerUtils.buildAnalysis(complexity, locations);
     }
 
     private ControlStructureAnalysis analyzeTryCatch(JavaParser.StatementContext node) {
         if (StructureVerifier.hasTryBlock(node)) {
-            return buildEmptyAnalysis();
+            return AnalyzerUtils.buildEmptyAnalysis();
         }
 
         List<ComplexityLocation> locations = new ArrayList<>();
@@ -119,17 +98,6 @@ public class ControlStructureAnalyzer implements ComplexityAnalyzerStrategy<Cont
             locations.add(ComplexityLocationFactory.createCatchLocation(catchClause));
         }
 
-        return buildAnalysis(complexity, locations);
-    }
-
-    private ControlStructureAnalysis buildAnalysis(int complexity, List<ComplexityLocation> locations) {
-        return ControlStructureAnalysis.builder()
-                .totalComplexity(complexity)
-                .locations(locations)
-                .build();
-    }
-
-    private ControlStructureAnalysis buildEmptyAnalysis() {
-        return buildAnalysis(0, new ArrayList<>());
+        return AnalyzerUtils.buildAnalysis(complexity, locations);
     }
 }

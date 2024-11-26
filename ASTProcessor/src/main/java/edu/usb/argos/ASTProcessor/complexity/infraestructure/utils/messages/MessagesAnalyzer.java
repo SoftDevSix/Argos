@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefactor;
+package edu.usb.argos.ASTProcessor.complexity.infraestructure.utils.messages;
 
 import lombok.experimental.UtilityClass;
 

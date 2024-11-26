@@ -4,8 +4,8 @@ import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;
 import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.NodeAnalyzer;
-import edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefactor.AnalyzerStrategyFactory;
-import edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefactor.ComplexityAnalyzerStrategy;
+import edu.usb.argos.ASTProcessor.complexity.infraestructure.factories.AnalyzerStrategyFactory;
+import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.ComplexityAnalyzerStrategy;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;

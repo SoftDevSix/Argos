@@ -1,8 +1,12 @@
-package edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefactor;
+package edu.usb.argos.ASTProcessor.complexity.core.domain;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;
+import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.ComplexityAnalyzerStrategy;
+import edu.usb.argos.ASTProcessor.complexity.infraestructure.utils.analyzers.AnalyzerUtils;
+import edu.usb.argos.ASTProcessor.complexity.infraestructure.utils.analyzers.StructureVerifier;
+import edu.usb.argos.ASTProcessor.complexity.infraestructure.utils.factories.ComplexityLocationFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;

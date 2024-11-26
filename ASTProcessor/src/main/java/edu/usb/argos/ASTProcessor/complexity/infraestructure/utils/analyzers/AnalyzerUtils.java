@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.complexity.infraestructure.analyzers.tryRefactor;
+package edu.usb.argos.ASTProcessor.complexity.infraestructure.utils.analyzers;
 
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
 import edu.usb.argos.ASTProcessor.complexity.core.entities.ControlStructureAnalysis;

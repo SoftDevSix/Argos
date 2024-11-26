@@ -9,8 +9,8 @@ import java.util.List;
 
 @Value
 @Builder
-public class ClassMembers {
-    List<MethodInformation<Object>> methods;
+public class ClassMembers<S> {
+    List<MethodInformation<S>> methods;
     List<AttributeInformation> attributes;
-    List<ConstructorInformation<Object>> constructors;
+    List<ConstructorInformation<S>> constructors;
 }

@@ -9,6 +9,7 @@ import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.shared.validation.ContextValidator;
+import lombok.Data;
 import lombok.Value;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Data
 @Value
 public class JavaClassMemberService implements IClassMemberService<ParserRuleContext, JavaParser.StatementContext, JavaParser.BlockStatementContext> {
     JavaMethodVisitor methodVisitor;
@@ -32,7 +34,8 @@ public class JavaClassMemberService implements IClassMemberService<ParserRuleCon
         );
     }
 
-    private List<MethodInformation<JavaParser.StatementContext>> extractMethodsFromClassBody(JavaParser.ClassDeclarationContext classCtx) {
+    private List<MethodInformation<JavaParser.StatementContext>> extractMethodsFromClassBody(
+            JavaParser.ClassDeclarationContext classCtx) {
         List<MethodInformation<JavaParser.StatementContext>> methods = new ArrayList<>();
         classCtx.classBody().classBodyDeclaration().stream()
                 .filter(this::isMethodDeclaration)

@@ -1,7 +1,8 @@
 package edu.usb.argos.ASTProcessor.visitor.core.interfaces.services;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IModifierExtractor<Node> {
-    List<String> extractModifiers(Node bodyCtx);
+    Optional<List<String>> extractModifiers(Node bodyCtx);
 }

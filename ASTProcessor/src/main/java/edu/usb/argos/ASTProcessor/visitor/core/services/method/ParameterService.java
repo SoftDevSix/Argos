@@ -15,70 +15,96 @@ public class ParameterService implements
         IParameterExtractor<JavaParser.FormalParameterContext, JavaParser.LastFormalParameterContext> {
 
     @Override
-    public ParameterInformation createRegularParameter(JavaParser.FormalParameterContext param) {
-        return ParameterInformation.builder()
-                .name(extractParameterName(param))
-                .type(extractParameterType(param))
+    public Optional<ParameterInformation> createRegularParameter(JavaParser.FormalParameterContext param) {
+        if (param == null) {
+            return Optional.empty();
+        }
+
+        Optional<String> name = extractParameterName(param);
+        Optional<String> type = extractParameterType(param);
+
+        if (name.isEmpty() || type.isEmpty()) {
+            return Optional.empty();
+        }
+
+        ParameterInformation paramInfo = ParameterInformation.builder()
+                .name(name.get())
+                .type(type.get())
                 .modifiers(extractVariableModifiers(param))
                 .isVarArgs(false)
                 .build();
+        return Optional.of(paramInfo);
     }
 
     @Override
-    public ParameterInformation createVarArgsParameter(JavaParser.LastFormalParameterContext param) {
-        return ParameterInformation.builder()
-                .name(extractVarArgsName(param))
-                .type(extractVarArgsType(param))
+    public Optional<ParameterInformation> createVarArgsParameter(JavaParser.LastFormalParameterContext param) {
+        if (param == null) {
+            return Optional.empty();
+        }
+
+        Optional<String> name = extractVarArgsName(param);
+        Optional<String> type = extractVarArgsType(param);
+
+        if (name.isEmpty() || type.isEmpty()) {
+            return Optional.empty();
+        }
+
+        ParameterInformation paramInfo = ParameterInformation.builder()
+                .name(name.get())
+                .type(type.get())
                 .modifiers(extractVarArgsModifiers(param))
                 .isVarArgs(true)
                 .build();
+        return Optional.of(paramInfo);
     }
 
-    private String extractParameterName(JavaParser.FormalParameterContext param) {
-        return Optional.ofNullable(param)
-                .map(JavaParser.FormalParameterContext::variableDeclaratorId)
-                .map(JavaParser.VariableDeclaratorIdContext::getText)
-                .orElse("");
+    private Optional<String> extractParameterName(JavaParser.FormalParameterContext param) {
+        if (param.variableDeclaratorId() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(param.variableDeclaratorId().getText());
     }
 
-    private String extractParameterType(JavaParser.FormalParameterContext param) {
-        return Optional.ofNullable(param)
-                .map(JavaParser.FormalParameterContext::typeType)
-                .map(JavaParser.TypeTypeContext::getText)
-                .orElse("");
+    private Optional<String> extractParameterType(JavaParser.FormalParameterContext param) {
+        if (param.typeType() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(param.typeType().getText());
     }
 
     private List<String> extractVariableModifiers(JavaParser.FormalParameterContext param) {
-        List<String> modifiers = new ArrayList<>();
-        if (param != null && param.variableModifier() != null) {
-            for (JavaParser.VariableModifierContext mod : param.variableModifier()) {
-                modifiers.add(mod.getText());
-            }
+        if (param == null || param.variableModifier() == null) {
+            return Collections.emptyList();
         }
-        return Collections.unmodifiableList(modifiers);
+        return extractModifiersFromList(param.variableModifier());
     }
 
-    private String extractVarArgsName(JavaParser.LastFormalParameterContext param) {
-        return Optional.ofNullable(param)
-                .map(JavaParser.LastFormalParameterContext::variableDeclaratorId)
-                .map(JavaParser.VariableDeclaratorIdContext::getText)
-                .orElse("");
+    private Optional<String> extractVarArgsName(JavaParser.LastFormalParameterContext param) {
+        if (param.variableDeclaratorId() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(param.variableDeclaratorId().getText());
     }
 
-    private String extractVarArgsType(JavaParser.LastFormalParameterContext param) {
-        return Optional.ofNullable(param)
-                .map(JavaParser.LastFormalParameterContext::typeType)
-                .map(JavaParser.TypeTypeContext::getText)
-                .orElse("");
+    private Optional<String> extractVarArgsType(JavaParser.LastFormalParameterContext param) {
+        if (param.typeType() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(param.typeType().getText());
     }
 
     private List<String> extractVarArgsModifiers(JavaParser.LastFormalParameterContext param) {
-        List<String> modifiers = new ArrayList<>();
-        if (param != null && param.variableModifier() != null) {
-            for (JavaParser.VariableModifierContext mod : param.variableModifier()) {
-                modifiers.add(mod.getText());
-            }
+        if (param == null || param.variableModifier() == null) {
+            return Collections.emptyList();
         }
-        return Collections.unmodifiableList(modifiers);
+        return extractModifiersFromList(param.variableModifier());
+    }
+
+    private List<String> extractModifiersFromList(List<JavaParser.VariableModifierContext> modifiers) {
+        List<String> extractedModifiers = new ArrayList<>();
+        for (JavaParser.VariableModifierContext mod : modifiers) {
+            extractedModifiers.add(mod.getText());
+        }
+        return Collections.unmodifiableList(extractedModifiers);
     }
 }

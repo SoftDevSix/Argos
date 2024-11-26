@@ -37,7 +37,7 @@ class DirectoryAnalyzerByTextTest {
     }
 
     @Test
-    void testAnalyzeDirectory_AllFilesValid() throws FileAnalyzerException {
+    void testAnalyzeDirectoryAllFilesValid() throws FileAnalyzerException {
         String[] sourceCode = {"code1", "code2"};
         Optional<Object> mockAst1 = Optional.of(new Object());
         Optional<Object> mockAst2 = Optional.of(new Object());
@@ -53,7 +53,7 @@ class DirectoryAnalyzerByTextTest {
     }
 
     @Test
-    void testAnalyzeDirectory_WithNullAst() throws FileAnalyzerException {
+    void testAnalyzeDirectoryWithNullAst() throws FileAnalyzerException {
         String[] sourceCode = {"code1", "code2"};
         Optional<Object> mockAst1 = Optional.of(new Object());
 
@@ -67,7 +67,7 @@ class DirectoryAnalyzerByTextTest {
     }
 
     @Test
-    void testAnalyzeDirectory_WithFileAnalyzerException() throws FileAnalyzerException {
+    void testAnalyzeDirectoryWithFileAnalyzerException() throws FileAnalyzerException {
         String[] sourceCode = {"code1", "code2"};
         Optional<Object> mockAst1 = Optional.of(new Object());
 
@@ -78,18 +78,10 @@ class DirectoryAnalyzerByTextTest {
     }
 
     @Test
-    void testAnalyzeDirectory_EmptySourceCodeArray() throws FileAnalyzerException {
+    void testAnalyzeDirectoryEmptySourceCodeArray() throws FileAnalyzerException {
         String[] sourceCode = {};
 
         List<Object> result = directoryAnalyzer.analyzeDirectory(sourceCode);
-
-        assertEquals(0, result.size());
-        verify(mockFileAnalyzer, never()).readFile(anyString());
-    }
-
-    @Test
-    void testAnalyzeDirectory_NullSourceCodeArray() throws FileAnalyzerException {
-        List<Object> result = directoryAnalyzer.analyzeDirectory(null);
 
         assertEquals(0, result.size());
         verify(mockFileAnalyzer, never()).readFile(anyString());

@@ -14,7 +14,7 @@ public class AnnotationService implements IAnnotationExtractor<JavaParser.ClassB
     @Override
     public Optional<List<String>> extractAnnotation(JavaParser.ClassBodyDeclarationContext bodyCtx) {
         if (bodyCtx == null) {
-            return Optional.empty();
+            return Optional.of(Collections.emptyList());
         }
         List<String> annotations = processModifiers(bodyCtx);
         return Optional.of(annotations);

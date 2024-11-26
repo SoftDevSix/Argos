@@ -16,7 +16,7 @@ public class ModifierService implements IModifierExtractor<JavaParser.ClassBodyD
     @Override
     public Optional<List<String>> extractModifiers(JavaParser.ClassBodyDeclarationContext bodyCtx) {
         if (bodyCtx == null) {
-            return Optional.empty();
+            return Optional.of(Collections.emptyList());
         }
         List<String> modifiers = processModifiers(bodyCtx);
         return Optional.of(modifiers);

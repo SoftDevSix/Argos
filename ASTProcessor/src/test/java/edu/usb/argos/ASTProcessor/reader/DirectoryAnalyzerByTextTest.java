@@ -1,7 +1,6 @@
 package edu.usb.argos.ASTProcessor.reader;
 
 import edu.usb.argos.ASTProcessor.reader.application.services.DirectoryAnalyzerByText;
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ASTAnalysisException;
 import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
 import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
 
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import static org.mockito.Mockito.*;
 
@@ -71,7 +69,11 @@ class DirectoryAnalyzerByTextTest {
         when(mockFileAnalyzer.readFile("code1")).thenReturn(mockAst1);
         when(mockFileAnalyzer.readFile("code2")).thenThrow(new FileAnalyzerException("Test exception"));
 
-        assertThrowsExactly(ASTAnalysisException.class, () -> directoryAnalyzer.analyzeDirectory(sourceCode));
+        List<Object> result = directoryAnalyzer.analyzeDirectory(sourceCode);
+
+        assertEquals(1, result.size());
+        assertEquals(mockAst1, result.get(0));
+        verify(mockFileAnalyzer).readFile("code2");
     }
 
     @Test

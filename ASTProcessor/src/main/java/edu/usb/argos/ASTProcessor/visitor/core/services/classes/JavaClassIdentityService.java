@@ -78,7 +78,8 @@ public class JavaClassIdentityService implements IClassIdentityService<ParserRul
         return modifiers;
     }
 
-    private List<JavaParser.ClassOrInterfaceModifierContext> getClassOrInterfaceModifiers(JavaParser.TypeDeclarationContext typeCtx) {
+    private List<JavaParser.ClassOrInterfaceModifierContext> getClassOrInterfaceModifiers(
+            JavaParser.TypeDeclarationContext typeCtx) {
         return typeCtx.classOrInterfaceModifier() != null ? typeCtx.classOrInterfaceModifier() : Collections.emptyList();
     }
 

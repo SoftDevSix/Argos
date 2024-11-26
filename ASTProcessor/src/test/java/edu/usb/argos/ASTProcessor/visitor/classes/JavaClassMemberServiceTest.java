@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class JavaClassMemberServiceTest {
     @Mock
     private JavaMethodVisitor methodVisitor;
@@ -40,17 +42,16 @@ public class JavaClassMemberServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         String testClass =
-                "public class TestClass {\n" +
-                        "    private String field1;\n" +
-                        "    public Integer field2;\n" +
-                        "    public TestClass() {}\n" +
-                        "    public TestClass(String field1) { this.field1 = field1; }\n" +
-                        "    public void method1() {}\n" +
-                        "    private String method2() { return \"\"; }\n" +
-                        "}";
+                """
+                        public class TestClass {
+                            private String field1;
+                            public Integer field2;
+                            public TestClass() {}
+                            public TestClass(String field1) { this.field1 = field1; }
+                            public void method1() {}
+                            private String method2() { return ""; }
+                        }""";
 
         CharStream input = CharStreams.fromString(testClass);
         JavaLexer lexer = new JavaLexer(input);
@@ -111,13 +112,13 @@ public class JavaClassMemberServiceTest {
         AttributeInformation attributeOne = AttributeInformation.builder()
                 .name("field1")
                 .type("String")
-                .modifiers(Arrays.asList("private"))
+                .modifiers(List.of("private"))
                 .build();
 
         AttributeInformation attributeTwo = AttributeInformation.builder()
                 .name("field2")
                 .type("String")
-                .modifiers(Arrays.asList("private"))
+                .modifiers(List.of("private"))
                 .build();
 
         List<AttributeInformation> expectedAttributes = Arrays.asList(

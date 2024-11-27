@@ -53,16 +53,20 @@ public class JavaClassMemberServiceTest {
                             private String method2() { return ""; }
                         }""";
 
-        CharStream input = CharStreams.fromString(testClass);
-        JavaLexer lexer = new JavaLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        JavaParser parser = new JavaParser(tokens);
-        compilationUnit = parser.compilationUnit();
+        setUpTestClass(testClass);
 
         memberService = new JavaClassMemberService(methodVisitor, attributeVisitor, constructorVisitor);
     }
 
-     @Test
+    private void setUpTestClass(String classCode) {
+        CharStream input = CharStreams.fromString(classCode);
+        JavaLexer lexer = new JavaLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokens);
+        compilationUnit = parser.compilationUnit();
+    }
+
+    @Test
      void getClassMethodsShouldReturnCorrectMethods() {
          JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
 
@@ -139,13 +143,15 @@ public class JavaClassMemberServiceTest {
     void getClassConstructorsShouldReturnCorrectConstructors() {
         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
 
-        ConstructorInformation constructorOne = ConstructorInformation.builder()
+        ConstructorInformation<JavaParser.StatementContext> constructorOne =
+                ConstructorInformation.<JavaParser.StatementContext>builder()
                 .name("TestClass")
                 .modifiers(List.of("public"))
                 .parameters(new ArrayList<>())
                 .build();
 
-        ConstructorInformation constructorTwo = ConstructorInformation.builder()
+        ConstructorInformation<JavaParser.StatementContext> constructorTwo =
+                ConstructorInformation.<JavaParser.StatementContext>builder()
                 .name("TestClass")
                 .modifiers(List.of("public"))
                 .parameters(List.of("String"))
@@ -153,7 +159,7 @@ public class JavaClassMemberServiceTest {
 
         when(constructorVisitor.visitConstructors(any())).thenReturn(Arrays.asList(constructorOne, constructorTwo));
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = memberService.getClassConstructors(ctx);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = memberService.getClassConstructors(ctx);
 
         assertEquals(2, constructors.size());
 
@@ -164,5 +170,64 @@ public class JavaClassMemberServiceTest {
         assertEquals("TestClass", constructors.get(1).getName());
         assertEquals(List.of("public"), constructors.get(1).getModifiers());
         assertEquals(List.of("String"), constructors.get(1).getParameters());
+    }
+
+    @Test
+    void getClassMethodsShouldReturnEmptyListWhenNoMethodsExist() {
+        String testClass = """
+            public class EmptyMethodsClass {
+                private String field;
+            }
+            """;
+        setUpTestClass(testClass);
+
+        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+        List<MethodInformation<JavaParser.StatementContext>> methods = memberService.getClassMethods(ctx);
+
+        assertTrue(methods.isEmpty());
+    }
+
+    @Test
+    void getClassAttributesShouldReturnEmptyListWhenNoAttributesExist() {
+        String testClass = """
+            public class EmptyAttributesClass {
+                public void method() {}
+            }
+            """;
+        setUpTestClass(testClass);
+
+        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+        List<AttributeInformation> attributes = memberService.getClassAttributes(ctx);
+
+        assertTrue(attributes.isEmpty());
+    }
+
+    @Test
+    void getClassConstructorsShouldReturnEmptyListWhenNoConstructorsExist() {
+        String testClass = """
+            public class NoConstructorClass {
+                private String field;
+                public void method() {}
+            }
+            """;
+        setUpTestClass(testClass);
+
+        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = memberService.getClassConstructors(ctx);
+
+        assertTrue(constructors.isEmpty());
+    }
+
+    @Test
+    void getClassMethodsShouldHandleInvalidContextGracefully() {
+        String testInvalid = """
+            interface InvalidContext {}
+            """;
+        setUpTestClass(testInvalid);
+
+        JavaParser.InterfaceDeclarationContext ctx = compilationUnit.typeDeclaration(0).interfaceDeclaration();
+        List<MethodInformation<JavaParser.StatementContext>> methods = memberService.getClassMethods(ctx);
+
+        assertTrue(methods.isEmpty());
     }
 }

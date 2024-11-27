@@ -17,7 +17,7 @@ public class AnalysisResult {
     public AnalysisResult(AnalysisType analysisType, String filePath, List<AnalysisReport> reports) {
         this.analysisType = analysisType;
         this.filePath = filePath;
-        this.reports = reports;
+        this.reports = (reports != null) ? reports : new ArrayList<>();
     }
 
     public void addReport(AnalysisReport report) {

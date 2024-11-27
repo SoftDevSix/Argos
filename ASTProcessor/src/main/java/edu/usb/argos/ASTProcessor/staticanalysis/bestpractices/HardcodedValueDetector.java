@@ -1,10 +1,10 @@
-package edu.usb.argos.ASTProcessor.bestpractices;
+package edu.usb.argos.ASTProcessor.staticanalysis.bestpractices;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.bestpractices.hardcodeddetection.AttributeDetectionStrategy;
-import edu.usb.argos.ASTProcessor.bestpractices.hardcodeddetection.ConstructorDetectionStrategy;
-import edu.usb.argos.ASTProcessor.bestpractices.hardcodeddetection.DetectorStrategyContext;
-import edu.usb.argos.ASTProcessor.bestpractices.hardcodeddetection.MethodDetectionStrategy;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.AttributeDetectionStrategy;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.ConstructorDetectionStrategy;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.DetectorStrategyContext;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.MethodDetectionStrategy;
 import lombok.Getter;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.bestpractices;
+package edu.usb.argos.ASTProcessor.staticanalysis.bestpractices;
 
 import lombok.Builder;
 import lombok.Getter;

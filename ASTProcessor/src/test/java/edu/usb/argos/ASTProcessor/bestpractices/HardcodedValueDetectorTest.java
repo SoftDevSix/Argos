@@ -2,12 +2,17 @@ package edu.usb.argos.ASTProcessor.bestpractices;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedDetection;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedValueDetector;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HardcodedValueDetectorTest {
     @Test
@@ -47,13 +52,13 @@ public class HardcodedValueDetectorTest {
 
         HardcodedValueDetector detector = new HardcodedValueDetector(classCtx);
         detector.detectHardcodedValues();
+        List<HardcodedDetection> hardcodedValues = detector.getHardcodedValues();
 
-//        assertEquals(4, detector.getHardcodedValues().size());
+        for(HardcodedDetection hardcodedValue : hardcodedValues) {
+            System.out.println(hardcodedValue.getHardcodedValue());
+        }
+
+        assertEquals(11, detector.getHardcodedValues().size());
         System.out.println(detector.getHardcodedValues());
-
-//        assertTrue(detector.getHardcodedValues().contains("100"));
-//        assertTrue(detector.getHardcodedValues().contains("40"));
-//        assertTrue(detector.getHardcodedValues().contains("\"Hardcoded String Constructor\""));
-//        assertTrue(detector.getHardcodedValues().contains("\"Hardcoded Message\""));
     }
 }

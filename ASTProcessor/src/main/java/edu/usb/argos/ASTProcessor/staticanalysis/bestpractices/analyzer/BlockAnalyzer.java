@@ -7,16 +7,12 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
 public class BlockAnalyzer {
     private final HardcodedValueMatcher matcher;
     private static BlockAnalyzer instance;
 
-    public static synchronized BlockAnalyzer getInstance() {
-        if (instance == null) {
-            instance = new BlockAnalyzer(HardcodedValueMatcher.getInstance());
-        }
-        return instance;
+    public BlockAnalyzer(){
+        matcher = HardcodedValueMatcher.getInstance();
     }
 
     public void analyze(JavaParser.BlockContext block, List<HardcodedDetection> detectedValues) {

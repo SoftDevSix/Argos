@@ -9,13 +9,19 @@ import edu.usb.argos.ASTProcessor.bestpractices.analyzer.BlockAnalyzer;
 import java.util.List;
 
 public class ConstructorDetectionStrategy implements IDetectionStrategy {
+    private final BlockAnalyzer analyzer;
+
+    public ConstructorDetectionStrategy(){
+        analyzer = new BlockAnalyzer();
+    }
+
     @Override
     public void detectHardcodedValues(JavaParser.ClassBodyDeclarationContext member,
                                       HardcodedValueMatcher matcher, List<HardcodedDetection> detectedValues) {
         if (member.memberDeclaration() != null &&
                 member.memberDeclaration().constructorDeclaration() != null) {
             JavaParser.ConstructorDeclarationContext constructor = member.memberDeclaration().constructorDeclaration();
-            BlockAnalyzer.getInstance().analyze(constructor.block(), detectedValues);
+            analyzer.analyze(constructor.block(), detectedValues);
         }
     }
 }

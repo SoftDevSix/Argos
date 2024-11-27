@@ -6,6 +6,7 @@ import edu.usb.argos.ASTProcessor.bestpractices.HardcodedDetection;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,6 +15,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BlockAnalyzerTest {
+    private static BlockAnalyzer analyzer;
+
+    @BeforeAll
+    public static void setUp(){
+        analyzer = new BlockAnalyzer();
+    }
+
     @Test
     void testAnalyzeBlockDetectsHardcodedValuesInAssignments() {
         String javaSource = """
@@ -36,7 +44,7 @@ class BlockAnalyzerTest {
 
         for (JavaParser.ClassBodyDeclarationContext member : classContext.classBody().classBodyDeclaration()) {
             JavaParser.ConstructorDeclarationContext constructor = member.memberDeclaration().constructorDeclaration();
-            BlockAnalyzer.getInstance().analyze(constructor.block(), detectedValues);
+            analyzer.analyze(constructor.block(), detectedValues);
         }
 
         assertEquals(2, detectedValues.size());

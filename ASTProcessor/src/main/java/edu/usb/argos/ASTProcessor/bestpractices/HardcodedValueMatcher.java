@@ -8,7 +8,7 @@ public class HardcodedValueMatcher {
     private static final String HARD_CODED_REGEX =
             "\\s*(\"(\\\\.|[^\"])*\"|-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?|true|false|null|'.')\\s*";
 
-    private Pattern pattern;
+    private final Pattern pattern;
 
     private HardcodedValueMatcher() {
         this.pattern = Pattern.compile(HARD_CODED_REGEX);

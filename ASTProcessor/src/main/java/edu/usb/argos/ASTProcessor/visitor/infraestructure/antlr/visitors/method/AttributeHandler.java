@@ -22,7 +22,6 @@ public class AttributeHandler {
                 attributeInfo.ifPresent(attributes::add);
             }
         }
-
         return attributes;
     }
 

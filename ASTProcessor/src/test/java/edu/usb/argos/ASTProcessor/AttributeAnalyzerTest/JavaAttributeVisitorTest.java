@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,7 +112,7 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testVisitMultipleAttributesWithoutModifiers() throws IOException {
+    void testVisitMultipleAttributesWithoutModifiers() {
         String classBody = """
                 public class Example {
                     int someValue = 12;

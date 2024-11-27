@@ -2,9 +2,7 @@ package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method
 
 import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
 import edu.usb.argos.ASTProcessor.visitor.core.interfaces.visitor.IAttributeAnalyzer;
-
 import java.util.List;
-
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import lombok.AllArgsConstructor;

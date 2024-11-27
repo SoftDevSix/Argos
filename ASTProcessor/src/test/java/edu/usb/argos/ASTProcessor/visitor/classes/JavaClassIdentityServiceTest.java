@@ -76,4 +76,57 @@ public class JavaClassIdentityServiceTest {
         assertEquals("TestAnnotation", annotations.get(0).getName());
         assertEquals("test", annotations.get(0).getAttributes().get("value"));
     }
+
+    @Test
+    void getClassNameShouldHandleInvalidContext() {
+        Optional<String> className = classIdentityService.getClassName(null);
+        assertEquals(Optional.empty(), className);
+    }
+
+    @Test
+    void getPackageNameShouldReturnDefaultWhenNoPackageDeclaration() {
+        String javaClassWithoutPackage = """
+            class TestClass {}
+            """;
+        CharStream input = CharStreams.fromString(javaClassWithoutPackage);
+        JavaLexer lexer = new JavaLexer(input);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokenStream);
+        JavaParser.CompilationUnitContext compilationUnit = parser.compilationUnit();
+
+        Optional<String> packageName = classIdentityService.getPackageName(compilationUnit);
+        assertEquals(Optional.empty(), packageName);
+    }
+
+    @Test
+    void getClassModifiersShouldReturnEmptyWhenNoModifiers() {
+        String classWithoutModifiers = """
+            class TestClass {}
+            """;
+        CharStream input = CharStreams.fromString(classWithoutModifiers);
+        JavaLexer lexer = new JavaLexer(input);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokenStream);
+        JavaParser.CompilationUnitContext compilationUnit = parser.compilationUnit();
+        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+
+        List<String> modifiers = classIdentityService.getClassModifiers(ctx);
+        assertTrue(modifiers.isEmpty());
+    }
+
+    @Test
+    void getClassAnnotationsShouldReturnEmptyWhenNoAnnotations() {
+        String classWithoutAnnotations = """
+            public class TestClass {}
+            """;
+        CharStream input = CharStreams.fromString(classWithoutAnnotations);
+        JavaLexer lexer = new JavaLexer(input);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokenStream);
+        JavaParser.CompilationUnitContext compilationUnit = parser.compilationUnit();
+        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+
+        List<AnnotationInformation> annotations = classIdentityService.getClassAnnotations(ctx);
+        assertTrue(annotations.isEmpty());
+    }
 }

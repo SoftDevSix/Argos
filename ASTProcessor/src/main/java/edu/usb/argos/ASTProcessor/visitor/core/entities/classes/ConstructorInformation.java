@@ -1,15 +1,14 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.classes;
 
 import lombok.Builder;
-import lombok.Getter;
-
+import lombok.Value;
 import java.util.List;
 
-@Getter
+@Value
 @Builder
 public class ConstructorInformation<S> {
-    private String name;
-    private List<String> modifiers;
-    private List<String> parameters;
-    private List<S> bodyStatements;
+    String name;
+    List<String> modifiers;
+    List<String> parameters;
+    List<S> bodyStatements;
 }

@@ -1,5 +1,6 @@
 package edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes;
 
+import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.antlr.JavaParserBaseVisitor;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassIdentity;
 import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ClassInformation;
@@ -15,20 +16,20 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 @EqualsAndHashCode(callSuper = true)
 @Value
-public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInformation>
-        implements IClassAnalyzerVisitor<ParserRuleContext> {
+public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInformation<JavaParser.StatementContext>>
+        implements IClassAnalyzerVisitor<ParserRuleContext, JavaParser.StatementContext> {
 
     IClassIdentityService<ParserRuleContext> identityCollector;
     IClassStructureService<ParserRuleContext> structureCollector;
-    IClassMemberService<ParserRuleContext, Object, Object> memberCollector;
+    IClassMemberService<ParserRuleContext, JavaParser.StatementContext> memberCollector;
 
     @Override
-    public ClassInformation visitClass(ParserRuleContext ctx) {
+    public ClassInformation<JavaParser.StatementContext> visitClass(ParserRuleContext ctx) {
         ClassIdentity identity = buildClassIdentity(ctx);
         ClassStructure structure = buildClassStructure(ctx);
-        ClassMembers members = buildClassMembers(ctx);
+        ClassMembers<JavaParser.StatementContext> members = buildClassMembers(ctx);
 
-        return ClassInformation.builder()
+        return ClassInformation.<JavaParser.StatementContext>builder()
                 .identity(identity)
                 .structure(structure)
                 .members(members)
@@ -51,8 +52,8 @@ public class JavaClassVisitor extends JavaParserBaseVisitor<ClassInformation>
                 .build();
     }
 
-    private ClassMembers buildClassMembers(ParserRuleContext ctx) {
-        return ClassMembers.builder()
+    private ClassMembers<JavaParser.StatementContext> buildClassMembers(ParserRuleContext ctx) {
+        return ClassMembers.<JavaParser.StatementContext>builder()
                 .methods(memberCollector.getClassMethods(ctx))
                 .attributes(memberCollector.getClassAttributes(ctx))
                 .constructors(memberCollector.getClassConstructors(ctx))

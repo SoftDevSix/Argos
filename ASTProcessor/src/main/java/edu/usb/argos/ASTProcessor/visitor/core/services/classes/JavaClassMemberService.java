@@ -19,7 +19,7 @@ import java.util.List;
 
 @Data
 @Value
-public class JavaClassMemberService implements IClassMemberService<ParserRuleContext, JavaParser.StatementContext, JavaParser.BlockStatementContext> {
+public class JavaClassMemberService implements IClassMemberService<ParserRuleContext, JavaParser.StatementContext> {
     JavaMethodVisitor methodVisitor;
     JavaAttributeVisitor attributeVisitor;
     JavaConstructorVisitor constructorVisitor;
@@ -70,7 +70,7 @@ public class JavaClassMemberService implements IClassMemberService<ParserRuleCon
     }
 
     @Override
-    public List<ConstructorInformation<JavaParser.BlockStatementContext>> getClassConstructors(ParserRuleContext ctx) {
+    public List<ConstructorInformation<JavaParser.StatementContext>> getClassConstructors(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
@@ -78,5 +78,4 @@ public class JavaClassMemberService implements IClassMemberService<ParserRuleCon
                 Collections.emptyList()
         );
     }
-
 }

@@ -1,34 +1,34 @@
 package edu.usb.argos.ASTProcessor.reader.application.services;
 
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ASTAnalysisException;
-import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IDirectoryAnalyzer;
-import edu.usb.argos.ASTProcessor.reader.infraestructure.utils.SourceTreeAnalyzer;
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
-@AllArgsConstructor
-public class DirectoryAnalyzerByPath<TAst> implements IDirectoryAnalyzer<Path, TAst> {
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ASTAnalysisException;
 
-    private final IFileAnalyzer<Path, TAst> fileAnalyzer;
-    private final SourceTreeAnalyzer treeAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IDirectoryAnalyzer;
+import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
+import org.springframework.stereotype.Component;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Component
+@AllArgsConstructor
+public class DirectoryAnalyzerByText<TAst> implements IDirectoryAnalyzer<String[], TAst> {
+
+    private final IFileAnalyzer<String, TAst> fileAnalyzer;
 
     @Override
-    public List<TAst> analyzeDirectory(Path path) {
-        List<Path> javaFilePaths = treeAnalyzer.getJavaFiles(path);
-        Optional<TAst> ast;
+    public List<TAst> analyzeDirectory(String[] sourceCode) {
         List<TAst> astFiles = new ArrayList<>();
+        Optional<TAst> ast;
 
-        for (Path javaFilePath : javaFilePaths) {
+        for (String code : sourceCode) {
             try {
-                ast = fileAnalyzer.readFile(javaFilePath);
+                ast = fileAnalyzer.readFile(code);
                 ast.ifPresent(astFiles::add);
             } catch (FileAnalyzerException exception) {
                 String errorMessage = "Error getting AST from the source";
@@ -38,4 +38,5 @@ public class DirectoryAnalyzerByPath<TAst> implements IDirectoryAnalyzer<Path, T
 
         return astFiles;
     }
+
 }

@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 @Slf4j
 public class FileReaderByPath implements IFileAnalyzer<Path, ParseTree> {
@@ -30,11 +31,12 @@ public class FileReaderByPath implements IFileAnalyzer<Path, ParseTree> {
     }
 
     @Override
-    public ParseTree readFile(Path codePath) throws FileAnalyzerException {
+    public Optional<ParseTree> readFile(Path codePath) throws FileAnalyzerException {
         try {
             validationStrategy.validate(codePath);
             String content = Files.readString(codePath);
-            return parseContent(content);
+
+            return Optional.of(parseContent(content));
         } catch (IOException e) {
             log.error("Error reading file: {}", codePath, e);
             throw new FileAnalyzerException("Error reading file: " + codePath, e);

@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: gsactions/commit-message-checker@v2
         with:
-          pattern: '^(Merge|(?:feat|fix|chore|docs|build|ci|style|refactor|perf|revert)(?:\(\w+\))?:\s[a-z]{1,2}.+)'
+          pattern: '^(Merge|(?:feat|fix|chore|docs|build|ci|style|refactor|perf|revert|hotfix)(?:\(\w+\))?:\s[a-z]{1,2}.+)'
           error: 'The commit message must have the following structure: <type>(?): <description>'
           excludeDescription: 'true'
           excludeTitle: 'true'

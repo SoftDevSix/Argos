@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Optional;
 
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -120,7 +119,7 @@ public class ConstructorAnalyzerTest {
         List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
         ConstructorInformation<JavaParser.StatementContext> constructor = constructors.get(0);
-        List<Statement<JavaParser.StatementContext>> bodyStatements = constructor.getBodyStatements();
+        List<JavaParser.StatementContext> bodyStatements = constructor.getBodyStatements();
 
         assertEquals(1, constructors.size());
         assertEquals("Calculator", constructor.getName());
@@ -129,8 +128,8 @@ public class ConstructorAnalyzerTest {
         assertEquals("int num2", constructor.getParameters().get(1));
 
         assertEquals(2, bodyStatements.size());
-        assertEquals("this.num1=num1;", bodyStatements.get(0).getNode().getText());
-        assertEquals("this.num2=num2;", bodyStatements.get(1).getNode().getText());
+        assertEquals("this.num1=num1;", bodyStatements.get(0).getText());
+        assertEquals("this.num2=num2;", bodyStatements.get(1).getText());
 
     }
 
@@ -152,9 +151,9 @@ public class ConstructorAnalyzerTest {
         List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
         ConstructorInformation<JavaParser.StatementContext> parameterizedConstructor = constructors.get(0);
-        List<Statement<JavaParser.StatementContext>> bodyStatements = parameterizedConstructor.getBodyStatements();
+        List<JavaParser.StatementContext> bodyStatements = parameterizedConstructor.getBodyStatements();
         ConstructorInformation<JavaParser.StatementContext> parameterizedSecondConstructor = constructors.get(1);
-        List<Statement<JavaParser.StatementContext>> secondBodyStatements = parameterizedSecondConstructor
+        List<JavaParser.StatementContext> secondBodyStatements = parameterizedSecondConstructor
                 .getBodyStatements();
 
         assertEquals(2, constructors.size());
@@ -166,7 +165,7 @@ public class ConstructorAnalyzerTest {
         assertEquals(1, constructors.get(1).getParameters().size());
         assertEquals("int ratio", constructors.get(1).getParameters().get(0));
         assertEquals(1, constructors.get(1).getBodyStatements().size());
-        assertEquals("this.ratio=ratio;", secondBodyStatements.get(0).getNode().getText());
+        assertEquals("this.ratio=ratio;", secondBodyStatements.get(0).getText());
     }
 
     @Test
@@ -190,7 +189,7 @@ public class ConstructorAnalyzerTest {
         List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
         ConstructorInformation<JavaParser.StatementContext> parameterizedConstructor = constructors.get(1);
-        List<Statement<JavaParser.StatementContext>> bodyStatements = parameterizedConstructor.getBodyStatements();
+        List<JavaParser.StatementContext> bodyStatements = parameterizedConstructor.getBodyStatements();
 
         assertEquals(2, constructors.size());
         assertEquals("Circle", constructors.get(0).getName());
@@ -201,7 +200,7 @@ public class ConstructorAnalyzerTest {
         assertEquals(1, constructors.get(1).getParameters().size());
         assertEquals("int ratio", constructors.get(1).getParameters().get(0));
         assertEquals(2, constructors.get(1).getBodyStatements().size());
-        assertEquals("this.ratio=ratio;", bodyStatements.get(0).getNode().getText());
-        assertEquals("someOperation();", bodyStatements.get(1).getNode().getText());
+        assertEquals("this.ratio=ratio;", bodyStatements.get(0).getText());
+        assertEquals("someOperation();", bodyStatements.get(1).getText());
     }
 }

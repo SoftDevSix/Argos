@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LexerDirectoryProcessorTest {
+class LexerDirectoryProcessorTest {
     private IDirectoryProcessor<CommonTokenStream> directoryProcessor;
     private Path tempDirectory;
     private Path testFile1;

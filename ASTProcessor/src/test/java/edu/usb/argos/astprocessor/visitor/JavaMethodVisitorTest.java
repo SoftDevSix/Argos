@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class JavaMethodVisitorTest {
+class JavaMethodVisitorTest {
     private JavaMethodVisitor visitor;
     private ModifierService modifierService;
     private ParameterService parameterService;

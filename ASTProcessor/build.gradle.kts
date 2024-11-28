@@ -22,7 +22,6 @@ dependencies {
 	implementation(libs.springboot.starter.web)
 	implementation(libs.springdoc.openapi)
 	implementation(libs.slf4j.api)
-	implementation(libs.slf4j.simple)
 	implementation(libs.antlr.runtime)
 	developmentOnly(libs.springboot.devtools)
 	compileOnly(libs.lombok)

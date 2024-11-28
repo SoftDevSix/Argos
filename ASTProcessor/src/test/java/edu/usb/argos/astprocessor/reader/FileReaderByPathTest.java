@@ -22,7 +22,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-public class FileReaderByPathTest {
+class FileReaderByPathTest {
     @Mock
     private IFileValidationStrategy<Path> mockValidationStrategy;
     private FileReaderByPath fileReader;
@@ -82,34 +82,39 @@ public class FileReaderByPathTest {
 
     private Path createValidJavaFile() throws IOException {
         Path javaFile = tempDir.resolve("TestClass.java");
-        String content =
-                "public class TestClass {\n" +
-                        "    public void testMethod() {\n" +
-                        "        System.out.println(\"Hello World\");\n" +
-                        "    }\n" +
-                        "}";
+        String content = """
+            public class TestClass {
+                public void testMethod() {
+                    System.out.println("Hello World");
+                }
+            }""";
         Files.writeString(javaFile, content);
         return javaFile;
     }
 
     private Path createComplexJavaFile() throws IOException {
         Path complexFile = tempDir.resolve("ComplexClass.java");
-        String content =
-                "package com.example;\n\n" +
-                        "import java.util.List;\n" +
-                        "import java.util.ArrayList;\n\n" +
-                        "public class ComplexClass {\n" +
-                        "    private List<String> items;\n\n" +
-                        "    public ComplexClass() {\n" +
-                        "        this.items = new ArrayList<>();\n" +
-                        "    }\n\n" +
-                        "    public void addItem(String item) {\n" +
-                        "        items.add(item);\n" +
-                        "    }\n\n" +
-                        "    public List<String> getItems() {\n" +
-                        "        return new ArrayList<>(items);\n" +
-                        "    }\n" +
-                        "}";
+        String content = """
+            package com.example;
+
+            import java.util.List;
+            import java.util.ArrayList;
+
+            public class ComplexClass {
+                private List<String> items;
+
+                public ComplexClass() {
+                    this.items = new ArrayList<>();
+                }
+
+                public void addItem(String item) {
+                    items.add(item);
+                }
+
+                public List<String> getItems() {
+                    return new ArrayList<>(items);
+                }
+            }""";
         Files.writeString(complexFile, content);
         return complexFile;
     }

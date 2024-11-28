@@ -25,6 +25,10 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
 
     @Override
     public MethodInformation<JavaParser.StatementContext> visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
+        if (ctx == null) {
+            return createEmptyMethodInformation();
+        }
+
         return MethodInformation.<JavaParser.StatementContext>builder()
                 .name(getName(ctx).get())
                 .returnType(getReturnType(ctx).get())
@@ -34,6 +38,19 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
                 .throwsExceptions(getThrowsExceptions(ctx))
                 .annotations(getAnnotations(ctx).orElse(Collections.emptyList()))
                 .isVarArgs(hasVarArgs(ctx))
+                .build();
+    }
+
+    private MethodInformation<JavaParser.StatementContext> createEmptyMethodInformation() {
+        return MethodInformation.<JavaParser.StatementContext>builder()
+                .name("")
+                .returnType("")
+                .modifiers(Collections.emptyList())
+                .parameters(Collections.emptyList())
+                .statements(Collections.emptyList())
+                .throwsExceptions(Collections.emptyList())
+                .annotations(Collections.emptyList())
+                .isVarArgs(false)
                 .build();
     }
 
@@ -125,9 +142,13 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
     }
 
     private JavaParser.StatementContext createLocalVariableStatement(JavaParser.BlockStatementContext blockStmt) {
-        JavaParser.StatementContext statementCtx = new JavaParser.StatementContext(blockStmt, 0);
-        statementCtx.statementExpression = blockStmt.localVariableDeclaration().getParent()
-                .getRuleContext(JavaParser.ExpressionContext.class, 0);
+        JavaParser.StatementContext statementCtx = new JavaParser.StatementContext(null, 0);
+        JavaParser.LocalVariableDeclarationContext localVarDecl = blockStmt.localVariableDeclaration();
+
+        JavaParser.ExpressionContext exprCtx = new JavaParser.ExpressionContext(null, 0);
+        exprCtx.addChild(localVarDecl);
+
+        statementCtx.statementExpression = exprCtx;
         return statementCtx;
     }
 

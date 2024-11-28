@@ -15,10 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class JavaMethodVisitorTest {
     private JavaMethodVisitor visitor;
@@ -269,12 +266,12 @@ class JavaMethodVisitorTest {
     @Test
     void testMethodWithGenericParameters() {
         String code = """
-            class Test {
-                public <T extends Comparable<T>> void sort(List<T> list) {
-                    // Method body
+                class Test {
+                    public <T extends Comparable<T>> void sort(List<T> list) {
+                        // Method body
+                    }
                 }
-            }
-            """;
+                """;
 
         JavaParser.MethodDeclarationContext ctx = parseMethod(code);
         MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
@@ -283,5 +280,167 @@ class JavaMethodVisitorTest {
         ParameterInformation param = info.getParameters().get(0);
         assertEquals("list", param.getName());
         assertEquals("List<T>", param.getType());
+    }
+
+    @Test
+    void testMethodWithLocalVariableDeclaration() {
+        String code = """
+                class Test {
+                    void methodWithLocalVar() {
+                        String name = "test";
+                        int x = 42;
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertEquals(2, info.getStatements().size());
+        info.getStatements().forEach(stmt ->
+                assertNotNull(stmt.statementExpression, "Local variable declarations should be converted to statements")
+        );
+    }
+
+    @Test
+    void testMethodWithNullContext() {
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(null);
+
+        assertNotNull(info);
+        assertTrue(info.getModifiers().isEmpty());
+        assertTrue(info.getParameters().isEmpty());
+        assertTrue(info.getStatements().isEmpty());
+        assertTrue(info.getAnnotations().isEmpty());
+        assertFalse(info.isVarArgs());
+    }
+
+    @Test
+    void testMethodWithNullMethodBody() {
+        String code = """
+                class Test {
+                    abstract void emptyMethod();
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertTrue(info.getStatements().isEmpty());
+    }
+
+    @Test
+    void testMethodWithEmptyBlock() {
+        String code = """
+                class Test {
+                    void emptyMethod() {
+                        // Empty block
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertTrue(info.getStatements().isEmpty());
+    }
+
+    @Test
+    void testMethodWithNullFormalParameters() {
+        String code = """
+                class Test {
+                    void method() {
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertTrue(info.getParameters().isEmpty());
+        assertFalse(info.isVarArgs());
+    }
+
+    @Test
+    void testMethodWithMixedBlockStatements() {
+        String code = """
+                class Test {
+                    void mixedMethod() {
+                        int x = 1;
+                        System.out.println(x);
+                        if (x > 0) {
+                            String s = "test";
+                            System.out.println(s);
+                        }
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertFalse(info.getStatements().isEmpty());
+        boolean hasLocalVar = info.getStatements().stream()
+                .anyMatch(stmt -> stmt.statementExpression != null);
+        boolean hasRegularStmt = info.getStatements().stream()
+                .anyMatch(stmt -> stmt.statementExpression == null);
+
+        assertTrue(hasLocalVar, "Should have local variable declarations");
+        assertTrue(hasRegularStmt, "Should have regular statements");
+    }
+
+    @Test
+    void testEmptyMethod() {
+        String code = """
+                class Test {
+                    void emptyMethod() {
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertEquals("emptyMethod", info.getName());
+        assertEquals("void", info.getReturnType());
+        assertTrue(info.getStatements().isEmpty());
+    }
+
+    @Test
+    void testMethodWithMixedStatements() {
+        String code = """
+                class Test {
+                    int mixedMethod() {
+                        int x = 1;
+                        if (x > 0) {
+                            return x;
+                        }
+                        return 0;
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertFalse(info.getStatements().isEmpty());
+        assertTrue(info.getStatements().size() >= 3);
+    }
+
+    @Test
+    void testMethodWithOnlyLocalVariables() {
+        String code = """
+                class Test {
+                    void localVarsMethod() {
+                        int a = 1;
+                        String b = "test";
+                        double c = 2.0;
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+
+        assertEquals(3, info.getStatements().size());
     }
 }

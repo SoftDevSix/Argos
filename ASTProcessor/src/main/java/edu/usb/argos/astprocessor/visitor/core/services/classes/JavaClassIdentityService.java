@@ -7,7 +7,6 @@ import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.shared.
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
-<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,34 +16,14 @@ import java.util.HashMap;
 public class JavaClassIdentityService implements IClassIdentityService<ParserRuleContext> {
 
     private static final String DEFAULT_VALUE = "";
-=======
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-public class JavaClassIdentityCollector implements IClassIdentityCollector<ParserRuleContext> {
-
-    private final String DEFAULT_VALUE = "";
->>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
 
     @Override
     public Optional<String> getClassName(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
-<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
-<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
                 classCtx -> Optional.ofNullable(classCtx.identifier().getText()),
                 Optional.empty()
-=======
-                classCtx -> classCtx.identifier().getText(),
-                DEFAULT_VALUE
->>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
-=======
-                classCtx -> Optional.ofNullable(classCtx.identifier().getText()),
-                Optional.empty()
->>>>>>> 5f1ad13 (refactor: add Optional object for better response):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
         );
     }
 
@@ -63,35 +42,15 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private Optional<String> extractPackageName(ParserRuleContext compilationUnitContext) {
-<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
         if (compilationUnitContext instanceof JavaParser.CompilationUnitContext compilationUnit) {
-=======
-        if (compilationUnitContext instanceof JavaParser.CompilationUnitContext) {
->>>>>>> 5f1ad13 (refactor: add Optional object for better response):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
             return ContextValidator.validateAndExecute(
                     compilationUnit.packageDeclaration(),
                     JavaParser.PackageDeclarationContext.class,
-<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
-<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
                     packageCtx -> Optional.ofNullable(packageCtx.qualifiedName().getText()),
                     Optional.empty()
             );
         }
         return Optional.empty();
-=======
-                    packageCtx -> packageCtx.qualifiedName().getText(),
-                    DEFAULT_VALUE
-            );
-        }
-        return DEFAULT_VALUE;
->>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
-=======
-                    packageCtx -> Optional.ofNullable(packageCtx.qualifiedName().getText()),
-                    Optional.empty()
-            );
-        }
-        return Optional.empty();
->>>>>>> 5f1ad13 (refactor: add Optional object for better response):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
     }
 
     @Override
@@ -156,7 +115,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private Map<String, String> getAnnotationAttributes(JavaParser.ClassOrInterfaceModifierContext mod) {
-        HashMap<String, String> attributes = new HashMap<>();
+        Map<String, String> attributes = new HashMap<>();
         if (mod.annotation().elementValuePairs() != null) {
             for (JavaParser.ElementValuePairContext pair : mod.annotation().elementValuePairs().elementValuePair()) {
                 attributes.put(pair.identifier().getText(), getAttributeValue(pair));

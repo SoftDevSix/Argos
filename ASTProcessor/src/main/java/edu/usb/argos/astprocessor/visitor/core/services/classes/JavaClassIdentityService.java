@@ -21,6 +21,7 @@ public class JavaClassIdentityService implements IClassIdentityService<ParserRul
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class JavaClassIdentityCollector implements IClassIdentityCollector<ParserRuleContext> {
 
@@ -33,12 +34,17 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
 <<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
+<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
                 classCtx -> Optional.ofNullable(classCtx.identifier().getText()),
                 Optional.empty()
 =======
                 classCtx -> classCtx.identifier().getText(),
                 DEFAULT_VALUE
 >>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
+=======
+                classCtx -> Optional.ofNullable(classCtx.identifier().getText()),
+                Optional.empty()
+>>>>>>> 5f1ad13 (refactor: add Optional object for better response):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
         );
     }
 
@@ -57,10 +63,15 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private Optional<String> extractPackageName(ParserRuleContext compilationUnitContext) {
+<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
         if (compilationUnitContext instanceof JavaParser.CompilationUnitContext compilationUnit) {
+=======
+        if (compilationUnitContext instanceof JavaParser.CompilationUnitContext) {
+>>>>>>> 5f1ad13 (refactor: add Optional object for better response):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
             return ContextValidator.validateAndExecute(
                     compilationUnit.packageDeclaration(),
                     JavaParser.PackageDeclarationContext.class,
+<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
 <<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
                     packageCtx -> Optional.ofNullable(packageCtx.qualifiedName().getText()),
                     Optional.empty()
@@ -74,6 +85,13 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
         }
         return DEFAULT_VALUE;
 >>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
+=======
+                    packageCtx -> Optional.ofNullable(packageCtx.qualifiedName().getText()),
+                    Optional.empty()
+            );
+        }
+        return Optional.empty();
+>>>>>>> 5f1ad13 (refactor: add Optional object for better response):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
     }
 
     @Override

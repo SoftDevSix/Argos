@@ -1,9 +1,9 @@
-package edu.usb.argos.ASTProcessor.analyzer.handlers;
+package edu.usb.argos.astprocessor.analyzer.handlers;
 
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.codeSmells.CodeAnalysisReport;
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.codeSmells.CodeAnalysisReportType;
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysisReport;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysisReportType;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
+import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

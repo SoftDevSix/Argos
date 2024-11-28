@@ -1,15 +1,10 @@
-package edu.usb.argos.ASTProcessor.analyzer.core.entities.handlers;
+package edu.usb.argos.astprocessor.analyzer.core.entities.handlers;
 
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.codeSmells.CodeAnalysisReport;
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.codeSmells.CodeAnalysisReportType;
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysisReport;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysisReportType;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 
-@Getter
-@AllArgsConstructor
-public class CodeAnalysisReportHandlerByClass {
-    private final CodeSmellAnalysisByClass codeSmellAnalysisByClass;
+public record CodeAnalysisReportHandlerByClass(CodeSmellAnalysisByClass codeSmellAnalysisByClass) {
 
     public void addMethodWithExcessiveParameters(int startLine, int endLine) {
         CodeAnalysisReport codeAnalysisReport = CodeAnalysisReport.builder()

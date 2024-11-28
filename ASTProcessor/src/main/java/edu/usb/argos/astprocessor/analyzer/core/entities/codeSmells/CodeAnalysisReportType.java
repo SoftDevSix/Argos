@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.analyzer.core.entities.codeSmells;
+package edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells;
 
 public enum CodeAnalysisReportType {
     MAGIC_NUMBER,

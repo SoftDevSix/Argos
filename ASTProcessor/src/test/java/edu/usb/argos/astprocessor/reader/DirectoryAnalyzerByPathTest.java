@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.mock;
@@ -53,11 +54,13 @@ class DirectoryAnalyzerByPathTest {
     void testAnalyzeDirectoryEmptyDirectoryPath() throws FileAnalyzerException {
         Path mockPath = mock(Path.class);
 
-        when(mockTreeAnalyzer.getJavaFiles(mockPath)).thenReturn(Collections.emptyList());
+        when(mockTreeAnalyzer.getJavaFiles(mockPath)).thenThrow(new FileAnalyzerException("Invalid path"));
 
-        List<Object> result = directoryAnalyzer.analyzeDirectory(mockPath);
+        FileAnalyzerException exception = assertThrows(FileAnalyzerException.class, () -> {
+            directoryAnalyzer.analyzeDirectory(mockPath);
+        });
 
-        assertEquals(0, result.size());
+        assertEquals("Invalid path", exception.getMessage());
         verify(mockFileAnalyzer, never()).readFile(any(Path.class));
     }
 }

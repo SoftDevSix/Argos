@@ -150,7 +150,6 @@ class ConstructorAnalyzerTest {
         Optional<JavaParser.ClassBodyContext> classFound = getClassFromText(classBody);
         List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
-        ConstructorInformation<JavaParser.StatementContext> parameterizedConstructor = constructors.get(0);
         ConstructorInformation<JavaParser.StatementContext> parameterizedSecondConstructor = constructors.get(1);
         List<JavaParser.StatementContext> secondBodyStatements = parameterizedSecondConstructor
                 .getBodyStatements();

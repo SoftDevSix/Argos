@@ -1,6 +1,5 @@
 package edu.usb.argos.ASTProcessor.visitor.core.entities.method;
 
-import edu.usb.argos.ASTProcessor.visitor.core.interfaces.nodes.Statement;
 import lombok.Builder;
 import lombok.Value;
 
@@ -13,7 +12,7 @@ public class MethodInformation<S> {
     String returnType;
     List<String> modifiers;
     List<ParameterInformation> parameters;
-    List<Statement<S>> statements;
+    List<S> statements;
     List<String> throwsExceptions;
     List<String> annotations;
     boolean isVarArgs;

@@ -2,48 +2,75 @@ package edu.usb.argos.astprocessor.analyzer.infrastructure.utils;
 
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IMethodLineAnalyzer;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
+
 import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Optional;
 
 @Component
 public class MethodLineAnalyzer implements IMethodLineAnalyzer<JavaParser.StatementContext> {
 
     @Override
     public int calculateMethodSize(MethodInformation<JavaParser.StatementContext> method) {
-        if (isMethodEmpty(method)) {
+        if (method.getStatements() == null || method.getStatements().isEmpty()) {
             return 0;
         }
-        int startLine = getMethodStartLine(method);
-        int endLine = getMethodEndLine(method);
-        return endLine - startLine + 1;
+
+        Optional<JavaParser.MethodDeclarationContext> methodContext =
+                findEnclosingMethod(method.getStatements().get(0));
+
+        if (methodContext.isEmpty()) {
+            return 0;
+        }
+
+        Optional<JavaParser.BlockContext> methodBody = Optional.ofNullable(methodContext.get().methodBody().block());
+        return methodBody
+                .map(blockContext -> blockContext.getStop().getLine() - blockContext.getStart().getLine())
+                .orElse(0);
+
     }
 
     @Override
     public int getMethodStartLine(MethodInformation<JavaParser.StatementContext> method) {
-        return calculateLine(method.getStatements(), true);
+        if (method.getStatements() == null || method.getStatements().isEmpty()) {
+            return 0;
+        }
+
+        Optional<JavaParser.MethodDeclarationContext> methodContext =
+                findEnclosingMethod(method.getStatements().get(0));
+
+        return methodContext
+                .map(methodNode -> methodNode.getStart().getLine())
+                .orElse(0);
     }
 
     @Override
     public int getMethodEndLine(MethodInformation<JavaParser.StatementContext> method) {
-        return calculateLine(method.getStatements(), false);
-    }
-
-    private boolean isMethodEmpty(MethodInformation<JavaParser.StatementContext> method) {
-        return method.getStatements() == null || method.getStatements().isEmpty();
-    }
-
-    private int calculateLine(List<JavaParser.StatementContext> statements, boolean findStart) {
-        int result = findStart ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-
-        for (JavaParser.StatementContext statement : statements) {
-            if (statement.getStart() != null && statement.getStop() != null) {
-                int line = findStart ? statement.getStart().getLine() : statement.getStop().getLine();
-                result = findStart ? Math.min(result, line) : Math.max(result, line);
-            }
+        if (method.getStatements() == null || method.getStatements().isEmpty()) {
+            return 0;
         }
 
-        return findStart ? result - 1 : result;
+        Optional<JavaParser.MethodDeclarationContext> methodContext =
+                findEnclosingMethod(method.getStatements().get(0));
+
+        return methodContext
+                .map(methodNode -> methodNode.getStop().getLine())
+                .orElse(0);
+    }
+
+    private Optional<JavaParser.MethodDeclarationContext> findEnclosingMethod(ParserRuleContext context) {
+        ParserRuleContext currentContext = context;
+
+        while (currentContext != null) {
+            if (currentContext instanceof JavaParser.MethodDeclarationContext) {
+                return Optional.of((JavaParser.MethodDeclarationContext) currentContext);
+            }
+
+            currentContext = currentContext.getParent();
+        }
+
+        return Optional.empty();
     }
 }

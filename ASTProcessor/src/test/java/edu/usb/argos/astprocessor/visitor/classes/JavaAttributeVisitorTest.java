@@ -48,6 +48,71 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
+    void testExtractAttributes_WithEmptyVariableDeclarator() {
+        String classContent = """
+                class TestClass {
+                    private int;
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classBody.get());
+        
+        assertTrue(classBody.isPresent());
+        assertTrue(attributes.isEmpty());
+    }
+
+    @Test
+    void testExtractAttributes_WithFieldDeclaration() {
+        String classContent = """
+                class TestClass {
+                    private int attribute1;
+                    public String attribute2;
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classBody.get());
+        
+        assertTrue(classBody.isPresent());
+        assertEquals(2, attributes.size());
+        assertEquals("attribute1", attributes.get(0).getName());
+        assertEquals("int", attributes.get(0).getType());
+        assertEquals("attribute2", attributes.get(1).getName());
+        assertEquals("String", attributes.get(1).getType());
+    }
+
+    @Test
+    void testExtractAttributes_WithoutFieldDeclaration() {
+        String classContent = """
+                class TestClass {
+                    public void method1() {}
+                    public static void main(String[] args) {}
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classBody.get());
+        
+        assertTrue(classBody.isPresent());
+        assertTrue(attributes.isEmpty());
+    }
+
+    @Test
+    void testExtractAttributes_NullMemberContext() {
+        String classContent = """
+                class TestClass {
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classBody.get());
+        
+        assertTrue(classBody.isPresent());
+        assertTrue(attributes.isEmpty());
+    }
+
+    @Test
     void testVisitAttributeWithModifiers() {
         String classBody = """
                 public class Example {

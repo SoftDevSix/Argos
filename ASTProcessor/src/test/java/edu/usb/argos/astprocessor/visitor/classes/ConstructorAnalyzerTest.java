@@ -43,6 +43,154 @@ class ConstructorAnalyzerTest {
     }
 
     @Test
+    void testVisitConstructors_WithConstructors() {
+        String classContent = """
+                class TestClass {
+                    TestClass() {}
+                    TestClass(int value) {}
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        assertTrue(classBody.isPresent());
+
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+
+        assertEquals(2, constructors.size()); 
+        assertEquals("TestClass", constructors.get(0).getName());
+        assertEquals("TestClass", constructors.get(1).getName());
+    }
+
+    @Test
+    void testVisitConstructors_WithoutConstructors() {
+        String classContent = """
+                class TestClass {
+                    void method() {}
+                    int field;
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        assertTrue(classBody.isPresent());
+
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+
+        assertTrue(constructors.isEmpty()); 
+    }
+
+    @Test
+    void testVisitConstructors_WithEmptyClass() {
+        String classContent = """
+                class TestClass {
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        assertTrue(classBody.isPresent());
+
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+
+        assertTrue(constructors.isEmpty());
+    }
+
+    @Test
+    void testGetModifiers_WithModifiers() {
+        String classContent = """
+                class TestClass {
+                    public TestClass() {}
+                    private TestClass(int value) {}
+                    protected TestClass(String value) {}
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<String> modifiers1 = constructors.get(0).getModifiers();
+        List<String> modifiers2 = constructors.get(1).getModifiers();
+        List<String> modifiers3 = constructors.get(2).getModifiers();
+        
+        assertTrue(classBody.isPresent());
+        assertEquals(3, constructors.size());
+        assertEquals(List.of("public"), modifiers1);
+        assertEquals(List.of("private"), modifiers2);
+        assertEquals(List.of("protected"), modifiers3);
+    }
+
+    @Test
+    void testGetModifiers_WithoutModifiers() {
+        String classContent = """
+                class TestClass {
+                    TestClass() {}
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<String> modifiers = constructors.get(0).getModifiers();
+        
+        assertTrue(classBody.isPresent());
+        assertEquals(1, constructors.size());
+        assertTrue(modifiers.isEmpty());
+    }
+
+    @Test
+    void testGetBodyStatements_WithStatements() {
+        String classContent = """
+                class TestClass {
+                    public TestClass() {
+                        System.out.println(y);
+                        System.out.println(x);
+                    }
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<JavaParser.StatementContext> bodyStatements = constructors.get(0).getBodyStatements();
+        
+        assertEquals(1, constructors.size());
+        assertTrue(classBody.isPresent());
+        assertEquals(2, bodyStatements.size());
+        assertEquals("System.out.println(y);", bodyStatements.get(0).getText());
+        assertEquals("System.out.println(x);", bodyStatements.get(1).getText());
+    }
+
+    @Test
+    void testGetBodyStatements_WithoutStatements() {
+        String classContent = """
+                class TestClass {
+                    public TestClass() {
+                    }
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<JavaParser.StatementContext> bodyStatements = constructors.get(0).getBodyStatements();
+        
+        assertTrue(classBody.isPresent());
+        assertEquals(1, constructors.size());
+        assertTrue(bodyStatements.isEmpty());
+    }
+
+    @Test
+    void testGetBodyStatements_NullBlock() {
+        String classContent = """
+                class TestClass {
+                    public TestClass() {}
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<JavaParser.StatementContext> bodyStatements = constructors.get(0).getBodyStatements();
+        
+        assertTrue(classBody.isPresent());
+        assertEquals(1, constructors.size());
+        assertTrue(bodyStatements.isEmpty());
+    }
+
+    @Test
     void testVisitConstructorsWithModifiers() {
         String classBody = """
                     public class MyClass {

@@ -1,4 +1,4 @@
-package edu.usb.argos.astprocessor.AttributeAnalyzerTest;
+package edu.usb.argos.astprocessor.visitor.classes;
 
 import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
 import edu.usb.argos.astprocessor.visitor.core.entities.method.AttributeInformation;

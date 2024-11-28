@@ -7,6 +7,7 @@ import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.shared.
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
+<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -16,14 +17,28 @@ import java.util.HashMap;
 public class JavaClassIdentityService implements IClassIdentityService<ParserRuleContext> {
 
     private static final String DEFAULT_VALUE = "";
+=======
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class JavaClassIdentityCollector implements IClassIdentityCollector<ParserRuleContext> {
+
+    private final String DEFAULT_VALUE = "";
+>>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
 
     @Override
     public Optional<String> getClassName(ParserRuleContext ctx) {
         return ContextValidator.validateAndExecute(
                 ctx,
                 JavaParser.ClassDeclarationContext.class,
+<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
                 classCtx -> Optional.ofNullable(classCtx.identifier().getText()),
                 Optional.empty()
+=======
+                classCtx -> classCtx.identifier().getText(),
+                DEFAULT_VALUE
+>>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
         );
     }
 
@@ -46,11 +61,19 @@ public class JavaClassIdentityService implements IClassIdentityService<ParserRul
             return ContextValidator.validateAndExecute(
                     compilationUnit.packageDeclaration(),
                     JavaParser.PackageDeclarationContext.class,
+<<<<<<< HEAD:ASTProcessor/src/main/java/edu/usb/argos/astprocessor/visitor/core/services/classes/JavaClassIdentityService.java
                     packageCtx -> Optional.ofNullable(packageCtx.qualifiedName().getText()),
                     Optional.empty()
             );
         }
         return Optional.empty();
+=======
+                    packageCtx -> packageCtx.qualifiedName().getText(),
+                    DEFAULT_VALUE
+            );
+        }
+        return DEFAULT_VALUE;
+>>>>>>> 7939bad (refactor: remove unnecessary spaces; remove imports with *):ASTProcessor/src/main/java/edu/usb/argos/ASTProcessor/visitor/core/services/collectors/classes/JavaClassIdentityCollector.java
     }
 
     @Override

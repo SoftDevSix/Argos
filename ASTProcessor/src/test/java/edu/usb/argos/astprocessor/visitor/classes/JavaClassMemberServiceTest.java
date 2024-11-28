@@ -67,46 +67,46 @@ class JavaClassMemberServiceTest {
     }
 
     @Test
-     void getClassMethodsShouldReturnCorrectMethods() {
-         JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+    void getClassMethodsShouldReturnCorrectMethods() {
+        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
 
-         MethodInformation<JavaParser.StatementContext>
-                 method1 = MethodInformation.<
-                         JavaParser.StatementContext>
-                         builder()
-                 .name("method1")
-                 .returnType("void")
-                 .modifiers(new ArrayList<>())
-                 .parameters(new ArrayList<>())
-                 .statements(new ArrayList<>())
-                 .throwsExceptions(new ArrayList<>())
-                 .annotations(new ArrayList<>())
-                 .isVarArgs(false)
-                 .build();
+        MethodInformation<JavaParser.StatementContext>
+                method1 = MethodInformation.<
+                        JavaParser.StatementContext>
+                        builder()
+                .name("method1")
+                .returnType("void")
+                .modifiers(new ArrayList<>())
+                .parameters(new ArrayList<>())
+                .statements(new ArrayList<>())
+                .throwsExceptions(new ArrayList<>())
+                .annotations(new ArrayList<>())
+                .isVarArgs(false)
+                .build();
 
-         MethodInformation<
-                 JavaParser.StatementContext>
-                 method2 = MethodInformation.<
-                         JavaParser.StatementContext>
-                         builder()
-                 .name("method2")
-                 .returnType("String")
-                 .modifiers(new ArrayList<>())
-                 .parameters(new ArrayList<>())
-                 .statements(new ArrayList<>())
-                 .throwsExceptions(new ArrayList<>())
-                 .annotations(new ArrayList<>())
-                 .isVarArgs(false)
-                 .build();
+        MethodInformation<
+                JavaParser.StatementContext>
+                method2 = MethodInformation.<
+                        JavaParser.StatementContext>
+                        builder()
+                .name("method2")
+                .returnType("String")
+                .modifiers(new ArrayList<>())
+                .parameters(new ArrayList<>())
+                .statements(new ArrayList<>())
+                .throwsExceptions(new ArrayList<>())
+                .annotations(new ArrayList<>())
+                .isVarArgs(false)
+                .build();
 
-         when(methodVisitor.visitMethodDeclaration(any())).thenReturn(method1).thenReturn(method2);
+        when(methodVisitor.visitMethodDeclaration(any())).thenReturn(method1).thenReturn(method2);
 
-         List<MethodInformation<JavaParser.StatementContext>> methods = memberService.getClassMethods(ctx);
+        List<MethodInformation<JavaParser.StatementContext>> methods = memberService.getClassMethods(ctx);
 
-         assertEquals(2, methods.size());
-         assertEquals("method1", methods.get(0).getName());
-         assertEquals("method2", methods.get(1).getName());
-     }
+        assertEquals(2, methods.size());
+        assertEquals("method1", methods.get(0).getName());
+        assertEquals("method2", methods.get(1).getName());
+    }
 
     @Test
     void getClassAttributesShouldReturnCorrectAttributes() {
@@ -145,17 +145,17 @@ class JavaClassMemberServiceTest {
 
         ConstructorInformation<JavaParser.StatementContext> constructorOne =
                 ConstructorInformation.<JavaParser.StatementContext>builder()
-                .name("TestClass")
-                .modifiers(List.of("public"))
-                .parameters(new ArrayList<>())
-                .build();
+                        .name("TestClass")
+                        .modifiers(List.of("public"))
+                        .parameters(new ArrayList<>())
+                        .build();
 
         ConstructorInformation<JavaParser.StatementContext> constructorTwo =
                 ConstructorInformation.<JavaParser.StatementContext>builder()
-                .name("TestClass")
-                .modifiers(List.of("public"))
-                .parameters(List.of("String"))
-                .build();
+                        .name("TestClass")
+                        .modifiers(List.of("public"))
+                        .parameters(List.of("String"))
+                        .build();
 
         when(constructorVisitor.visitConstructors(any())).thenReturn(Arrays.asList(constructorOne, constructorTwo));
 

@@ -3,7 +3,7 @@ package edu.usb.argos.astprocessor.reader;
 import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException;
 import edu.usb.argos.astprocessor.reader.application.services.FileReaderByPath;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileValidationStrategy;
-import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,7 +41,7 @@ class FileReaderByPathTest {
         Path validFile = createValidJavaFile();
         doNothing().when(mockValidationStrategy).validate(any());
 
-        Optional<ParseTree> result = fileReader.readFile(validFile);
+        Optional<ParserRuleContext> result = fileReader.readFile(validFile);
 
         assertTrue(result.isPresent());
         assertTrue(result.get().getText().contains("TestClass"));
@@ -73,7 +73,7 @@ class FileReaderByPathTest {
         Path complexFile = createComplexJavaFile();
         doNothing().when(mockValidationStrategy).validate(any());
 
-        Optional<ParseTree> result = fileReader.readFile(complexFile);
+        Optional<ParserRuleContext> result = fileReader.readFile(complexFile);
 
         assertTrue(result.isPresent());
         assertTrue(result.get().getText().contains("ComplexClass"));

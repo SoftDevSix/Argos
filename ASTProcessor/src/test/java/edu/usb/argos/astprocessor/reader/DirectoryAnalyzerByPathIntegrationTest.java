@@ -7,7 +7,7 @@ import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileValidationStrategy;
 import edu.usb.argos.astprocessor.reader.infraestructure.utils.SourceTreeAnalyzer;
 import edu.usb.argos.astprocessor.reader.infraestructure.validation.DirectoryPathValidator;
-import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
@@ -39,7 +39,7 @@ class DirectoryAnalyzerByPathIntegrationTest {
     @InjectMocks
     private FileReaderByPath fileReader;
 
-    private DirectoryAnalyzerByPath<ParseTree> directoryAnalyzer;
+    private DirectoryAnalyzerByPath<ParserRuleContext> directoryAnalyzer;
 
     @TempDir
     Path tempDir;
@@ -62,7 +62,7 @@ class DirectoryAnalyzerByPathIntegrationTest {
 
         doNothing().when(validationStrategy).validate(any());
 
-        List<ParseTree> result = directoryAnalyzer.analyzeDirectory(tempDir);
+        List<ParserRuleContext> result = directoryAnalyzer.analyzeDirectory(tempDir);
 
         assertEquals(3, result.size());
         result.forEach(Assertions::assertNotNull);
@@ -71,7 +71,7 @@ class DirectoryAnalyzerByPathIntegrationTest {
 
     @Test
     void testAnalyzeDirectory_EmptyDirectory() throws Exception {
-        List<ParseTree> result = directoryAnalyzer.analyzeDirectory(tempDir);
+        List<ParserRuleContext> result = directoryAnalyzer.analyzeDirectory(tempDir);
 
         assertTrue(result.isEmpty());
         verify(validationStrategy, never()).validate(any());
@@ -85,7 +85,7 @@ class DirectoryAnalyzerByPathIntegrationTest {
 
         doNothing().when(validationStrategy).validate(any());
 
-        List<ParseTree> result = directoryAnalyzer.analyzeDirectory(tempDir);
+        List<ParserRuleContext> result = directoryAnalyzer.analyzeDirectory(tempDir);
 
         assertTrue(result.isEmpty());
         verify(validationStrategy, never()).validate(any());

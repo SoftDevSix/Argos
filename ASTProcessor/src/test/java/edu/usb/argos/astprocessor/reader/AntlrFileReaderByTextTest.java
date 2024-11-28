@@ -2,7 +2,7 @@ package edu.usb.argos.astprocessor.reader;
 
 import edu.usb.argos.astprocessor.reader.application.services.FileReaderByText;
 
-import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ class AntlrFileReaderByTextTest {
     @Test
     void testReadFileWithValidContent() {
         String content = "class Example {}";
-        Optional<ParseTree> parseTree = fileReader.readFile(content);
+        Optional<ParserRuleContext> parseTree = fileReader.readFile(content);
         assertTrue(parseTree.isPresent());
     }
 
@@ -48,7 +48,7 @@ class AntlrFileReaderByTextTest {
                         return a - b;
                     }
                 }""";
-        Optional<ParseTree> parseContent = fileReader.readFile(content);
+        Optional<ParserRuleContext> parseContent = fileReader.readFile(content);
         assertTrue(parseContent.isPresent());
     }
 

@@ -10,7 +10,7 @@ import edu.usb.argos.astprocessor.reader.infraestructure.validation.PathValidati
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 @Slf4j
-public class FileReaderByPath implements IFileAnalyzer<Path, ParseTree> {
+public class FileReaderByPath implements IFileAnalyzer<Path, ParserRuleContext> {
     private final IFileValidationStrategy<Path> validationStrategy;
 
     public FileReaderByPath() {
@@ -31,12 +31,12 @@ public class FileReaderByPath implements IFileAnalyzer<Path, ParseTree> {
     }
 
     @Override
-    public Optional<ParseTree> readFile(Path codePath) throws FileAnalyzerException {
+    public Optional<ParserRuleContext> readFile(Path codePath) throws FileAnalyzerException {
         try {
             validationStrategy.validate(codePath);
             String content = Files.readString(codePath);
 
-            return Optional.of(parseContent(content));
+            return Optional.ofNullable(parseContent(content));
         } catch (IOException e) {
             log.error("Error reading file: {}", codePath, e);
             throw new FileAnalyzerException("Error reading file: " + codePath, e);
@@ -49,14 +49,15 @@ public class FileReaderByPath implements IFileAnalyzer<Path, ParseTree> {
         }
     }
 
-    private ParseTree parseContent(String content) throws ParserException {
+    private ParserRuleContext parseContent(String content) throws ParserException {
         try {
             CharStream input = CharStreams.fromString(content);
             JavaLexer lexer = new JavaLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             JavaParser parser = new JavaParser(tokens);
+            JavaParser.CompilationUnitContext context = parser.compilationUnit();
 
-            return parser.compilationUnit();
+            return context.typeDeclaration(0).classDeclaration();
         } catch (Exception e) {
             log.error("Error parsing content", e);
             throw new ParserException("Error to parse tree", e);

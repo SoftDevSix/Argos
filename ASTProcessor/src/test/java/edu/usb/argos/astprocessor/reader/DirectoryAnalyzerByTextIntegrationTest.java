@@ -2,7 +2,7 @@ package edu.usb.argos.astprocessor.reader;
 
 import edu.usb.argos.astprocessor.reader.application.services.DirectoryAnalyzerByText;
 import edu.usb.argos.astprocessor.reader.application.services.FileReaderByText;
-import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DirectoryAnalyzerByTextIntegrationTest {
 
-    private DirectoryAnalyzerByText<ParseTree> directoryAnalyzer;
+    private DirectoryAnalyzerByText<ParserRuleContext> directoryAnalyzer;
 
     @TempDir
     Path tempDir;
@@ -43,7 +43,7 @@ class DirectoryAnalyzerByTextIntegrationTest {
                 Files.readString(javaFile2)
         };
 
-        List<ParseTree> result = directoryAnalyzer.analyzeDirectory(sourceCode);
+        List<ParserRuleContext> result = directoryAnalyzer.analyzeDirectory(sourceCode);
 
         assertEquals(2, result.size());
         assertNotNull(result.get(0));
@@ -73,7 +73,7 @@ class DirectoryAnalyzerByTextIntegrationTest {
                 Files.readString(javaFile3)
         };
 
-        List<ParseTree> result = directoryAnalyzer.analyzeDirectory(sourceCode);
+        List<ParserRuleContext> result = directoryAnalyzer.analyzeDirectory(sourceCode);
 
         assertEquals(3, result.size());
         assertNotNull(result.get(0));
@@ -91,7 +91,7 @@ class DirectoryAnalyzerByTextIntegrationTest {
                 Files.readString(javaFile2)
         };
 
-        List<ParseTree> result = directoryAnalyzer.analyzeDirectory(sourceCode);
+        List<ParserRuleContext> result = directoryAnalyzer.analyzeDirectory(sourceCode);
 
         assertEquals(2, result.size());
         assertNotNull(result.get(0));

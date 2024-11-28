@@ -138,7 +138,7 @@ public class JavaClassIdentityCollector implements IClassIdentityCollector<Parse
     }
 
     private Map<String, String> getAnnotationAttributes(JavaParser.ClassOrInterfaceModifierContext mod) {
-        Map<String, String> attributes = new HashMap<>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (mod.annotation().elementValuePairs() != null) {
             for (JavaParser.ElementValuePairContext pair : mod.annotation().elementValuePairs().elementValuePair()) {
                 attributes.put(pair.identifier().getText(), getAttributeValue(pair));

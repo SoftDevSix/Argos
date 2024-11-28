@@ -63,6 +63,22 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
+    void testExtractFieldInfo_WithNonEmptyVariableDeclarators() {
+        String classContent = """
+                class TestClass {
+                    private int attribute1;
+                }
+                """;
+
+        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
+        List<AttributeInformation> attributes = visitor.visitAttribute(classBody.get());
+
+        assertEquals(1, attributes.size());
+        assertEquals("attribute1", attributes.get(0).getName());
+        assertEquals("int", attributes.get(0).getType());
+    }
+
+    @Test
     void testExtractAttributes_WithFieldDeclaration() {
         String classContent = """
                 class TestClass {

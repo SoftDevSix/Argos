@@ -1,7 +1,8 @@
 package edu.usb.argos.ASTProcessor.visitor.core.interfaces.services;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IAnnotationExtractor<Node> {
-    List<String> extractAnnotation(Node bodyCtx);
+    Optional<List<String>> extractAnnotation(Node bodyCtx);
 }

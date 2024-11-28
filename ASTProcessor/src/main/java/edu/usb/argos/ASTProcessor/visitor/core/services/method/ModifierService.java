@@ -11,11 +11,15 @@ import java.util.Optional;
 
 @Value
 public class ModifierService implements IModifierExtractor<JavaParser.ClassBodyDeclarationContext> {
+    private static final String ANNOTATION_PREFIX = "@";
+
     @Override
-    public List<String> extractModifiers(JavaParser.ClassBodyDeclarationContext bodyCtx) {
-        return Optional.ofNullable(bodyCtx)
-                .map(this::processModifiers)
-                .orElse(Collections.emptyList());
+    public Optional<List<String>> extractModifiers(JavaParser.ClassBodyDeclarationContext bodyCtx) {
+        if (bodyCtx == null) {
+            return Optional.of(Collections.emptyList());
+        }
+        List<String> modifiers = processModifiers(bodyCtx);
+        return Optional.of(modifiers);
     }
 
     private List<String> processModifiers(JavaParser.ClassBodyDeclarationContext bodyCtx) {
@@ -27,25 +31,23 @@ public class ModifierService implements IModifierExtractor<JavaParser.ClassBodyD
     private List<String> extractModifiersFromList(List<JavaParser.ModifierContext> modifiers) {
         List<String> extractedModifiers = new ArrayList<>();
         for (JavaParser.ModifierContext mod : modifiers) {
-            String modifier = extractModifier(mod);
-            if (modifier != null) {
-                extractedModifiers.add(modifier);
-            }
+            extractModifier(mod).
+                    ifPresent(extractedModifiers::add);
         }
         return filterAndMakeUnmodifiable(extractedModifiers);
     }
 
-    private String extractModifier(JavaParser.ModifierContext mod) {
-        if (mod.classOrInterfaceModifier() != null) {
-            return mod.classOrInterfaceModifier().getText();
+    private Optional<String> extractModifier(JavaParser.ModifierContext mod) {
+        if (mod.classOrInterfaceModifier() == null) {
+            return Optional.of(mod.getText());
         }
-        return mod.getText();
+        return Optional.of(mod.classOrInterfaceModifier().getText());
     }
 
     private List<String> filterAndMakeUnmodifiable(List<String> modifiers) {
         List<String> filteredModifiers = new ArrayList<>();
         for (String mod : modifiers) {
-            if (!mod.startsWith("@")) {
+            if (!mod.startsWith(ANNOTATION_PREFIX)) {
                 filteredModifiers.add(mod);
             }
         }

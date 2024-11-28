@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### ANTLR ###
-/src/main/java/edu/usb/argos/ASTProcessor/antlr/
+/src/main/java/edu/usb/argos/astprocessor/antlr/

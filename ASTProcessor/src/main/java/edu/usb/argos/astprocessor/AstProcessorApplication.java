@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor;
+package edu.usb.argos.astprocessor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

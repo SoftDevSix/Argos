@@ -1,12 +1,12 @@
-package edu.usb.argos.ASTProcessor.reader;
+package edu.usb.argos.astprocessor.reader;
 
-import edu.usb.argos.ASTProcessor.reader.application.services.DirectoryAnalyzerByPath;
-import edu.usb.argos.ASTProcessor.reader.application.services.FileReaderByPath;
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ASTAnalysisException;
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileValidationStrategy;
-import edu.usb.argos.ASTProcessor.reader.infraestructure.utils.SourceTreeAnalyzer;
-import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.DirectoryPathValidator;
+import edu.usb.argos.astprocessor.reader.application.services.DirectoryAnalyzerByPath;
+import edu.usb.argos.astprocessor.reader.application.services.FileReaderByPath;
+import edu.usb.argos.astprocessor.reader.domain.exceptions.ASTAnalysisException;
+import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileValidationStrategy;
+import edu.usb.argos.astprocessor.reader.infraestructure.utils.SourceTreeAnalyzer;
+import edu.usb.argos.astprocessor.reader.infraestructure.validation.DirectoryPathValidator;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.io.TempDir;

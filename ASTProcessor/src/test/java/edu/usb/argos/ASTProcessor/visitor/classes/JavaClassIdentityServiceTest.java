@@ -1,9 +1,9 @@
-package edu.usb.argos.ASTProcessor.visitor.classes;
+package edu.usb.argos.astprocessor.visitor.classes;
 
-import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.AnnotationInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassIdentityService;
+import edu.usb.argos.astprocessor.antlr.JavaLexer;
+import edu.usb.argos.astprocessor.antlr.JavaParser;
+import edu.usb.argos.astprocessor.visitor.core.entities.classes.AnnotationInformation;
+import edu.usb.argos.astprocessor.visitor.core.services.classes.JavaClassIdentityService;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

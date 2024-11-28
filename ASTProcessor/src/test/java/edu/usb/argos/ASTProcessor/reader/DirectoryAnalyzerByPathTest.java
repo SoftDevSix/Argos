@@ -1,14 +1,14 @@
-package edu.usb.argos.ASTProcessor.reader;
+package edu.usb.argos.astprocessor.reader;
 
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
+import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import edu.usb.argos.ASTProcessor.reader.application.services.DirectoryAnalyzerByPath;
-import edu.usb.argos.ASTProcessor.reader.infraestructure.utils.SourceTreeAnalyzer;
+import edu.usb.argos.astprocessor.reader.application.services.DirectoryAnalyzerByPath;
+import edu.usb.argos.astprocessor.reader.infraestructure.utils.SourceTreeAnalyzer;
 
 import java.nio.file.Path;
 import java.util.Collections;

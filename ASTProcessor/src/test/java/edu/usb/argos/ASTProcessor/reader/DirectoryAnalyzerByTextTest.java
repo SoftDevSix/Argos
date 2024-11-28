@@ -1,9 +1,9 @@
-package edu.usb.argos.ASTProcessor.reader;
+package edu.usb.argos.astprocessor.reader;
 
-import edu.usb.argos.ASTProcessor.reader.application.services.DirectoryAnalyzerByText;
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.ASTAnalysisException;
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileAnalyzer;
+import edu.usb.argos.astprocessor.reader.application.services.DirectoryAnalyzerByText;
+import edu.usb.argos.astprocessor.reader.domain.exceptions.ASTAnalysisException;
+import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

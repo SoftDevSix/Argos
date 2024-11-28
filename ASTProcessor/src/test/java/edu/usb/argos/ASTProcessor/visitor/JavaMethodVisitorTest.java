@@ -1,13 +1,13 @@
-package edu.usb.argos.ASTProcessor.visitor;
+package edu.usb.argos.astprocessor.visitor;
 
-import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.ParameterInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.services.method.AnnotationService;
-import edu.usb.argos.ASTProcessor.visitor.core.services.method.ModifierService;
-import edu.usb.argos.ASTProcessor.visitor.core.services.method.ParameterService;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
+import edu.usb.argos.astprocessor.antlr.JavaLexer;
+import edu.usb.argos.astprocessor.antlr.JavaParser;
+import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
+import edu.usb.argos.astprocessor.visitor.core.entities.method.ParameterInformation;
+import edu.usb.argos.astprocessor.visitor.core.services.method.AnnotationService;
+import edu.usb.argos.astprocessor.visitor.core.services.method.ModifierService;
+import edu.usb.argos.astprocessor.visitor.core.services.method.ParameterService;
+import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.BeforeEach;

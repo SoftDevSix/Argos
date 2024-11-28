@@ -1,14 +1,14 @@
-package edu.usb.argos.ASTProcessor.visitor.classes;
+package edu.usb.argos.astprocessor.visitor.classes;
 
-import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.MethodInformation;
-import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassMemberService;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
+import edu.usb.argos.astprocessor.antlr.JavaLexer;
+import edu.usb.argos.astprocessor.antlr.JavaParser;
+import edu.usb.argos.astprocessor.visitor.core.entities.classes.ConstructorInformation;
+import edu.usb.argos.astprocessor.visitor.core.entities.method.AttributeInformation;
+import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
+import edu.usb.argos.astprocessor.visitor.core.services.classes.JavaClassMemberService;
+import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
+import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
+import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

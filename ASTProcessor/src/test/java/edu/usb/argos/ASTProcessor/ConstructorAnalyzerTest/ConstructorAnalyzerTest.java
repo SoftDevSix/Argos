@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.ConstructorAnalyzerTest;
+package edu.usb.argos.astprocessor.ConstructorAnalyzerTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,10 +10,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 import org.antlr.v4.runtime.CharStream;
 import org.junit.jupiter.api.BeforeAll;
-import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.classes.ConstructorInformation;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
+import edu.usb.argos.astprocessor.antlr.JavaLexer;
+import edu.usb.argos.astprocessor.antlr.JavaParser;
+import edu.usb.argos.astprocessor.visitor.core.entities.classes.ConstructorInformation;
+import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
 
 public class ConstructorAnalyzerTest {
 

@@ -1,7 +1,7 @@
-package edu.usb.argos.ASTProcessor.validators;
+package edu.usb.argos.astprocessor.validators;
 
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.infraestructure.validation.PathValidationStrategy;
+import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.astprocessor.reader.infraestructure.validation.PathValidationStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

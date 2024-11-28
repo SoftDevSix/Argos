@@ -1,6 +1,6 @@
-package edu.usb.argos.ASTProcessor.reader;
+package edu.usb.argos.astprocessor.reader;
 
-import edu.usb.argos.ASTProcessor.reader.application.services.FileReaderByText;
+import edu.usb.argos.astprocessor.reader.application.services.FileReaderByText;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;

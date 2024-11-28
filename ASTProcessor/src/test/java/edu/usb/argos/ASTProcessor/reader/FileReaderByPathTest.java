@@ -1,8 +1,8 @@
-package edu.usb.argos.ASTProcessor.reader;
+package edu.usb.argos.astprocessor.reader;
 
-import edu.usb.argos.ASTProcessor.reader.domain.exceptions.FileAnalyzerException;
-import edu.usb.argos.ASTProcessor.reader.application.services.FileReaderByPath;
-import edu.usb.argos.ASTProcessor.reader.domain.interfaces.IFileValidationStrategy;
+import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException;
+import edu.usb.argos.astprocessor.reader.application.services.FileReaderByPath;
+import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileValidationStrategy;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,14 +1,14 @@
-package edu.usb.argos.ASTProcessor.visitor.classes;
+package edu.usb.argos.astprocessor.visitor.classes;
 
-import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.visitor.core.services.classes.JavaClassStructureService;
+import edu.usb.argos.astprocessor.antlr.JavaLexer;
+import edu.usb.argos.astprocessor.visitor.core.services.classes.JavaClassStructureService;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
+import edu.usb.argos.astprocessor.antlr.JavaParser;
 
 import java.util.List;
 import java.util.Optional;

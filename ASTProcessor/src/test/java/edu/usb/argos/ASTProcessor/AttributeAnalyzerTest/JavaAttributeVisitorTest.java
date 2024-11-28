@@ -1,15 +1,15 @@
-package edu.usb.argos.ASTProcessor.AttributeAnalyzerTest;
+package edu.usb.argos.astprocessor.AttributeAnalyzerTest;
 
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
-import edu.usb.argos.ASTProcessor.visitor.core.entities.method.AttributeInformation;
-import edu.usb.argos.ASTProcessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
+import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
+import edu.usb.argos.astprocessor.visitor.core.entities.method.AttributeInformation;
+import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
+import edu.usb.argos.astprocessor.antlr.JavaLexer;
+import edu.usb.argos.astprocessor.antlr.JavaParser;
 
 import java.util.List;
 import java.util.Optional;

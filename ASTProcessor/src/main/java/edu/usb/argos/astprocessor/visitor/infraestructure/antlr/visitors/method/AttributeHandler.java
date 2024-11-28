@@ -29,24 +29,24 @@ public class AttributeHandler {
         String fieldType = fieldContext.typeType().getText();
         List<String> modifiers = extractModifiers(bodyContext);
 
-        for (JavaParser.VariableDeclaratorContext varCtx : fieldContext.variableDeclarators().variableDeclarator()) {
-            String varName = varCtx.variableDeclaratorId().getText();
-            Optional<String> value = Optional.ofNullable(varCtx.variableInitializer())
-                    .map(JavaParser.VariableInitializerContext::getText);
-
-            AttributeInformation attributeInformation = AttributeInformation.builder()
-                    .name(varName)
-                    .type(fieldType)
-                    .modifiers(modifiers)
-                    .value(value)
-                    .build();
-
-            return Optional.of(attributeInformation);
+        if (fieldContext.variableDeclarators().variableDeclarator().isEmpty()) {
+            return Optional.empty();
         }
 
-        return Optional.empty();
-    }
+        JavaParser.VariableDeclaratorContext varCtx = fieldContext.variableDeclarators().variableDeclarator().get(0);
+        String varName = varCtx.variableDeclaratorId().getText();
+        Optional<String> value = Optional.ofNullable(varCtx.variableInitializer())
+                .map(JavaParser.VariableInitializerContext::getText);
 
+        AttributeInformation attributeInformation = AttributeInformation.builder()
+                .name(varName)
+                .type(fieldType)
+                .modifiers(modifiers)
+                .value(value)
+                .build();
+
+        return Optional.of(attributeInformation);
+    }
 
     private List<String> extractModifiers(JavaParser.ClassBodyDeclarationContext context) {
         List<String> modifiers = new ArrayList<>();

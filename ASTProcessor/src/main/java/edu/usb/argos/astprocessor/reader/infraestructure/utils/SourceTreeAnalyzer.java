@@ -37,7 +37,7 @@ public class SourceTreeAnalyzer {
             filePaths = stream
                     .filter(file -> !Files.isDirectory(file))
                     .filter(file -> file.toString().endsWith(extension))
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (NoSuchFileException exception) {
             log.error(exception.getMessage());
         } catch (IOException exception) {

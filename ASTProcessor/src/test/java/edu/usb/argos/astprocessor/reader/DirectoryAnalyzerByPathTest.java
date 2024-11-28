@@ -38,7 +38,7 @@ class DirectoryAnalyzerByPathTest {
     }
 
     @Test
-    void testAnalyzeDirectory_NoJavaFiles() throws FileAnalyzerException {
+    void testAnalyzeDirectoryNoJavaFiles() throws FileAnalyzerException {
         Path mockPath = mock(Path.class);
 
         when(mockTreeAnalyzer.getJavaFiles(mockPath)).thenReturn(Collections.emptyList());
@@ -50,7 +50,7 @@ class DirectoryAnalyzerByPathTest {
     }
 
     @Test
-    void testAnalyzeDirectory_EmptyDirectoryPath() throws FileAnalyzerException {
+    void testAnalyzeDirectoryEmptyDirectoryPath() throws FileAnalyzerException {
         Path mockPath = mock(Path.class);
 
         when(mockTreeAnalyzer.getJavaFiles(mockPath)).thenReturn(Collections.emptyList());

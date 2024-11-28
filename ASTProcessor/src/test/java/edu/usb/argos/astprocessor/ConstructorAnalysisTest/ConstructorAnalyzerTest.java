@@ -15,7 +15,7 @@ import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.ConstructorInformation;
 import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
 
-public class ConstructorAnalyzerTest {
+class ConstructorAnalyzerTest {
 
     private static JavaConstructorVisitor visitor;
 
@@ -151,7 +151,6 @@ public class ConstructorAnalyzerTest {
         List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
                 .visitConstructors(classFound.get());
         ConstructorInformation<JavaParser.StatementContext> parameterizedConstructor = constructors.get(0);
-        List<JavaParser.StatementContext> bodyStatements = parameterizedConstructor.getBodyStatements();
         ConstructorInformation<JavaParser.StatementContext> parameterizedSecondConstructor = constructors.get(1);
         List<JavaParser.StatementContext> secondBodyStatements = parameterizedSecondConstructor
                 .getBodyStatements();

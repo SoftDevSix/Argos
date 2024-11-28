@@ -17,14 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class DirectoryAnalyzerByText<TAst> implements IDirectoryAnalyzer<String[], TAst> {
+public class DirectoryAnalyzerByText<A> implements IDirectoryAnalyzer<String[], A> {
 
-    private final IFileAnalyzer<String, TAst> fileAnalyzer;
+    private final IFileAnalyzer<String, A> fileAnalyzer;
 
     @Override
-    public List<TAst> analyzeDirectory(String[] sourceCode) {
-        List<TAst> astFiles = new ArrayList<>();
-        Optional<TAst> ast;
+    public List<A> analyzeDirectory(String[] sourceCode) {
+        List<A> astFiles = new ArrayList<>();
+        Optional<A> ast;
 
         for (String code : sourceCode) {
             try {

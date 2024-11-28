@@ -22,7 +22,7 @@ public class AntlrFileReaderByTextTest {
     }
 
     @Test
-    void testReadFileWithValidContent() throws Exception {
+    void testReadFileWithValidContent() {
         String content = "class Example {}";
         Optional<ParseTree> parseTree = fileReader.readFile(content);
         assertTrue(parseTree.isPresent());
@@ -37,24 +37,24 @@ public class AntlrFileReaderByTextTest {
     }
 
     @Test
-    void testReadFileWithAConcreteClass() throws Exception {
-        String content = "public class Calculator {\n" +
-                "    public int add(int a, int b) {\n" +
-                "        return a + b;\n" +
-                "    }\n" +
-                "\n" +
-                "    public int subtract(int a, int b) {\n" +
-                "        return a - b;\n" +
-                "    }\n" +
-                "}";
+    void testReadFileWithAConcreteClass() {
+        String content = """
+                public class Calculator {
+                    public int add(int a, int b) {
+                        return a + b;
+                    }
+                
+                    public int subtract(int a, int b) {
+                        return a - b;
+                    }
+                }""";
         Optional<ParseTree> parseContent = fileReader.readFile(content);
         assertTrue(parseContent.isPresent());
     }
 
     @Test
     void testReadFileWithNullContent() {
-        String content = null;
-        Exception exception = assertThrows(Exception.class, () -> fileReader.readFile(content));
+        Exception exception = assertThrows(Exception.class, () -> fileReader.readFile(null));
         assertEquals("error to parse null input", exception.getMessage(),
                 "Should throw read file error for null input");
     }

@@ -42,9 +42,9 @@ public class JavaClassIdentityService implements IClassIdentityService<ParserRul
     }
 
     private Optional<String> extractPackageName(ParserRuleContext compilationUnitContext) {
-        if (compilationUnitContext instanceof JavaParser.CompilationUnitContext) {
+        if (compilationUnitContext instanceof JavaParser.CompilationUnitContext compilationUnit) {
             return ContextValidator.validateAndExecute(
-                    ((JavaParser.CompilationUnitContext) compilationUnitContext).packageDeclaration(),
+                    compilationUnit.packageDeclaration(),
                     JavaParser.PackageDeclarationContext.class,
                     packageCtx -> Optional.ofNullable(packageCtx.qualifiedName().getText()),
                     Optional.empty()
@@ -60,8 +60,8 @@ public class JavaClassIdentityService implements IClassIdentityService<ParserRul
     }
 
     private JavaParser.TypeDeclarationContext getTypeDeclarationContext(ParserRuleContext ctx) {
-        if (ctx.parent instanceof JavaParser.TypeDeclarationContext) {
-            return (JavaParser.TypeDeclarationContext) ctx.parent;
+        if (ctx.parent instanceof JavaParser.TypeDeclarationContext typeDeclaration) {
+            return typeDeclaration;
         }
         return null;
     }

@@ -16,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JavaClassStructureServiceTest {
+class JavaClassStructureServiceTest {
     private JavaClassStructureService structureService;
     private JavaParser.CompilationUnitContext compilationUnit;
 

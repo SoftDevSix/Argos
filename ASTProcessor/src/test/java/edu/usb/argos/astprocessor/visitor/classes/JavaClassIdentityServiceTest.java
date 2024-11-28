@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class JavaClassIdentityServiceTest {
+class JavaClassIdentityServiceTest {
     private JavaClassIdentityService classIdentityService;
     private JavaParser.CompilationUnitContext compilationUnit;
 
@@ -92,9 +92,9 @@ public class JavaClassIdentityServiceTest {
         JavaLexer lexer = new JavaLexer(input);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokenStream);
-        JavaParser.CompilationUnitContext compilationUnit = parser.compilationUnit();
+        JavaParser.CompilationUnitContext compilationUnitContext = parser.compilationUnit();
 
-        Optional<String> packageName = classIdentityService.getPackageName(compilationUnit);
+        Optional<String> packageName = classIdentityService.getPackageName(compilationUnitContext);
         assertEquals(Optional.empty(), packageName);
     }
 
@@ -107,8 +107,8 @@ public class JavaClassIdentityServiceTest {
         JavaLexer lexer = new JavaLexer(input);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokenStream);
-        JavaParser.CompilationUnitContext compilationUnit = parser.compilationUnit();
-        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+        JavaParser.CompilationUnitContext compilationUnitContext = parser.compilationUnit();
+        JavaParser.ClassDeclarationContext ctx = compilationUnitContext.typeDeclaration(0).classDeclaration();
 
         List<String> modifiers = classIdentityService.getClassModifiers(ctx);
         assertTrue(modifiers.isEmpty());
@@ -123,8 +123,8 @@ public class JavaClassIdentityServiceTest {
         JavaLexer lexer = new JavaLexer(input);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokenStream);
-        JavaParser.CompilationUnitContext compilationUnit = parser.compilationUnit();
-        JavaParser.ClassDeclarationContext ctx = compilationUnit.typeDeclaration(0).classDeclaration();
+        JavaParser.CompilationUnitContext compilationUnitContext = parser.compilationUnit();
+        JavaParser.ClassDeclarationContext ctx = compilationUnitContext.typeDeclaration(0).classDeclaration();
 
         List<AnnotationInformation> annotations = classIdentityService.getClassAnnotations(ctx);
         assertTrue(annotations.isEmpty());

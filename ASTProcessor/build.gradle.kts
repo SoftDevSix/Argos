@@ -28,9 +28,9 @@ dependencies {
 	annotationProcessor(libs.lombok)
 	antlr(libs.antlr)
 	testImplementation(libs.logback)
+	testImplementation(libs.springboot.starter.test)
 	testCompileOnly(libs.lombok)
 	testAnnotationProcessor(libs.lombok)
-	testImplementation(libs.springboot.starter.test)
 	testRuntimeOnly(libs.junit.launcher)
 }
 

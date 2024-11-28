@@ -15,16 +15,16 @@ import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
-public class DirectoryAnalyzerByPath<TAst> implements IDirectoryAnalyzer<Path, TAst> {
+public class DirectoryAnalyzerByPath<A> implements IDirectoryAnalyzer<Path, A> {
 
-    private final IFileAnalyzer<Path, TAst> fileAnalyzer;
+    private final IFileAnalyzer<Path, A> fileAnalyzer;
     private final SourceTreeAnalyzer treeAnalyzer;
 
     @Override
-    public List<TAst> analyzeDirectory(Path path) {
+    public List<A> analyzeDirectory(Path path) {
         List<Path> javaFilePaths = treeAnalyzer.getJavaFiles(path);
-        Optional<TAst> ast;
-        List<TAst> astFiles = new ArrayList<>();
+        Optional<A> ast;
+        List<A> astFiles = new ArrayList<>();
 
         for (Path javaFilePath : javaFilePaths) {
             try {

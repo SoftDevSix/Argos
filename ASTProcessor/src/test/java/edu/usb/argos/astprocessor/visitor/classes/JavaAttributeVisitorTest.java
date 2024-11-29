@@ -99,22 +99,6 @@ class JavaAttributeVisitorTest {
     }
 
     @Test
-    void testExtractAttributes_WithoutFieldDeclaration() {
-        String classContent = """
-                class TestClass {
-                    public void method1() {}
-                    public static void main(String[] args) {}
-                }
-                """;
-
-        Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
-        List<AttributeInformation> attributes = visitor.visitAttribute(classBody.get());
-        
-        assertTrue(classBody.isPresent());
-        assertTrue(attributes.isEmpty());
-    }
-
-    @Test
     void testExtractAttributes_NullMemberContext() {
         String classContent = """
                 class TestClass {

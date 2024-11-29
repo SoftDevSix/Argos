@@ -2,6 +2,9 @@ package edu.usb.argos.astprocessor.visitor.classes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,7 @@ import edu.usb.argos.astprocessor.antlr.JavaLexer;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.ConstructorInformation;
 import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
+import static org.mockito.Mockito.*;
 
 class ConstructorAnalyzerTest {
 
@@ -40,6 +44,48 @@ class ConstructorAnalyzerTest {
         }
 
         return Optional.empty();
+    }
+
+    @Test
+    void testIsConstructorDeclaration_NullMemberContext() {
+        JavaConstructorVisitor visitor = new JavaConstructorVisitor();
+        JavaParser.MemberDeclarationContext memberCtx = null;
+
+        boolean result = invokeIsConstructorDeclaration(visitor, memberCtx);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void testIsConstructorDeclaration_MemberContextWithoutConstructor() {
+        JavaConstructorVisitor visitor = new JavaConstructorVisitor();
+        JavaParser.MemberDeclarationContext memberCtx = mock(JavaParser.MemberDeclarationContext.class);
+        when(memberCtx.constructorDeclaration()).thenReturn(null);
+
+        boolean result = invokeIsConstructorDeclaration(visitor, memberCtx);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void testIsConstructorDeclaration_MemberContextWithConstructor() {
+        JavaConstructorVisitor visitor = new JavaConstructorVisitor();
+        JavaParser.MemberDeclarationContext memberCtx = mock(JavaParser.MemberDeclarationContext.class);
+        when(memberCtx.constructorDeclaration()).thenReturn(mock(JavaParser.ConstructorDeclarationContext.class));
+
+        boolean result = invokeIsConstructorDeclaration(visitor, memberCtx);
+
+        assertTrue(result);
+    }
+
+    private boolean invokeIsConstructorDeclaration(JavaConstructorVisitor visitor, JavaParser.MemberDeclarationContext memberCtx) {
+        try {
+            Method method = JavaConstructorVisitor.class.getDeclaredMethod("isConstructorDeclaration", JavaParser.MemberDeclarationContext.class);
+            method.setAccessible(true);
+            return (boolean) method.invoke(visitor, memberCtx);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

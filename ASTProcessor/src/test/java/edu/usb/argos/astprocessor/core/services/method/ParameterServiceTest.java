@@ -42,12 +42,6 @@ class ParameterServiceTest {
     }
 
     @Test
-    void createRegularParameterNullParamReturnsEmpty() {
-        Optional<ParameterInformation> result = parameterService.createRegularParameter(null);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
     void createRegularParameterValidParamReturnsParameterInfo() {
         when(formalParamCtx.variableDeclaratorId()).thenReturn(varDeclId);
         when(formalParamCtx.typeType()).thenReturn(typeType);
@@ -189,6 +183,36 @@ class ParameterServiceTest {
         Optional<ParameterInformation> result = parameterService.createRegularParameter(formalParamCtx);
 
         assertTrue(result.isPresent());
+        assertTrue(result.get().getModifiers().isEmpty());
+    }
+
+    @Test
+    void testExtractVariableModifiersWithNullModifierButValidParam() {
+        when(formalParamCtx.variableModifier()).thenReturn(null);
+        when(formalParamCtx.variableDeclaratorId()).thenReturn(varDeclId);
+        when(formalParamCtx.typeType()).thenReturn(typeType);
+        when(varDeclId.getText()).thenReturn("param");
+        when(typeType.getText()).thenReturn("String");
+
+        Optional<ParameterInformation> result = parameterService.createRegularParameter(formalParamCtx);
+
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getModifiers());
+        assertTrue(result.get().getModifiers().isEmpty());
+    }
+
+    @Test
+    void testExtractVarArgsModifiersWithNullModifierButValidParam() {
+        when(lastFormalParamCtx.variableModifier()).thenReturn(null);
+        when(lastFormalParamCtx.variableDeclaratorId()).thenReturn(varDeclId);
+        when(lastFormalParamCtx.typeType()).thenReturn(typeType);
+        when(varDeclId.getText()).thenReturn("args");
+        when(typeType.getText()).thenReturn("String");
+
+        Optional<ParameterInformation> result = parameterService.createVarArgsParameter(lastFormalParamCtx);
+
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getModifiers());
         assertTrue(result.get().getModifiers().isEmpty());
     }
 }

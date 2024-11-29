@@ -30,8 +30,8 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
         }
 
         return MethodInformation.<JavaParser.StatementContext>builder()
-                .name(getName(ctx).get())
-                .returnType(getReturnType(ctx).get())
+                .name(getName(ctx).orElse(""))
+                .returnType(getReturnType(ctx).orElse(""))
                 .modifiers(getMethodModifiers(ctx).orElse(Collections.emptyList()))
                 .parameters(getParameters(ctx))
                 .statements(getStatements(ctx))
@@ -180,5 +180,4 @@ public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<J
         }
         return (JavaParser.ClassBodyDeclarationContext) current;
     }
-
 }

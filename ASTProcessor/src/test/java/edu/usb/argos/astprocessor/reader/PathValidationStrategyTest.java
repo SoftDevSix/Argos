@@ -90,6 +90,18 @@ class PathValidationStrategyTest {
         assertEquals("File can't be read: " + javaFile, exception.getMessage());
     }
 
+    @Test
+    void shouldThrowExceptionForJavaDirectory() throws IOException {
+        Path javaDirectory = Files.createDirectory(tempDir.resolve("test.java"));
+
+        FileAnalyzerException exception = assertThrows(
+                FileAnalyzerException.class,
+                () -> validator.validate(javaDirectory)
+        );
+
+        assertEquals("Path must point to a file: " + javaDirectory, exception.getMessage());
+    }
+
     private Path createValidJavaFile() throws IOException {
         Path javaFile = tempDir.resolve("TestClass.java");
         Files.writeString(javaFile, "public class TestClass {}");

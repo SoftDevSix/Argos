@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class JavaMethodVisitorTest {
     private JavaMethodVisitor visitor;
@@ -442,5 +444,111 @@ class JavaMethodVisitorTest {
         MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
 
         assertEquals(3, info.getStatements().size());
+    }
+
+    @Test
+    void testGetNameWithNullContext() {
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(null);
+        assertEquals("", info.getName());
+    }
+
+    @Test
+    void testGetNameWithNullIdentifier() {
+        String code = """
+                class Test {
+                    void method() {}
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        JavaParser.MethodDeclarationContext mockCtx = mock(JavaParser.MethodDeclarationContext.class);
+        when(mockCtx.identifier()).thenReturn(null);
+        when(mockCtx.typeTypeOrVoid()).thenReturn(ctx.typeTypeOrVoid());
+
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(mockCtx);
+        assertEquals("", info.getName());
+    }
+
+    @Test
+    void testHasVarArgsWithNullFormalParameters() {
+        String code = """
+                class Test {
+                    void method() {}
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        JavaParser.MethodDeclarationContext mockCtx = mock(JavaParser.MethodDeclarationContext.class);
+        when(mockCtx.formalParameters()).thenReturn(null);
+        when(mockCtx.identifier()).thenReturn(ctx.identifier());
+        when(mockCtx.typeTypeOrVoid()).thenReturn(ctx.typeTypeOrVoid());
+
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(mockCtx);
+        assertFalse(info.isVarArgs());
+    }
+
+    @Test
+    void testAddRegularParametersWithNullFormalParameter() {
+        String code = """
+                class Test {
+                    void method() {}
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+        assertTrue(info.getParameters().isEmpty());
+    }
+
+    @Test
+    void testAddStatementWithOnlyLocalVariableDeclaration() {
+        String code = """
+                class Test {
+                    void method() {
+                        int x;
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+        assertEquals(1, info.getStatements().size());
+        assertNotNull(info.getStatements().get(0).statementExpression);
+    }
+
+    @Test
+    void testFindClassBodyDeclarationContextWithComplexHierarchy() {
+        String code = """
+                class Test {
+                    class Inner {
+                        void method() {}
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+        assertNotNull(info);
+        assertNotNull(info.getName());
+    }
+
+    @Test
+    void testMethodWithComplexNestedBlocks() {
+        String code = """
+                class Test {
+                    void method() {
+                        if (true) {
+                            int x = 1;
+                            if (x > 0) {
+                                String y = "test";
+                            }
+                        }
+                    }
+                }
+                """;
+
+        JavaParser.MethodDeclarationContext ctx = parseMethod(code);
+        MethodInformation<JavaParser.StatementContext> info = visitor.visitMethodDeclaration(ctx);
+        assertFalse(info.getStatements().isEmpty());
     }
 }

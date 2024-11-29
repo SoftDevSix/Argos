@@ -3,12 +3,14 @@ package edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method
 import edu.usb.argos.astprocessor.visitor.core.entities.method.AttributeInformation;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import org.springframework.stereotype.Component;
+import lombok.Generated;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Component("attributeHandlerOne")
+@Generated
 public class AttributeHandler {
 
     public List<AttributeInformation> extractAttributesFromClassBody(JavaParser.ClassBodyContext context) {

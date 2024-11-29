@@ -24,16 +24,12 @@ public class FileReaderByText implements IFileAnalyzer<String, ParserRuleContext
     private ParserRuleContext parseContent(String content) throws FileReaderException {
         FileReaderValidation fileReaderValidation = new FileReaderValidation();
         fileReaderValidation.validateFileReaderByText(content);
-        try {
-            CharStream input = CharStreams.fromString(content);
-            JavaLexer lexer = new JavaLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            JavaParser parser = new JavaParser(tokens);
-            JavaParser.CompilationUnitContext context = parser.compilationUnit();
+        CharStream input = CharStreams.fromString(content);
+        JavaLexer lexer = new JavaLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokens);
+        JavaParser.CompilationUnitContext context = parser.compilationUnit();
 
-            return context.typeDeclaration(0).classDeclaration();
-        } catch (Exception e) {
-            throw new FileReaderException("Error to parse content");
-        }
+        return context.typeDeclaration(0).classDeclaration();
     }
 }

@@ -1,4 +1,4 @@
-package edu.usb.argos.ASTProcessor.analyzer.infrastructure.utils;
+package edu.usb.argos.astprocessor.analyzer.infrastructure.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

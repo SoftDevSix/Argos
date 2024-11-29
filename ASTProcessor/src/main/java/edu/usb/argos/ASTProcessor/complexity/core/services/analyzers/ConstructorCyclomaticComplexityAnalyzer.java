@@ -17,8 +17,8 @@ import java.util.List;
 @Value
 @Builder
 public class ConstructorCyclomaticComplexityAnalyzer
-        implements CyclomaticComplexityAnalyzer<JavaParser.BlockStatementContext, ComplexityResult> {
-    CodeElementAdapter<JavaParser.BlockStatementContext> target;
+        implements CyclomaticComplexityAnalyzer<JavaParser.StatementContext, ComplexityResult> {
+    CodeElementAdapter<JavaParser.StatementContext> target;
     ComplexityRulesManager rulesManager;
     JavaStatementAnalyzer statementAnalyzer;
 
@@ -44,8 +44,8 @@ public class ConstructorCyclomaticComplexityAnalyzer
     public int calculateComplexityScore() {
         int complexity = 1;
 
-        for (JavaParser.BlockStatementContext statement : target.getStatements()) {
-            complexity += statementAnalyzer.analyzeNode(statement.statement());
+        for (JavaParser.StatementContext statement : target.getStatements()) {
+            complexity += statementAnalyzer.analyzeNode(statement);
         }
 
         return complexity;
@@ -64,8 +64,8 @@ public class ConstructorCyclomaticComplexityAnalyzer
     private List<ComplexityLocation> calculateComplexityLocations() {
         List<ComplexityLocation> locations = new ArrayList<>();
 
-        for (JavaParser.BlockStatementContext statement : target.getStatements()) {
-            locations.addAll(statementAnalyzer.getComplexityLocation(statement.statement()));
+        for (JavaParser.StatementContext statement : target.getStatements()) {
+            locations.addAll(statementAnalyzer.getComplexityLocation(statement));
         }
 
         return locations;

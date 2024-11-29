@@ -8,11 +8,11 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-public class ConstructorAdapter implements CodeElementAdapter<JavaParser.BlockStatementContext> {
-    ConstructorInformation<JavaParser.BlockStatementContext> constructorInformation;
+public class ConstructorAdapter implements CodeElementAdapter<JavaParser.StatementContext> {
+    ConstructorInformation<JavaParser.StatementContext> constructorInformation;
 
     @Override
-    public List<JavaParser.BlockStatementContext> getStatements() {
+    public List<JavaParser.StatementContext> getStatements() {
         return constructorInformation.getBodyStatements();
     }
 

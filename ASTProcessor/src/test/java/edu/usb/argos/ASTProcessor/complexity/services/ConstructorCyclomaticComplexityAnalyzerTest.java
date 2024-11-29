@@ -31,7 +31,7 @@ public class ConstructorCyclomaticComplexityAnalyzerTest {
         statementAnalyzer = new JavaStatementAnalyzer();
     }
 
-    private List<ConstructorInformation<JavaParser.BlockStatementContext>> parseConstructors(String code) {
+    private List<ConstructorInformation<JavaParser.StatementContext>> parseConstructors(String code) {
         try {
             JavaLexer lexer = new JavaLexer(CharStreams.fromString(code));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -61,9 +61,9 @@ public class ConstructorCyclomaticComplexityAnalyzerTest {
                 }
                 """;
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = parseConstructors(code);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = parseConstructors(code);
         assertFalse(constructors.isEmpty());
-        ConstructorInformation<JavaParser.BlockStatementContext> constructorInfo = constructors.get(0);
+        ConstructorInformation<JavaParser.StatementContext> constructorInfo = constructors.get(0);
         ConstructorAdapter constructorAdapter = new ConstructorAdapter(constructorInfo);
 
         analyzer = ConstructorCyclomaticComplexityAnalyzer.builder()
@@ -105,9 +105,9 @@ public class ConstructorCyclomaticComplexityAnalyzerTest {
                 }
                 """;
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = parseConstructors(code);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = parseConstructors(code);
         assertFalse(constructors.isEmpty());
-        ConstructorInformation<JavaParser.BlockStatementContext> constructorInfo = constructors.get(0);
+        ConstructorInformation<JavaParser.StatementContext> constructorInfo = constructors.get(0);
         ConstructorAdapter constructorAdapter = new ConstructorAdapter(constructorInfo);
 
         analyzer = ConstructorCyclomaticComplexityAnalyzer.builder()
@@ -141,9 +141,9 @@ public class ConstructorCyclomaticComplexityAnalyzerTest {
                 }
                 """;
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = parseConstructors(code);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = parseConstructors(code);
         assertFalse(constructors.isEmpty());
-        ConstructorInformation<JavaParser.BlockStatementContext> constructorInfo = constructors.get(0);
+        ConstructorInformation<JavaParser.StatementContext> constructorInfo = constructors.get(0);
         ConstructorAdapter constructorAdapter = new ConstructorAdapter(constructorInfo);
 
         analyzer = ConstructorCyclomaticComplexityAnalyzer.builder()
@@ -185,9 +185,9 @@ public class ConstructorCyclomaticComplexityAnalyzerTest {
                 }
                 """;
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = parseConstructors(code);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = parseConstructors(code);
         assertFalse(constructors.isEmpty());
-        ConstructorInformation<JavaParser.BlockStatementContext> constructorInfo = constructors.get(0);
+        ConstructorInformation<JavaParser.StatementContext> constructorInfo = constructors.get(0);
         ConstructorAdapter constructorAdapter = new ConstructorAdapter(constructorInfo);
 
         analyzer = ConstructorCyclomaticComplexityAnalyzer.builder()
@@ -213,9 +213,9 @@ public class ConstructorCyclomaticComplexityAnalyzerTest {
                 }
                 """;
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = parseConstructors(code);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = parseConstructors(code);
         assertFalse(constructors.isEmpty());
-        ConstructorInformation<JavaParser.BlockStatementContext> constructorInfo = constructors.get(0);
+        ConstructorInformation<JavaParser.StatementContext> constructorInfo = constructors.get(0);
         ConstructorAdapter constructorAdapter = new ConstructorAdapter(constructorInfo);
 
         analyzer = ConstructorCyclomaticComplexityAnalyzer.builder()
@@ -243,7 +243,7 @@ public class ConstructorCyclomaticComplexityAnalyzerTest {
                 }
                 """;
 
-        List<ConstructorInformation<JavaParser.BlockStatementContext>> constructors = parseConstructors(code);
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = parseConstructors(code);
 
         assertTrue(constructors.isEmpty(), "No explicit constructors should be found.");
 

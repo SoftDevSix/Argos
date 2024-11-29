@@ -3,9 +3,9 @@ package edu.usb.argos.astprocessor.visitor.classes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,9 +79,11 @@ class ConstructorAnalyzerTest {
         assertTrue(result);
     }
 
-    private boolean invokeIsConstructorDeclaration(JavaConstructorVisitor visitor, JavaParser.MemberDeclarationContext memberCtx) {
+    private boolean invokeIsConstructorDeclaration(JavaConstructorVisitor visitor,
+            JavaParser.MemberDeclarationContext memberCtx) {
         try {
-            Method method = JavaConstructorVisitor.class.getDeclaredMethod("isConstructorDeclaration", JavaParser.MemberDeclarationContext.class);
+            Method method = JavaConstructorVisitor.class.getDeclaredMethod("isConstructorDeclaration",
+                    JavaParser.MemberDeclarationContext.class);
             method.setAccessible(true);
             return (boolean) method.invoke(visitor, memberCtx);
         } catch (Exception e) {
@@ -93,8 +95,9 @@ class ConstructorAnalyzerTest {
     void testGetModifiersWithoutModifiers() throws Exception {
         JavaParser.ClassBodyDeclarationContext mockBodyCtx = mock(JavaParser.ClassBodyDeclarationContext.class);
         when(mockBodyCtx.modifier()).thenReturn(List.of());
-        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getModifiers", JavaParser.ClassBodyDeclarationContext.class);
-        method.setAccessible(true); 
+        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getModifiers",
+                JavaParser.ClassBodyDeclarationContext.class);
+        method.setAccessible(true);
 
         List<String> modifiers = (List<String>) method.invoke(visitor, mockBodyCtx);
         assertTrue(modifiers.isEmpty());
@@ -104,11 +107,45 @@ class ConstructorAnalyzerTest {
     void testGetModifiersNullModifiers() throws Exception {
         JavaParser.ClassBodyDeclarationContext mockBodyCtx = mock(JavaParser.ClassBodyDeclarationContext.class);
         when(mockBodyCtx.modifier()).thenReturn(null);
-        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getModifiers", JavaParser.ClassBodyDeclarationContext.class);
+        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getModifiers",
+                JavaParser.ClassBodyDeclarationContext.class);
         method.setAccessible(true);
 
         List<String> modifiers = (List<String>) method.invoke(visitor, mockBodyCtx);
         assertTrue(modifiers.isEmpty());
+    }
+
+    @Test
+    void testGetBodyStatementsWithNullBlock() throws Exception {
+        JavaParser.ConstructorDeclarationContext mockConstructorCtx = mock(
+                JavaParser.ConstructorDeclarationContext.class);
+        when(mockConstructorCtx.block()).thenReturn(null);
+        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getBodyStatements",
+                JavaParser.ConstructorDeclarationContext.class);
+        method.setAccessible(true);
+        List<JavaParser.StatementContext> statements = (List<JavaParser.StatementContext>) method.invoke(visitor,
+                mockConstructorCtx);
+
+        assertNotNull(statements);
+        assertTrue(statements.isEmpty());
+    }
+
+    @Test
+    void testGetBodyStatementsWithNullStatement() throws Exception {
+        JavaParser.ConstructorDeclarationContext mockConstructorCtx = mock(JavaParser.ConstructorDeclarationContext.class);
+        JavaParser.BlockContext mockBlockCtx = mock(JavaParser.BlockContext.class);
+        JavaParser.BlockStatementContext mockBlockStmtCtx = mock(JavaParser.BlockStatementContext.class);
+        when(mockConstructorCtx.block()).thenReturn(mockBlockCtx);
+        when(mockBlockCtx.blockStatement()).thenReturn(List.of(mockBlockStmtCtx));
+        when(mockBlockStmtCtx.statement()).thenReturn(null);
+
+        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getBodyStatements", JavaParser.ConstructorDeclarationContext.class);
+        method.setAccessible(true); 
+        List<JavaParser.StatementContext> statements = (List<JavaParser.StatementContext>) method.invoke(visitor, mockConstructorCtx);
+
+       
+        assertNotNull(statements);
+        assertTrue(statements.isEmpty());
     }
 
     @Test
@@ -123,9 +160,10 @@ class ConstructorAnalyzerTest {
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
         assertTrue(classBody.isPresent());
 
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
 
-        assertEquals(2, constructors.size()); 
+        assertEquals(2, constructors.size());
         assertEquals("TestClass", constructors.get(0).getName());
         assertEquals("TestClass", constructors.get(1).getName());
     }
@@ -142,9 +180,10 @@ class ConstructorAnalyzerTest {
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
         assertTrue(classBody.isPresent());
 
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
 
-        assertTrue(constructors.isEmpty()); 
+        assertTrue(constructors.isEmpty());
     }
 
     @Test
@@ -157,7 +196,8 @@ class ConstructorAnalyzerTest {
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
         assertTrue(classBody.isPresent());
 
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
 
         assertTrue(constructors.isEmpty());
     }
@@ -173,11 +213,12 @@ class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
         List<String> modifiers1 = constructors.get(0).getModifiers();
         List<String> modifiers2 = constructors.get(1).getModifiers();
         List<String> modifiers3 = constructors.get(2).getModifiers();
-        
+
         assertTrue(classBody.isPresent());
         assertEquals(3, constructors.size());
         assertEquals(List.of("public"), modifiers1);
@@ -194,9 +235,10 @@ class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
         List<String> modifiers = constructors.get(0).getModifiers();
-        
+
         assertTrue(classBody.isPresent());
         assertEquals(1, constructors.size());
         assertTrue(modifiers.isEmpty());
@@ -214,9 +256,10 @@ class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
         List<JavaParser.StatementContext> bodyStatements = constructors.get(0).getBodyStatements();
-        
+
         assertEquals(1, constructors.size());
         assertTrue(classBody.isPresent());
         assertEquals(2, bodyStatements.size());
@@ -234,9 +277,10 @@ class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
         List<JavaParser.StatementContext> bodyStatements = constructors.get(0).getBodyStatements();
-        
+
         assertTrue(classBody.isPresent());
         assertEquals(1, constructors.size());
         assertTrue(bodyStatements.isEmpty());
@@ -251,9 +295,10 @@ class ConstructorAnalyzerTest {
                 """;
 
         Optional<JavaParser.ClassBodyContext> classBody = getClassFromText(classContent);
-        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor.visitConstructors(classBody.get());
+        List<ConstructorInformation<JavaParser.StatementContext>> constructors = visitor
+                .visitConstructors(classBody.get());
         List<JavaParser.StatementContext> bodyStatements = constructors.get(0).getBodyStatements();
-        
+
         assertTrue(classBody.isPresent());
         assertEquals(1, constructors.size());
         assertTrue(bodyStatements.isEmpty());

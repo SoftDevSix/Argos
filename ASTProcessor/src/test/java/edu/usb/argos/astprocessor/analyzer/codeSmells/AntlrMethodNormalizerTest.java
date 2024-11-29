@@ -1,9 +1,9 @@
-package edu.usb.argos.ASTProcessor.analyzer.codeSmells;
+package edu.usb.argos.astprocessor.analyzer.codeSmells;
 
-import edu.usb.argos.ASTProcessor.analyzer.core.entities.interfaces.INormalizer;
-import edu.usb.argos.ASTProcessor.analyzer.infrastructure.normalizers.AntlrMethodNormalizer;
-import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
-import edu.usb.argos.ASTProcessor.antlr.JavaParser;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.INormalizer;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.normalizers.AntlrMethodNormalizer;
+import edu.usb.argos.astprocessor.antlr.JavaLexer;
+import edu.usb.argos.astprocessor.antlr.JavaParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

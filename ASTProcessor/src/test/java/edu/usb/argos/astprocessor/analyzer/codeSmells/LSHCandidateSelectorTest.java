@@ -1,5 +1,6 @@
 package edu.usb.argos.astprocessor.analyzer.codeSmells;
 
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.MethodPair;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IPlainTextHasher;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.cantidateSelectors.LSHCandidateSelector;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.config.CodeMinHashConfig;

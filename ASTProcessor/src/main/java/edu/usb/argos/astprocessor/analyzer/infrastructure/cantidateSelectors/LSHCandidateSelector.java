@@ -1,6 +1,8 @@
 package edu.usb.argos.astprocessor.analyzer.infrastructure.cantidateSelectors;
 
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.MethodPair;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.config.LSHConfig;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.CodeMinHash;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;

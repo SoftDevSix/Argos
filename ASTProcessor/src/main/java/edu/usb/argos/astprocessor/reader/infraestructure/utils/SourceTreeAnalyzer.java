@@ -4,6 +4,7 @@ import edu.usb.argos.astprocessor.reader.domain.exceptions.NoSuchFileException;
 import edu.usb.argos.astprocessor.reader.infraestructure.validation.DirectoryPathValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.Generated;
 
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Component
+@Generated
 @AllArgsConstructor
 public class SourceTreeAnalyzer {
 

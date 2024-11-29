@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,32 +49,32 @@ class ConstructorAnalyzerTest {
 
     @Test
     void testIsConstructorDeclaration_NullMemberContext() {
-        JavaConstructorVisitor visitor = new JavaConstructorVisitor();
+        JavaConstructorVisitor visitorNullMember = new JavaConstructorVisitor();
         JavaParser.MemberDeclarationContext memberCtx = null;
 
-        boolean result = invokeIsConstructorDeclaration(visitor, memberCtx);
+        boolean result = invokeIsConstructorDeclaration(visitorNullMember, memberCtx);
 
         assertFalse(result);
     }
 
     @Test
     void testIsConstructorDeclaration_MemberContextWithoutConstructor() {
-        JavaConstructorVisitor visitor = new JavaConstructorVisitor();
+        JavaConstructorVisitor visitorMemberContext = new JavaConstructorVisitor();
         JavaParser.MemberDeclarationContext memberCtx = mock(JavaParser.MemberDeclarationContext.class);
         when(memberCtx.constructorDeclaration()).thenReturn(null);
 
-        boolean result = invokeIsConstructorDeclaration(visitor, memberCtx);
+        boolean result = invokeIsConstructorDeclaration(visitorMemberContext, memberCtx);
 
         assertFalse(result);
     }
 
     @Test
     void testIsConstructorDeclaration_MemberContextWithConstructor() {
-        JavaConstructorVisitor visitor = new JavaConstructorVisitor();
+        JavaConstructorVisitor visitorConstructor = new JavaConstructorVisitor();
         JavaParser.MemberDeclarationContext memberCtx = mock(JavaParser.MemberDeclarationContext.class);
         when(memberCtx.constructorDeclaration()).thenReturn(mock(JavaParser.ConstructorDeclarationContext.class));
 
-        boolean result = invokeIsConstructorDeclaration(visitor, memberCtx);
+        boolean result = invokeIsConstructorDeclaration(visitorConstructor, memberCtx);
 
         assertTrue(result);
     }
@@ -86,6 +87,28 @@ class ConstructorAnalyzerTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void testGetModifiersWithoutModifiers() throws Exception {
+        JavaParser.ClassBodyDeclarationContext mockBodyCtx = mock(JavaParser.ClassBodyDeclarationContext.class);
+        when(mockBodyCtx.modifier()).thenReturn(List.of());
+        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getModifiers", JavaParser.ClassBodyDeclarationContext.class);
+        method.setAccessible(true); 
+
+        List<String> modifiers = (List<String>) method.invoke(visitor, mockBodyCtx);
+        assertTrue(modifiers.isEmpty());
+    }
+
+    @Test
+    void testGetModifiersNullModifiers() throws Exception {
+        JavaParser.ClassBodyDeclarationContext mockBodyCtx = mock(JavaParser.ClassBodyDeclarationContext.class);
+        when(mockBodyCtx.modifier()).thenReturn(null);
+        Method method = JavaConstructorVisitor.class.getDeclaredMethod("getModifiers", JavaParser.ClassBodyDeclarationContext.class);
+        method.setAccessible(true);
+
+        List<String> modifiers = (List<String>) method.invoke(visitor, mockBodyCtx);
+        assertTrue(modifiers.isEmpty());
     }
 
     @Test

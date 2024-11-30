@@ -10,5 +10,5 @@ public class ComplexityLocation {
     int lineNumber;
     ComplexityType complexityType;
     String description;
-    String nodeType;
+    String contextInfo;
 }

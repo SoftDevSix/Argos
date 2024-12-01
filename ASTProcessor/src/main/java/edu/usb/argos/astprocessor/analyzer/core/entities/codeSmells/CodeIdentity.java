@@ -1,20 +1,13 @@
 package edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.Value;
 
-import java.util.UUID;
-
-@Getter
-@Setter
+@Value
 @Builder
 @ToString
-public class CodeIdentity<S> {
-    @Builder.Default
-    private UUID id = UUID.randomUUID();
-    private String identifier;
-    private CodeRange codeRange;
-    private S signature;
+public class CodeIdentity {
+    String identifier;
+    CodeRange codeRange;
 }

@@ -1,18 +1,21 @@
 package edu.usb.argos.astprocessor.analyzer.codeSmells;
 
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeIdentity;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.INormalizer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IPlainTextHasher;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IShingleGenerator;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.ISimilarityCalculator;
 import edu.usb.argos.astprocessor.analyzer.core.services.NoRepeatedCodeAnalyzer;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.cantidateSelectors.LSHCandidateSelector;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.config.CodeMinHashConfig;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.config.LSHConfig;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.LshConfiguration;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.MinHashConfiguration;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.normalizers.AntlrMethodNormalizer;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.CodeMinHash;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.SHATextHasher;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.TokenShingleGenerator;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.JaccardSimilarityCalculator;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.LshSelector;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.MinHashingHandler;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.TokenShingleGenerator;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.reader.application.services.FileReaderByText;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
@@ -33,6 +36,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -103,23 +107,24 @@ public class NoRepeatedCodeAnalyzerTest {
         CodeAnalysisReportHandlerByClass reportHandlerByClass = new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass);
 
         IPlainTextHasher textHasher = new SHATextHasher();
-        CodeMinHashConfig codeMinHashConfig = CodeMinHashConfig
+        MinHashConfiguration minHashConfiguration = MinHashConfiguration
                 .builder()
-                .numHashFunctions(4)
+                .seed(7)
+                .numberOfHashFunctions(4)
                 .prime(16777619)
                 .build();
-        LSHConfig lshConfig = LSHConfig.builder()
+        LshConfiguration lshConfig = LshConfiguration.builder()
                 .shinglesFrequency(3)
-                .prime(16777619)
-                .numBands(2)
-                .numHashFunctions(4)
+                .minHashConfiguration(minHashConfiguration)
+                .numberOfBands(2)
                 .similarityThreshold(0.5)
                 .build();
 
-        CodeMinHash codeMinHash = new CodeMinHash(codeMinHashConfig, textHasher);
+        MinHashingHandler codeMinHash = new MinHashingHandler(minHashConfiguration, textHasher);
         IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfig.getShinglesFrequency());
         INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer = new AntlrMethodNormalizer();
-        LSHCandidateSelector candidateSelector = new LSHCandidateSelector(lshConfig, codeMinHash);
+        ISimilarityCalculator<List<Integer>> similarityCalculator = new JaccardSimilarityCalculator(minHashConfiguration);
+        LshSelector<CodeIdentity> candidateSelector = new LshSelector<>(lshConfig, similarityCalculator);
         NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector);
         repeatedCodeAnalyzer.setCodeAnalyzerReport(reportHandlerByClass);
         repeatedCodeAnalyzer.analyze(classInformation);
@@ -170,23 +175,24 @@ public class NoRepeatedCodeAnalyzerTest {
         ClassInformation<JavaParser.StatementContext> classInformation2 = classVisitor.visitClass(classContext2.get());
 
         IPlainTextHasher textHasher = new SHATextHasher();
-        CodeMinHashConfig codeMinHashConfig = CodeMinHashConfig
+        MinHashConfiguration minHashConfiguration = MinHashConfiguration
                 .builder()
-                .numHashFunctions(4)
+                .seed(7)
+                .numberOfHashFunctions(4)
                 .prime(16777619)
                 .build();
-        LSHConfig lshConfig = LSHConfig.builder()
+        LshConfiguration lshConfig = LshConfiguration.builder()
                 .shinglesFrequency(3)
-                .prime(16777619)
-                .numBands(2)
-                .numHashFunctions(4)
+                .minHashConfiguration(minHashConfiguration)
+                .numberOfBands(2)
                 .similarityThreshold(0.5)
                 .build();
 
-        CodeMinHash codeMinHash = new CodeMinHash(codeMinHashConfig, textHasher);
+        MinHashingHandler codeMinHash = new MinHashingHandler(minHashConfiguration, textHasher);
         IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfig.getShinglesFrequency());
         INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer = new AntlrMethodNormalizer();
-        LSHCandidateSelector candidateSelector = new LSHCandidateSelector(lshConfig, codeMinHash);
+        ISimilarityCalculator<List<Integer>> similarityCalculator = new JaccardSimilarityCalculator(minHashConfiguration);
+        LshSelector<CodeIdentity> candidateSelector = new LshSelector<>(lshConfig, similarityCalculator);
         NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector);
 
         CodeSmellAnalysisByClass codeSmellAnalysisByClass1 = new CodeSmellAnalysisByClass("JavaPathTest.java");

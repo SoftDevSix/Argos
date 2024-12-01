@@ -1,6 +1,7 @@
 package edu.usb.argos.astprocessor.analyzer.core.services;
 
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeRange;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.EntityWithSignature;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.OrderedPair;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeIdentity;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.Pair;
@@ -8,8 +9,8 @@ import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisRe
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.INormalizer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IShingleGenerator;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.cantidateSelectors.LSHCandidateSelector;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.CodeMinHash;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.LshSelector;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.MinHashingHandler;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.ClassInformation;
 import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
@@ -26,24 +27,25 @@ import java.util.UUID;
 
 public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> {
 
-    private final List<CodeIdentity<List<Integer>>> methods;
-    private final Map<UUID, CodeIdentity<List<Integer>>> methodMap;
+    private final List<EntityWithSignature<CodeIdentity, List<Integer>>> methods;
+    private final Map<UUID, EntityWithSignature<CodeIdentity, List<Integer>>> methodMap;
     private final Set<Pair<UUID>> methodsAdded;
-    private final CodeMinHash codeMinHash;
+
+    private final MinHashingHandler minHashingHandler;
     private final IShingleGenerator<String> shingleGenerator;
     private final INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer;
-    private final LSHCandidateSelector candidateSelector;
+    private final LshSelector<CodeIdentity> candidateSelector;
     private Optional<CodeAnalysisReportHandlerByClass> reportHandlerByClass;
 
-    public NoRepeatedCodeAnalyzer(CodeMinHash codeMinHash, IShingleGenerator<String> shingleGenerator, INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer, LSHCandidateSelector candidateSelector) {
+    public NoRepeatedCodeAnalyzer(MinHashingHandler minHashingHandler, IShingleGenerator<String> shingleGenerator, INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer, LshSelector<CodeIdentity> selector) {
         this.methods = new ArrayList<>();
         this.methodsAdded = new HashSet<>();
         this.methodMap = new HashMap<>();
 
-        this.codeMinHash = codeMinHash;
+        this.minHashingHandler = minHashingHandler;
         this.shingleGenerator = shingleGenerator;
         this.methodNormalizer = methodNormalizer;
-        this.candidateSelector = candidateSelector;
+        this.candidateSelector = selector;
     }
 
     @Override
@@ -54,10 +56,10 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
     @Override
     public void analyze(ClassInformation<JavaParser.StatementContext> classNode) {
         reportHandlerByClass.ifPresent(report -> {
-            List<CodeIdentity<List<Integer>>> classMethods = findMethodsFromClass(classNode);
+            List<EntityWithSignature<CodeIdentity, List<Integer>>> classMethods = findMethodsFromClass(classNode);
             methods.addAll(classMethods);
             Set<OrderedPair<UUID>> candidates = candidateSelector.findCandidatePairs(methods);
-            for (CodeIdentity<List<Integer>> method : classMethods) {
+            for (EntityWithSignature<CodeIdentity, List<Integer>> method : classMethods) {
                 methodMap.put(method.getId(), method);
             }
             Set<OrderedPair<UUID>> duplicatedMethods = candidateSelector.filterCandidates(candidates, methodMap);
@@ -65,17 +67,17 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
                 Pair<UUID> pair = new Pair<>(dup.firstElement(), dup.secondElement());
 
                 if (!methodsAdded.contains(pair)) {
-                    CodeIdentity<List<Integer>> firstMethodDuplicated = methodMap.get(dup.firstElement());
-                    CodeIdentity<List<Integer>> secondMethodDuplicated = methodMap.get(dup.secondElement());
+                    EntityWithSignature<CodeIdentity, List<Integer>> firstMethodDuplicated = methodMap.get(dup.firstElement());
+                    EntityWithSignature<CodeIdentity, List<Integer>> secondMethodDuplicated = methodMap.get(dup.secondElement());
                     report.addMethodWithNoDuplicatedCode(
-                            firstMethodDuplicated.getCodeRange().startLine(),
-                            firstMethodDuplicated.getCodeRange().endLine(),
-                            secondMethodDuplicated.getIdentifier()
+                            firstMethodDuplicated.getEntity().getCodeRange().startLine(),
+                            firstMethodDuplicated.getEntity().getCodeRange().endLine(),
+                            secondMethodDuplicated.getEntity().getIdentifier()
                     );
                     report.addMethodWithNoDuplicatedCode(
-                            secondMethodDuplicated.getCodeRange().startLine(),
-                            secondMethodDuplicated.getCodeRange().endLine(),
-                            firstMethodDuplicated.getIdentifier()
+                            secondMethodDuplicated.getEntity().getCodeRange().startLine(),
+                            secondMethodDuplicated.getEntity().getCodeRange().endLine(),
+                            firstMethodDuplicated.getEntity().getIdentifier()
                     );
                     methodsAdded.add(pair);
                 }
@@ -83,9 +85,9 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
         });
     }
 
-    private List<CodeIdentity<List<Integer>>> findMethodsFromClass(ClassInformation<JavaParser.StatementContext> classNode) {
+    private List<EntityWithSignature<CodeIdentity, List<Integer>>> findMethodsFromClass(ClassInformation<JavaParser.StatementContext> classNode) {
         List<MethodInformation<JavaParser.StatementContext>> methods = classNode.getMembers().getMethods();
-        List<CodeIdentity<List<Integer>>> methodContexts = new ArrayList<>();
+        List<EntityWithSignature<CodeIdentity, List<Integer>>> methodContexts = new ArrayList<>();
 
         for (MethodInformation<JavaParser.StatementContext> method : methods) {
             Optional<JavaParser.StatementContext> firstStatement = Optional.ofNullable(method.getStatements().get(0));
@@ -95,7 +97,7 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
                     List<String> tokens = methodNormalizer.normalize(methodNode.get());
                     List<List<String>> singles = shingleGenerator.generate(tokens);
                     List<String> flatSingles = shingleGenerator.flatSingles(singles);
-                    List<Integer> signature = codeMinHash.computeMinHash(flatSingles);
+                    List<Integer> signature = minHashingHandler.computeMinHash(flatSingles);
 
                     CodeRange codeRange = new CodeRange(methodNode.get().getStart().getLine(), methodNode.get().getStop().getLine());
 
@@ -104,11 +106,15 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
                     classNode.getIdentity().getName().ifPresent(path -> methodPath.append(path).append(".java").append("/"));
                     methodPath.append(method.getName());
 
-                    methodContexts.add(CodeIdentity.<List<Integer>>builder()
+                    CodeIdentity codeIdentity = CodeIdentity
+                            .builder()
                             .identifier(methodPath.toString())
-                            .signature(signature)
                             .codeRange(codeRange)
+                            .build();
+
+                    methodContexts.add(EntityWithSignature.<CodeIdentity, List<Integer>>builder()
                             .signature(signature)
+                            .entity(codeIdentity)
                             .build());
                 }
             }

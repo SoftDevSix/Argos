@@ -67,7 +67,7 @@ class CodeAnalysisReportHandlerByClassTest {
 
     @Test
     void testAddMethodWithNoDuplicatedCode() {
-        handler.addMethodWithNoDuplicatedCode(70, 80);
+        handler.addMethodWithNoDuplicatedCode(70, 80, "TestClass.java");
 
         ArgumentCaptor<CodeAnalysisReport> captor = ArgumentCaptor.forClass(CodeAnalysisReport.class);
         verify(mockCodeSmellAnalysisByClass).addCodeAnalysisReport(captor.capture());
@@ -76,6 +76,7 @@ class CodeAnalysisReportHandlerByClassTest {
         assertEquals(70, report.getStartLine());
         assertEquals(80, report.getEndLine());
         assertEquals(CodeAnalysisReportType.DUPLICATED_CODE, report.getType());
-        assertEquals("Duplicate code was detected in the method, consider abstracting it or reusing functions.", report.getMessage());
+
+        assertEquals("Similar code was detected in file TestClass.java, consider abstracting it or reusing functions.", report.getMessage());
     }
 }

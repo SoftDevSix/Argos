@@ -58,11 +58,15 @@ public class CodeAnalysisReportHandlerByClass {
         addReportIfExists(codeAnalysisReport);
     }
 
-    public void addMethodWithNoDuplicatedCode(int startLine, int endLine) {
+    public void addMethodWithNoDuplicatedCode(int startLine, int endLine, String referenceFile) {
+        String messageReport = "Similar code was detected in file "
+                .concat(referenceFile)
+                .concat(", consider abstracting it or reusing functions.");
+
         CodeAnalysisReport codeAnalysisReport = CodeAnalysisReport.builder()
                 .startLine(startLine)
                 .endLine(endLine)
-                .message("Duplicate code was detected in the method, consider abstracting it or reusing functions.")
+                .message(messageReport)
                 .type(CodeAnalysisReportType.DUPLICATED_CODE)
                 .build();
 

@@ -1,4 +1,4 @@
-package edu.usb.argos.astprocessor.analyzer.codeSmells;
+package edu.usb.argos.astprocessor.analyzer.codeSmells.algorithms.lsh;
 
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IShingleGenerator;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.TokenShingleGenerator;

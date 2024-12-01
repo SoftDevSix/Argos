@@ -1,4 +1,4 @@
-package edu.usb.argos.astprocessor.analyzer.infrastructure.utils;
+package edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh;
 
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IShingleGenerator;
 import lombok.AllArgsConstructor;

@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +65,31 @@ public class NoRepeatedCodeAnalyzerTest {
         IClassMemberService<ParserRuleContext, JavaParser.StatementContext> memberService = new JavaClassMemberService(methodVisitor, attributeVisitor, constructorVisitor);
 
         classVisitor = new JavaClassVisitor(identityService, structureService, memberService);
+    }
+
+    private ClassInformation<JavaParser.StatementContext> parseClassFromPlainText(String code) {
+        Optional<ParserRuleContext> classContext = reader.readFile(code);
+        assertTrue(classContext.isPresent());
+
+        return classVisitor.visitClass(classContext.get());
+    }
+
+    private List<ClassInformation<JavaParser.StatementContext>> parseClassesFromPlainTest(List<String> code) {
+        return code.stream()
+                .map(this::parseClassFromPlainText)
+                .toList();
+    }
+
+    private NoRepeatedCodeAnalyzer buildAnalyzerFromRules(LshConfiguration lshConfiguration) {
+        IPlainTextHasher textHasher = new SHATextHasher();
+        MinHashingHandler codeMinHash = new MinHashingHandler(lshConfiguration.getMinHashConfiguration(), textHasher);
+        IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfiguration.getShinglesFrequency());
+        INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer = new AntlrMethodNormalizer();
+        ISimilarityCalculator<List<Integer>> similarityCalculator = new JaccardSimilarityCalculator(lshConfiguration.getMinHashConfiguration());
+        LshSelector<CodeIdentity> candidateSelector = new LshSelector<>(lshConfiguration, similarityCalculator);
+        CodeAnalysisReportHandlerByClass reportHandlerByClass = new CodeAnalysisReportHandlerByClass();
+
+        return new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector, reportHandlerByClass);
     }
 
     @Test
@@ -99,14 +125,7 @@ public class NoRepeatedCodeAnalyzerTest {
                 }
                 """;
 
-        Optional<ParserRuleContext> classContext = reader.readFile(code);
-        assertTrue(classContext.isPresent());
-        ClassInformation<JavaParser.StatementContext> classInformation = classVisitor.visitClass(classContext.get());
-
-        CodeSmellAnalysisByClass codeSmellAnalysisByClass = new CodeSmellAnalysisByClass("JavaPathTest.java");
-        CodeAnalysisReportHandlerByClass reportHandlerByClass = new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass);
-
-        IPlainTextHasher textHasher = new SHATextHasher();
+        ClassInformation<JavaParser.StatementContext> classInformation = parseClassFromPlainText(code);
         MinHashConfiguration minHashConfiguration = MinHashConfiguration
                 .builder()
                 .seed(7)
@@ -120,96 +139,80 @@ public class NoRepeatedCodeAnalyzerTest {
                 .similarityThreshold(0.5)
                 .build();
 
-        MinHashingHandler codeMinHash = new MinHashingHandler(minHashConfiguration, textHasher);
-        IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfig.getShinglesFrequency());
-        INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer = new AntlrMethodNormalizer();
-        ISimilarityCalculator<List<Integer>> similarityCalculator = new JaccardSimilarityCalculator(minHashConfiguration);
-        LshSelector<CodeIdentity> candidateSelector = new LshSelector<>(lshConfig, similarityCalculator);
-        NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector);
-        repeatedCodeAnalyzer.setCodeAnalyzerReport(reportHandlerByClass);
+        NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = buildAnalyzerFromRules(lshConfig);
+        CodeSmellAnalysisByClass codeSmellAnalysisByClass = new CodeSmellAnalysisByClass("JavaPathTest.java");
+
+        repeatedCodeAnalyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(codeSmellAnalysisByClass);
         repeatedCodeAnalyzer.analyze(classInformation);
 
-        assertEquals(12, reportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().size());
+        assertEquals(12, codeSmellAnalysisByClass.getCodeAnalysis().size());
     }
 
     @Test
     public void testRepeatedCodeInMultipleClasses() {
-        String code1 = """
-                public class RepeatedExampleOne {
-                    public int sumMultiplication(int a, int b) {
-                        int result = a + b;
-                        result = result * 2;
-                
-                        return result;
-                    }
-                
-                    public int sumDivision(int a, int b) {
-                        int result = a + b;
-                        result = result / 2;
-                
-                        return result;
-                    }
-                }
-                """;
-        String code2 = """
-                public class RepeatedExampleTwo {
-                    public int sum(int a, int b) {
-                        int result = a + b;
-                
-                        return result;
-                    }
-                
-                    public int multiplication(int a, int b) {
-                        int result = a * b;
-                
-                        return result;
-                    }
-                }
-                """;
+        List<String> code = List.of(
+                """
+                        public class RepeatedExampleOne {
+                            public int sumMultiplication(int a, int b) {
+                                int result = a + b;
+                                result = result * 2;
+                        
+                                return result;
+                            }
+                        
+                            public int sumDivision(int a, int b) {
+                                int result = a + b;
+                                result = result / 2;
+                        
+                                return result;
+                            }
+                        }
+                        """,
+                """
+                        public class RepeatedExampleTwo {
+                            public int sum(int a, int b) {
+                                int result = a + b;
+                        
+                                return result;
+                            }
+                        
+                            public int multiplication(int a, int b) {
+                                int result = a * b;
+                        
+                                return result;
+                            }
+                        }
+                        """
+        );
 
-        Optional<ParserRuleContext> classContext1 = reader.readFile(code1);
-        Optional<ParserRuleContext> classContext2 = reader.readFile(code2);
-        assertTrue(classContext1.isPresent());
-        assertTrue(classContext2.isPresent());
-        ClassInformation<JavaParser.StatementContext> classInformation1 = classVisitor.visitClass(classContext1.get());
-        ClassInformation<JavaParser.StatementContext> classInformation2 = classVisitor.visitClass(classContext2.get());
+        List<ClassInformation<JavaParser.StatementContext>> classes = parseClassesFromPlainTest(code);
 
-        IPlainTextHasher textHasher = new SHATextHasher();
-        MinHashConfiguration minHashConfiguration = MinHashConfiguration
-                .builder()
-                .seed(7)
-                .numberOfHashFunctions(4)
-                .prime(16777619)
-                .build();
         LshConfiguration lshConfig = LshConfiguration.builder()
                 .shinglesFrequency(3)
-                .minHashConfiguration(minHashConfiguration)
+                .minHashConfiguration(MinHashConfiguration
+                        .builder()
+                        .seed(7)
+                        .numberOfHashFunctions(4)
+                        .prime(16777619)
+                        .build())
                 .numberOfBands(2)
                 .similarityThreshold(0.5)
                 .build();
 
-        MinHashingHandler codeMinHash = new MinHashingHandler(minHashConfiguration, textHasher);
-        IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfig.getShinglesFrequency());
-        INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer = new AntlrMethodNormalizer();
-        ISimilarityCalculator<List<Integer>> similarityCalculator = new JaccardSimilarityCalculator(minHashConfiguration);
-        LshSelector<CodeIdentity> candidateSelector = new LshSelector<>(lshConfig, similarityCalculator);
-        NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector);
+        NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = buildAnalyzerFromRules(lshConfig);
 
-        CodeSmellAnalysisByClass codeSmellAnalysisByClass1 = new CodeSmellAnalysisByClass("JavaPathTest.java");
-        CodeAnalysisReportHandlerByClass reportHandlerByClass1 = new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass1);
+        List<CodeSmellAnalysisByClass> reports = new ArrayList<>();
 
-        repeatedCodeAnalyzer.setCodeAnalyzerReport(reportHandlerByClass1);
-        repeatedCodeAnalyzer.analyze(classInformation1);
+        for (ClassInformation<JavaParser.StatementContext> classInfo : classes) {
+            CodeSmellAnalysisByClass classReport = new CodeSmellAnalysisByClass("ClassPath.java");
+            repeatedCodeAnalyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
+            repeatedCodeAnalyzer.analyze(classInfo);
+            reports.add(classReport);
+        }
 
-        CodeSmellAnalysisByClass codeSmellAnalysisByClass2 = new CodeSmellAnalysisByClass("JavaPathTest2.java");
-        CodeAnalysisReportHandlerByClass reportHandlerByClass2 = new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass2);
-
-        repeatedCodeAnalyzer.setCodeAnalyzerReport(reportHandlerByClass2);
-        repeatedCodeAnalyzer.analyze(classInformation2);
-
-
-        int totalReports = reportHandlerByClass1.codeSmellAnalysisByClass().getCodeAnalysis().size() +
-                reportHandlerByClass2.codeSmellAnalysisByClass().getCodeAnalysis().size();
-        assertEquals(12, totalReports);
+        int totalNumberOfReports = reports.stream()
+                .mapToInt(rep -> rep.getCodeAnalysis().size())
+                .sum();
+        assertEquals(12, totalNumberOfReports);
     }
 }

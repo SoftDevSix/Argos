@@ -24,8 +24,9 @@ public class CodeAnalysisReportHandlerByClass {
     public void setCodeSmellAnalysisByClass(CodeSmellAnalysisByClass codeSmellAnalysisByClass) {
         this.codeSmellAnalysisByClass = Optional.ofNullable(codeSmellAnalysisByClass);
     }
-
+    
     public void addMethodWithExcessiveParameters(int startLine, int endLine) {
+
         CodeAnalysisReport codeAnalysisReport = CodeAnalysisReport.builder()
                 .startLine(startLine)
                 .endLine(endLine)

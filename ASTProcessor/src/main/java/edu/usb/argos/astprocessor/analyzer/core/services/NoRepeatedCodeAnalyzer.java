@@ -14,6 +14,7 @@ import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.M
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.ClassInformation;
 import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
+import lombok.Getter;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@Getter
 public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> {
 
     private final List<EntityWithSignature<CodeIdentity, List<Integer>>> methods;
@@ -35,13 +37,14 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
     private final IShingleGenerator<String> shingleGenerator;
     private final INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer;
     private final LshSelector<CodeIdentity> candidateSelector;
-    private Optional<CodeAnalysisReportHandlerByClass> reportHandlerByClass;
+    private CodeAnalysisReportHandlerByClass reportHandlerByClass;
 
-    public NoRepeatedCodeAnalyzer(MinHashingHandler minHashingHandler, IShingleGenerator<String> shingleGenerator, INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer, LshSelector<CodeIdentity> selector) {
+    public NoRepeatedCodeAnalyzer(MinHashingHandler minHashingHandler, IShingleGenerator<String> shingleGenerator, INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer, LshSelector<CodeIdentity> selector, CodeAnalysisReportHandlerByClass reportHandlerByClass) {
         this.methods = new ArrayList<>();
         this.methodsAdded = new HashSet<>();
         this.methodMap = new HashMap<>();
 
+        this.reportHandlerByClass = reportHandlerByClass;
         this.minHashingHandler = minHashingHandler;
         this.shingleGenerator = shingleGenerator;
         this.methodNormalizer = methodNormalizer;
@@ -49,39 +52,32 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
     }
 
     @Override
-    public void setCodeAnalyzerReport(CodeAnalysisReportHandlerByClass codeAnalysisReportHandlerByClass) {
-        reportHandlerByClass = Optional.of(codeAnalysisReportHandlerByClass);
-    }
-
-    @Override
     public void analyze(ClassInformation<JavaParser.StatementContext> classNode) {
-        reportHandlerByClass.ifPresent(report -> {
-            List<EntityWithSignature<CodeIdentity, List<Integer>>> classMethods = findMethodsFromClass(classNode);
-            methods.addAll(classMethods);
-            Set<OrderedPair<UUID>> candidates = candidateSelector.findCandidatePairs(methods);
-            for (EntityWithSignature<CodeIdentity, List<Integer>> method : classMethods) {
-                methodMap.put(method.getId(), method);
-            }
-            Set<OrderedPair<UUID>> duplicatedMethods = candidateSelector.filterCandidates(candidates, methodMap);
-            duplicatedMethods.forEach(dup -> {
-                Pair<UUID> pair = new Pair<>(dup.firstElement(), dup.secondElement());
+        List<EntityWithSignature<CodeIdentity, List<Integer>>> classMethods = findMethodsFromClass(classNode);
+        methods.addAll(classMethods);
+        Set<OrderedPair<UUID>> candidates = candidateSelector.findCandidatePairs(methods);
+        for (EntityWithSignature<CodeIdentity, List<Integer>> method : classMethods) {
+            methodMap.put(method.getId(), method);
+        }
+        Set<OrderedPair<UUID>> duplicatedMethods = candidateSelector.filterCandidates(candidates, methodMap);
+        duplicatedMethods.forEach(dup -> {
+            Pair<UUID> pair = new Pair<>(dup.firstElement(), dup.secondElement());
 
-                if (!methodsAdded.contains(pair)) {
-                    EntityWithSignature<CodeIdentity, List<Integer>> firstMethodDuplicated = methodMap.get(dup.firstElement());
-                    EntityWithSignature<CodeIdentity, List<Integer>> secondMethodDuplicated = methodMap.get(dup.secondElement());
-                    report.addMethodWithNoDuplicatedCode(
-                            firstMethodDuplicated.getEntity().getCodeRange().startLine(),
-                            firstMethodDuplicated.getEntity().getCodeRange().endLine(),
-                            secondMethodDuplicated.getEntity().getIdentifier()
-                    );
-                    report.addMethodWithNoDuplicatedCode(
-                            secondMethodDuplicated.getEntity().getCodeRange().startLine(),
-                            secondMethodDuplicated.getEntity().getCodeRange().endLine(),
-                            firstMethodDuplicated.getEntity().getIdentifier()
-                    );
-                    methodsAdded.add(pair);
-                }
-            });
+            if (!methodsAdded.contains(pair)) {
+                EntityWithSignature<CodeIdentity, List<Integer>> firstMethodDuplicated = methodMap.get(dup.firstElement());
+                EntityWithSignature<CodeIdentity, List<Integer>> secondMethodDuplicated = methodMap.get(dup.secondElement());
+                reportHandlerByClass.addMethodWithNoDuplicatedCode(
+                        firstMethodDuplicated.getEntity().getCodeRange().startLine(),
+                        firstMethodDuplicated.getEntity().getCodeRange().endLine(),
+                        secondMethodDuplicated.getEntity().getIdentifier()
+                );
+                reportHandlerByClass.addMethodWithNoDuplicatedCode(
+                        secondMethodDuplicated.getEntity().getCodeRange().startLine(),
+                        secondMethodDuplicated.getEntity().getCodeRange().endLine(),
+                        firstMethodDuplicated.getEntity().getIdentifier()
+                );
+                methodsAdded.add(pair);
+            }
         });
     }
 

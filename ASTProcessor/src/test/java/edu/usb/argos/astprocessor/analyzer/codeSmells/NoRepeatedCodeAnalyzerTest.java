@@ -38,7 +38,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NoDuplicatedMethodTest {
+public class NoRepeatedCodeAnalyzerTest {
 
     private static IFileAnalyzer<String, ParserRuleContext> reader;
     private static JavaClassVisitor classVisitor;
@@ -63,7 +63,7 @@ public class NoDuplicatedMethodTest {
     }
 
     @Test
-    public void testDuplicatedCode() {
+    public void testRepeatedCodeInAClass() {
         String code = """
                 public class RepeatedExample {
                 
@@ -125,5 +125,85 @@ public class NoDuplicatedMethodTest {
         repeatedCodeAnalyzer.analyze(classInformation);
 
         assertEquals(12, reportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().size());
+    }
+
+    @Test
+    public void testRepeatedCodeInMultipleClasses() {
+        String code1 = """
+                public class RepeatedExampleOne {
+                    public int sumMultiplication(int a, int b) {
+                        int result = a + b;
+                        result = result * 2;
+                
+                        return result;
+                    }
+                
+                    public int sumDivision(int a, int b) {
+                        int result = a + b;
+                        result = result / 2;
+                
+                        return result;
+                    }
+                }
+                """;
+        String code2 = """
+                public class RepeatedExampleTwo {
+                    public int sum(int a, int b) {
+                        int result = a + b;
+                
+                        return result;
+                    }
+                
+                    public int multiplication(int a, int b) {
+                        int result = a * b;
+                
+                        return result;
+                    }
+                }
+                """;
+
+        Optional<ParserRuleContext> classContext1 = reader.readFile(code1);
+        Optional<ParserRuleContext> classContext2 = reader.readFile(code2);
+        assertTrue(classContext1.isPresent());
+        assertTrue(classContext2.isPresent());
+        ClassInformation<JavaParser.StatementContext> classInformation1 = classVisitor.visitClass(classContext1.get());
+        ClassInformation<JavaParser.StatementContext> classInformation2 = classVisitor.visitClass(classContext2.get());
+
+        IPlainTextHasher textHasher = new SHATextHasher();
+        CodeMinHashConfig codeMinHashConfig = CodeMinHashConfig
+                .builder()
+                .numHashFunctions(4)
+                .prime(16777619)
+                .build();
+        LSHConfig lshConfig = LSHConfig.builder()
+                .shinglesFrequency(3)
+                .prime(16777619)
+                .numBands(2)
+                .numHashFunctions(4)
+                .similarityThreshold(0.5)
+                .build();
+
+        CodeMinHash codeMinHash = new CodeMinHash(codeMinHashConfig, textHasher);
+        IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfig.getShinglesFrequency());
+        INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer = new AntlrMethodNormalizer();
+        LSHCandidateSelector candidateSelector = new LSHCandidateSelector(lshConfig, codeMinHash);
+        NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector);
+
+        CodeSmellAnalysisByClass codeSmellAnalysisByClass1 = new CodeSmellAnalysisByClass("JavaPathTest.java");
+        CodeAnalysisReportHandlerByClass reportHandlerByClass1 = new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass1);
+
+        repeatedCodeAnalyzer.setCodeAnalyzerReport(reportHandlerByClass1);
+        repeatedCodeAnalyzer.analyze(classInformation1);
+
+        CodeSmellAnalysisByClass codeSmellAnalysisByClass2 = new CodeSmellAnalysisByClass("JavaPathTest2.java");
+        CodeAnalysisReportHandlerByClass reportHandlerByClass2 = new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass2);
+
+        repeatedCodeAnalyzer.setCodeAnalyzerReport(reportHandlerByClass2);
+        repeatedCodeAnalyzer.analyze(classInformation2);
+
+
+        int totalReports = reportHandlerByClass1.codeSmellAnalysisByClass().getCodeAnalysis().size() +
+                reportHandlerByClass2.codeSmellAnalysisByClass().getCodeAnalysis().size();
+        assertEquals(12, totalReports);
     }
 }

@@ -3,6 +3,7 @@ package edu.usb.argos.astprocessor.analyzer.core.services;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeRange;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.OrderedPair;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeIdentity;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.Pair;
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.INormalizer;
@@ -16,6 +17,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +26,9 @@ import java.util.UUID;
 
 public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> {
 
+    private final List<CodeIdentity<List<Integer>>> methods;
+    private final Map<UUID, CodeIdentity<List<Integer>>> methodMap;
+    private final Set<Pair<UUID>> methodsAdded;
     private final CodeMinHash codeMinHash;
     private final IShingleGenerator<String> shingleGenerator;
     private final INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer;
@@ -31,6 +36,10 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
     private Optional<CodeAnalysisReportHandlerByClass> reportHandlerByClass;
 
     public NoRepeatedCodeAnalyzer(CodeMinHash codeMinHash, IShingleGenerator<String> shingleGenerator, INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer, LSHCandidateSelector candidateSelector) {
+        this.methods = new ArrayList<>();
+        this.methodsAdded = new HashSet<>();
+        this.methodMap = new HashMap<>();
+
         this.codeMinHash = codeMinHash;
         this.shingleGenerator = shingleGenerator;
         this.methodNormalizer = methodNormalizer;
@@ -45,26 +54,31 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
     @Override
     public void analyze(ClassInformation<JavaParser.StatementContext> classNode) {
         reportHandlerByClass.ifPresent(report -> {
-            List<CodeIdentity<List<Integer>>> methods = findMethodsFromClass(classNode);
+            List<CodeIdentity<List<Integer>>> classMethods = findMethodsFromClass(classNode);
+            methods.addAll(classMethods);
             Set<OrderedPair<UUID>> candidates = candidateSelector.findCandidatePairs(methods);
-            Map<UUID, CodeIdentity<List<Integer>>> methodMap = new HashMap<>();
-            for (CodeIdentity<List<Integer>> method : methods) {
+            for (CodeIdentity<List<Integer>> method : classMethods) {
                 methodMap.put(method.getId(), method);
             }
             Set<OrderedPair<UUID>> duplicatedMethods = candidateSelector.filterCandidates(candidates, methodMap);
             duplicatedMethods.forEach(dup -> {
-                CodeIdentity<List<Integer>> firstMethodDuplicated = methodMap.get(dup.firstElement());
-                CodeIdentity<List<Integer>> secondMethodDuplicated = methodMap.get(dup.secondElement());
-                report.addMethodWithNoDuplicatedCode(
-                        firstMethodDuplicated.getCodeRange().startLine(),
-                        firstMethodDuplicated.getCodeRange().endLine(),
-                        secondMethodDuplicated.getIdentifier()
-                );
-                report.addMethodWithNoDuplicatedCode(
-                        secondMethodDuplicated.getCodeRange().startLine(),
-                        secondMethodDuplicated.getCodeRange().endLine(),
-                        firstMethodDuplicated.getIdentifier()
-                );
+                Pair<UUID> pair = new Pair<>(dup.firstElement(), dup.secondElement());
+
+                if (!methodsAdded.contains(pair)) {
+                    CodeIdentity<List<Integer>> firstMethodDuplicated = methodMap.get(dup.firstElement());
+                    CodeIdentity<List<Integer>> secondMethodDuplicated = methodMap.get(dup.secondElement());
+                    report.addMethodWithNoDuplicatedCode(
+                            firstMethodDuplicated.getCodeRange().startLine(),
+                            firstMethodDuplicated.getCodeRange().endLine(),
+                            secondMethodDuplicated.getIdentifier()
+                    );
+                    report.addMethodWithNoDuplicatedCode(
+                            secondMethodDuplicated.getCodeRange().startLine(),
+                            secondMethodDuplicated.getCodeRange().endLine(),
+                            firstMethodDuplicated.getIdentifier()
+                    );
+                    methodsAdded.add(pair);
+                }
             });
         });
     }

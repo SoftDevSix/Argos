@@ -1,7 +1,7 @@
-package edu.usb.argos.astprocessor.analyzer.infrastructure.config;
+package edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms;
 
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.PrimeNumberHandler;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.validations.MinHashConfigurationValidator;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.validations.algorithms.MinHashConfigurationValidator;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +10,7 @@ import lombok.Value;
 @Value
 public class MinHashConfiguration {
 
+    int seed;
     int prime;
     int numberOfHashFunctions;
 
@@ -20,7 +21,8 @@ public class MinHashConfiguration {
     MinHashConfigurationValidator configurationValidator;
 
     @Builder
-    private MinHashConfiguration(int prime, int numberOfHashFunctions) {
+    private MinHashConfiguration(int seed, int prime, int numberOfHashFunctions) {
+        this.seed = seed;
         this.prime = prime;
         this.numberOfHashFunctions = numberOfHashFunctions;
 

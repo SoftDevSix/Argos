@@ -1,6 +1,6 @@
-package edu.usb.argos.astprocessor.analyzer.infrastructure.config;
+package edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms;
 
-import edu.usb.argos.astprocessor.analyzer.infrastructure.validations.LshConfigurationValidator;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.validations.algorithms.LshConfigurationValidator;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

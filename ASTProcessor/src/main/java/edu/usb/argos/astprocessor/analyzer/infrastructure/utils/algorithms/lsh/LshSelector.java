@@ -1,8 +1,7 @@
-package edu.usb.argos.astprocessor.analyzer.infrastructure.cantidateSelectors;
+package edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh;
 
-import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.MethodPair;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.config.LSHConfig;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.CodeMinHash;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.OrderedPair;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.LshConfiguration;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -16,16 +15,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class LSHCandidateSelector {
 
-    private final LSHConfig lshConfig;
+    private final LshConfiguration lshConfig;
 
-    public Set<MethodPair> findCandidatePairs(Map<String, List<Integer>> methodSignatures) {
+    public Set<OrderedPair<String>> findCandidatePairs(Map<String, List<Integer>> methodSignatures) {
         Map<Integer, List<String>> bandBuckets = new HashMap<>();
 
         for (Map.Entry<String, List<Integer>> entry : methodSignatures.entrySet()) {
             String methodId = entry.getKey();
             List<Integer> signature = entry.getValue();
 
-            for (int bandIndex = 0; bandIndex < lshConfig.getNumBands(); bandIndex++) {
+            for (int bandIndex = 0; bandIndex < lshConfig.getNumberOfBands(); bandIndex++) {
                 List<Integer> band = signature.subList(
                         bandIndex * lshConfig.getRowsPerBand(),
                         (bandIndex + 1) * lshConfig.getRowsPerBand()
@@ -36,12 +35,12 @@ public class LSHCandidateSelector {
             }
         }
 
-        Set<MethodPair> candidatePairs = new HashSet<>();
+        Set<OrderedPair<String>> candidatePairs = new HashSet<>();
         for (List<String> bucket : bandBuckets.values()) {
             if (bucket.size() > 1) {
                 for (int i = 0; i < bucket.size(); i++) {
                     for (int j = i + 1; j < bucket.size(); j++) {
-                        candidatePairs.add(new MethodPair(bucket.get(i), bucket.get(j)));
+                        candidatePairs.add(new OrderedPair<>(bucket.get(i), bucket.get(j)));
                     }
                 }
             }
@@ -50,11 +49,11 @@ public class LSHCandidateSelector {
         return candidatePairs;
     }
 
-    public Set<MethodPair> filterCandidates(Set<MethodPair> candidatePairs, Map<String, List<Integer>> methodSignatures, CodeMinHash codeMinHash) {
+    public Set<OrderedPair<String>> filterCandidates(Set<OrderedPair<String>> candidatePairs, Map<String, List<Integer>> methodSignatures, CodeMinHash codeMinHash) {
         return candidatePairs.stream()
                 .filter(pair -> {
-                    List<Integer> signature1 = methodSignatures.get(pair.firstMethod);
-                    List<Integer> signature2 = methodSignatures.get(pair.secondMethod);
+                    List<Integer> signature1 = methodSignatures.get(pair.firstElement());
+                    List<Integer> signature2 = methodSignatures.get(pair.secondElement());
 
                     double similarity = codeMinHash.computeSimilarity(signature1, signature2);
                     return similarity >= lshConfig.getSimilarityThreshold();

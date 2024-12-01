@@ -28,10 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MethodTooLongAnalyzerTest {
+class MethodTooLongAnalyzerTest {
 
     private final int MAX_METHOD_LENGTH = 3;
     private CodeAnalysisReportHandlerByClass codeAnalysisReportHandlerByClass;
+    private CodeSmellAnalysisByClass codeSmellAnalysisByClass;
     private MethodTooLongAnalyzer<JavaParser.StatementContext> methodTooLongAnalyzer;
     private static JavaMethodVisitor visitor;
     private static ModifierService modifierService;
@@ -48,11 +49,10 @@ public class MethodTooLongAnalyzerTest {
 
     @BeforeEach
     void setupSingleTest() {
-        CodeSmellAnalysisByClass codeSmellAnalysisByClass = new CodeSmellAnalysisByClass("JavaPath.java");
+        codeSmellAnalysisByClass = new CodeSmellAnalysisByClass("JavaPath.java");
         codeAnalysisReportHandlerByClass = new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass);
         IMethodLineAnalyzer<JavaParser.StatementContext> methodLineAnalyzer = new MethodLineAnalyzer();
-        methodTooLongAnalyzer = new MethodTooLongAnalyzer<>(MAX_METHOD_LENGTH, methodLineAnalyzer);
-        methodTooLongAnalyzer.setCodeAnalyzerReport(codeAnalysisReportHandlerByClass);
+        methodTooLongAnalyzer = new MethodTooLongAnalyzer<>(MAX_METHOD_LENGTH, methodLineAnalyzer, codeAnalysisReportHandlerByClass);
     }
 
     private List<JavaParser.MethodDeclarationContext> parseMethods(String code) {
@@ -109,9 +109,9 @@ public class MethodTooLongAnalyzerTest {
         methodTooLongAnalyzer.analyze(info);
 
         int numberOfReportsExpected = 1;
-        assertEquals(numberOfReportsExpected, codeAnalysisReportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().size());
+        assertEquals(numberOfReportsExpected, codeSmellAnalysisByClass.getCodeAnalysis().size());
 
-        CodeAnalysisReport report = codeAnalysisReportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().get(0);
+        CodeAnalysisReport report = codeSmellAnalysisByClass.getCodeAnalysis().get(0);
         int startMethodLineExpected = 2;
         int endMethodLineExpected = 9;
         CodeAnalysisReportType reportTypeExpected = CodeAnalysisReportType.METHOD_TOO_LONG;
@@ -151,9 +151,9 @@ public class MethodTooLongAnalyzerTest {
         }
 
         int numberOfReportsExpected = 1;
-        assertEquals(numberOfReportsExpected, codeAnalysisReportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().size());
+        assertEquals(numberOfReportsExpected, codeSmellAnalysisByClass.getCodeAnalysis().size());
 
-        CodeAnalysisReport report = codeAnalysisReportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().get(0);
+        CodeAnalysisReport report = codeSmellAnalysisByClass.getCodeAnalysis().get(0);
         int startMethodLineExpected = 7;
         int endMethodLineExpected = 13;
         assertEquals(startMethodLineExpected, report.getStartLine());
@@ -185,7 +185,7 @@ public class MethodTooLongAnalyzerTest {
         }
 
         int numberOfReportsExpected = 0;
-        assertEquals(numberOfReportsExpected, codeAnalysisReportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().size());
+        assertEquals(numberOfReportsExpected, codeSmellAnalysisByClass.getCodeAnalysis().size());
     }
 
     @Test
@@ -220,7 +220,6 @@ public class MethodTooLongAnalyzerTest {
         }
 
         int numberOfReportsExpected = 2;
-        assertEquals(numberOfReportsExpected, codeAnalysisReportHandlerByClass.codeSmellAnalysisByClass().getCodeAnalysis().size());
+        assertEquals(numberOfReportsExpected, codeSmellAnalysisByClass.getCodeAnalysis().size());
     }
-
 }

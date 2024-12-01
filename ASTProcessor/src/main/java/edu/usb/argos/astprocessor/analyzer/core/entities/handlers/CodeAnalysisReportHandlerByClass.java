@@ -3,8 +3,27 @@ package edu.usb.argos.astprocessor.analyzer.core.entities.handlers;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysisReport;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysisReportType;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
+import lombok.Getter;
 
-public record CodeAnalysisReportHandlerByClass(CodeSmellAnalysisByClass codeSmellAnalysisByClass) {
+import java.util.Optional;
+
+@Getter
+public class CodeAnalysisReportHandlerByClass {
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<CodeSmellAnalysisByClass> codeSmellAnalysisByClass;
+
+    public CodeAnalysisReportHandlerByClass(CodeSmellAnalysisByClass codeSmellAnalysisByClass) {
+        this.codeSmellAnalysisByClass = Optional.of(codeSmellAnalysisByClass);
+    }
+
+    public CodeAnalysisReportHandlerByClass() {
+        this.codeSmellAnalysisByClass = Optional.empty();
+    }
+
+    public void setCodeSmellAnalysisByClass(CodeSmellAnalysisByClass codeSmellAnalysisByClass) {
+        this.codeSmellAnalysisByClass = Optional.ofNullable(codeSmellAnalysisByClass);
+    }
 
     public void addMethodWithExcessiveParameters(int startLine, int endLine) {
         CodeAnalysisReport codeAnalysisReport = CodeAnalysisReport.builder()
@@ -14,7 +33,7 @@ public record CodeAnalysisReportHandlerByClass(CodeSmellAnalysisByClass codeSmel
                 .type(CodeAnalysisReportType.EXCESSIVE_PARAMETERS)
                 .build();
 
-        codeSmellAnalysisByClass.addCodeAnalysisReport(codeAnalysisReport);
+        addReportIfExists(codeAnalysisReport);
     }
 
     public void addMethodWithMagicNumbers(int startLine, int endLine) {
@@ -25,7 +44,7 @@ public record CodeAnalysisReportHandlerByClass(CodeSmellAnalysisByClass codeSmel
                 .type(CodeAnalysisReportType.MAGIC_NUMBER)
                 .build();
 
-        codeSmellAnalysisByClass.addCodeAnalysisReport(codeAnalysisReport);
+        addReportIfExists(codeAnalysisReport);
     }
 
     public void addMethodWithMethodTooLong(int startLine, int endLine) {
@@ -36,7 +55,7 @@ public record CodeAnalysisReportHandlerByClass(CodeSmellAnalysisByClass codeSmel
                 .type(CodeAnalysisReportType.METHOD_TOO_LONG)
                 .build();
 
-        codeSmellAnalysisByClass.addCodeAnalysisReport(codeAnalysisReport);
+        addReportIfExists(codeAnalysisReport);
     }
 
     public void addMethodWithNoDuplicatedCode(int startLine, int endLine) {
@@ -47,6 +66,12 @@ public record CodeAnalysisReportHandlerByClass(CodeSmellAnalysisByClass codeSmel
                 .type(CodeAnalysisReportType.DUPLICATED_CODE)
                 .build();
 
-        codeSmellAnalysisByClass.addCodeAnalysisReport(codeAnalysisReport);
+        addReportIfExists(codeAnalysisReport);
+    }
+
+    private void addReportIfExists(CodeAnalysisReport codeAnalysisReport) {
+        codeSmellAnalysisByClass.ifPresent(report -> {
+            report.addCodeAnalysisReport(codeAnalysisReport);
+        });
     }
 }

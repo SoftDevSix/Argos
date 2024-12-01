@@ -6,69 +6,25 @@ import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.PrimeNumberHandl
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class CodeMinHash {
-    
-    private final IPlainTextHasher textHasher;
-    private final MinHashConfiguration hashConfig;
-    private final PrimeNumberHandler primeNumberHandler;
+public class MinHashingHandler {
+
     private final int[] aValues;
     private final int[] bValues;
+    private final IPlainTextHasher textHasher;
+    private final MinHashConfiguration hashConfig;
 
-    public CodeMinHash(final MinHashConfiguration hashConfig, final IPlainTextHasher textHasher, PrimeNumberHandler primeNumberHandler) {
+    public MinHashingHandler(MinHashConfiguration hashConfig, IPlainTextHasher textHasher) {
         this.hashConfig = hashConfig;
         this.textHasher = textHasher;
-        this.primeNumberHandler = primeNumberHandler;
 
-        this.aValues = primeNumberHandler.generatePrimeValues(hashConfig.getNumberOfHashFunctions(), hashConfig.getSeed());
-        this.bValues = primeNumberHandler.generatePrimeValues(hashConfig.getNumberOfHashFunctions(), hashConfig.getSeed());
-    }
-
-    public int[] generateGoodHashValues(int count) {
-        int[] values = new int[count];
-        Random random = new Random(SEED);
-
-        for (int i = 0; i < count; i++) {
-            values[i] = generateLargePrime(random);
-        }
-
-        return values;
-    }
-
-    private int generateLargePrime(Random random) {
-        while (true) {
-            int candidate = random.nextInt(Integer.MAX_VALUE / 2) * 2 + 1;
-            if (isPrime(candidate)) {
-                return candidate;
-            }
-        }
-    }
-
-    private boolean isPrime(int number) {
-        if (number <= 1) return false;
-        if (number <= 3) return true;
-
-        if (number % 2 == 0 || number % 3 == 0) return false;
-
-        for (int i = 5; i * i <= number; i += 6) {
-            if (number % i == 0 || number % (i + 2) == 0) return false;
-        }
-
-        return true;
-    }
-
-    private void createHashFunctions() {
-        Random random = new Random();
-
-        for (int i = 0; i < hashConfig.getNumberOfHashFunctions(); i++) {
-            aValues[i] = random.nextInt(Integer.MAX_VALUE - 1) + 1;
-            bValues[i] = random.nextInt(Integer.MAX_VALUE - 1) + 1;
-        }
+        PrimeNumberHandler primeHandler = new PrimeNumberHandler();
+        this.aValues = primeHandler.generateLargePrimeValues(hashConfig.getNumberOfHashFunctions(), hashConfig.getSeed());
+        this.bValues = primeHandler.generateLargePrimeValues(hashConfig.getNumberOfHashFunctions(), hashConfig.getSeed());
     }
 
     public List<Integer> computeMinHash(List<String> shingles) {
-        List<Integer> minHashSignature = new ArrayList<>(hashConfig.getNumberOfHashFunctions());
+        List<Integer> signature = new ArrayList<>(hashConfig.getNumberOfHashFunctions());
 
         for (int i = 0; i < hashConfig.getNumberOfHashFunctions(); i++) {
             int minHash = Integer.MAX_VALUE;
@@ -78,10 +34,10 @@ public class CodeMinHash {
                 minHash = Math.min(minHash, hashValue);
             }
 
-            minHashSignature.add(minHash);
+            signature.add(minHash);
         }
 
-        return minHashSignature;
+        return signature;
     }
 
     private int computeHashValue(String shingle, int a, int b, int prime) {

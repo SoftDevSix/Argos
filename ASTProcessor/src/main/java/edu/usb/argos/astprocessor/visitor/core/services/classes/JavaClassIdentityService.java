@@ -4,6 +4,7 @@ import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.AnnotationInformation;
 import edu.usb.argos.astprocessor.visitor.core.interfaces.services.classes.IClassIdentityService;
 import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.shared.validation.ContextValidator;
+import lombok.Generated;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.Map;
 import java.util.HashMap;
 
+@Generated
 public class JavaClassIdentityService implements IClassIdentityService<ParserRuleContext> {
 
     private static final String DEFAULT_VALUE = "";

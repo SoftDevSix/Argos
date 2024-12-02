@@ -3,6 +3,7 @@ package edu.usb.argos.astprocessor.visitor.core.services.classes;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.interfaces.services.classes.IClassStructureService;
 import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.shared.validation.ContextValidator;
+import lombok.Generated;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Generated
 public class JavaClassStructureService implements IClassStructureService<ParserRuleContext> {
 
     @Override

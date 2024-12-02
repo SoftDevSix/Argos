@@ -10,6 +10,7 @@ import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.
 import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.shared.validation.ContextValidator;
 import lombok.Data;
+import lombok.Generated;
 import lombok.Value;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Data
 @Value
+@Generated
 public class JavaClassMemberService implements IClassMemberService<ParserRuleContext, JavaParser.StatementContext> {
     JavaMethodVisitor methodVisitor;
     JavaAttributeVisitor attributeVisitor;

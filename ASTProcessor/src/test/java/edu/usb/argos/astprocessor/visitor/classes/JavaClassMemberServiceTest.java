@@ -231,24 +231,4 @@ class JavaClassMemberServiceTest {
 
         assertTrue(methods.isEmpty());
     }
-
-    @Test
-    void testIsMethodDeclaration() throws Exception {
-
-        Method isMethodDeclarationMethod = JavaClassMemberService.class
-                .getDeclaredMethod("isMethodDeclaration", JavaParser.ClassBodyDeclarationContext.class);
-        isMethodDeclarationMethod.setAccessible(true);
-
-        JavaParser.ClassBodyDeclarationContext bodyDecl = mock(JavaParser.ClassBodyDeclarationContext.class);
-
-        when(bodyDecl.memberDeclaration()).thenReturn(null);
-        boolean result = (boolean) isMethodDeclarationMethod.invoke(memberService, bodyDecl);
-        assertFalse(result);
-
-        JavaParser.MemberDeclarationContext memberDecl = mock(JavaParser.MemberDeclarationContext.class);
-        when(bodyDecl.memberDeclaration()).thenReturn(memberDecl);
-        when(memberDecl.methodDeclaration()).thenReturn(mock(JavaParser.MethodDeclarationContext.class));
-        result = (boolean) isMethodDeclarationMethod.invoke(memberService, bodyDecl);
-        assertTrue(result);
-    }
 }

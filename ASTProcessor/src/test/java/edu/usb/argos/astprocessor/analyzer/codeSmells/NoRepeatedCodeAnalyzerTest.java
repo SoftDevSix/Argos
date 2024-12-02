@@ -92,51 +92,58 @@ public class NoRepeatedCodeAnalyzerTest {
         return new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector, reportHandlerByClass);
     }
 
+    private static int getNumberOfReportsFound(CodeSmellAnalysisByClass codeSmellAnalysisByClass, List<String> expectedRangeAndMessageReports) {
+        int numberOfReportsFound = 0;
+        for (var report : codeSmellAnalysisByClass.getCodeAnalysis()) {
+            String rangeAndMessageReport = "CodeRange: " + report.getStartLine() + " - " + report.getEndLine() + ", Message: " + report.getMessage();
+
+            if (expectedRangeAndMessageReports.contains(rangeAndMessageReport)) {
+                numberOfReportsFound++;
+            }
+        }
+        return numberOfReportsFound;
+    }
+
     @Test
     public void testRepeatedCodeInAClass() {
         String code = """
-                public class RepeatedExample {
-                
+                public class MathOperations {
                     public int sum(int a, int b) {
+                        if (a < 0 || b < 0) {
+                            throw new IllegalArgumentException("Values must be non-negative");
+                        }
                         int result = a + b;
-                
-                        return result;
-                    }
-                
-                    public int multiplication(int a, int b) {
-                        int result = a * b;
-                
+                        System.out.println("Sum result: " + result);
                         return result;
                     }
                 
                     public int sumMultiplication(int a, int b) {
-                        int result = a + b;
-                        result = result * 2;
-                
+                        int sumResult = a + b;
+                        int result = sumResult * 3;
+                        System.out.println("SumMultiplication result: " + result);
                         return result;
                     }
                 
                     public int sumDivision(int a, int b) {
-                        int result = a + b;
-                        result = result / 2;
-                
+                        int sumResult = a + b;
+                        int result = (int) Math.ceil(sumResult / 2.0);
+                        System.out.println("SumDivision result: " + result);
                         return result;
                     }
                 }
                 """;
 
         ClassInformation<JavaParser.StatementContext> classInformation = parseClassFromPlainText(code);
-        MinHashConfiguration minHashConfiguration = MinHashConfiguration
-                .builder()
-                .seed(7)
-                .numberOfHashFunctions(4)
-                .prime(16777619)
-                .build();
         LshConfiguration lshConfig = LshConfiguration.builder()
                 .shinglesFrequency(3)
-                .minHashConfiguration(minHashConfiguration)
-                .numberOfBands(2)
-                .similarityThreshold(0.5)
+                .minHashConfiguration(MinHashConfiguration
+                        .builder()
+                        .seed(7)
+                        .numberOfHashFunctions(15)
+                        .prime(16777619)
+                        .build())
+                .numberOfBands(5)
+                .similarityThreshold(0.4)
                 .build();
 
         NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = buildAnalyzerFromRules(lshConfig);
@@ -144,41 +151,50 @@ public class NoRepeatedCodeAnalyzerTest {
 
         repeatedCodeAnalyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(codeSmellAnalysisByClass);
         repeatedCodeAnalyzer.analyze(classInformation);
+        assertEquals(6, codeSmellAnalysisByClass.getCodeAnalysis().size());
 
-        assertEquals(12, codeSmellAnalysisByClass.getCodeAnalysis().size());
+        List<String> expectedRangeAndMessageReports = List.of(
+                "CodeRange: 2 - 9, Message: Similar code was detected in file MathOperations.java/sumDivision, consider abstracting it or reusing functions.",
+                "CodeRange: 18 - 23, Message: Similar code was detected in file MathOperations.java/sum, consider abstracting it or reusing functions.",
+                "CodeRange: 11 - 16, Message: Similar code was detected in file MathOperations.java/sumDivision, consider abstracting it or reusing functions.",
+                "CodeRange: 18 - 23, Message: Similar code was detected in file MathOperations.java/sumMultiplication, consider abstracting it or reusing functions.",
+                "CodeRange: 2 - 9, Message: Similar code was detected in file MathOperations.java/sumMultiplication, consider abstracting it or reusing functions.",
+                "CodeRange: 11 - 16, Message: Similar code was detected in file MathOperations.java/sum, consider abstracting it or reusing functions."
+        );
+
+        int numberOfReportsFound = getNumberOfReportsFound(codeSmellAnalysisByClass, expectedRangeAndMessageReports);
+        assertEquals(numberOfReportsFound, expectedRangeAndMessageReports.size());
     }
 
     @Test
     public void testRepeatedCodeInMultipleClasses() {
+
         List<String> code = List.of(
                 """
-                        public class RepeatedExampleOne {
-                            public int sumMultiplication(int a, int b) {
+                        public class SimpleMathOperations {
+                            public int sum(int a, int b) {
+                                if (a < 0 || b < 0) {
+                                    throw new IllegalArgumentException("Values must be non-negative");
+                                }
                                 int result = a + b;
-                                result = result * 2;
-                        
-                                return result;
-                            }
-                        
-                            public int sumDivision(int a, int b) {
-                                int result = a + b;
-                                result = result / 2;
-                        
+                                System.out.println("Sum result: " + result);
                                 return result;
                             }
                         }
                         """,
                 """
-                        public class RepeatedExampleTwo {
-                            public int sum(int a, int b) {
-                                int result = a + b;
-                        
+                        public class MathOperations {
+                            public int sumMultiplication(int a, int b) {
+                                int sumResult = a + b;
+                                int result = sumResult * 3;
+                                System.out.println("SumMultiplication result: " + result);
                                 return result;
                             }
                         
-                            public int multiplication(int a, int b) {
-                                int result = a * b;
-                        
+                            public int sumDivision(int a, int b) {
+                                int sumResult = a + b;
+                                int result = (int) Math.ceil(sumResult / 2.0);
+                                System.out.println("SumDivision result: " + result);
                                 return result;
                             }
                         }
@@ -192,11 +208,11 @@ public class NoRepeatedCodeAnalyzerTest {
                 .minHashConfiguration(MinHashConfiguration
                         .builder()
                         .seed(7)
-                        .numberOfHashFunctions(4)
+                        .numberOfHashFunctions(15)
                         .prime(16777619)
                         .build())
-                .numberOfBands(2)
-                .similarityThreshold(0.5)
+                .numberOfBands(5)
+                .similarityThreshold(0.4)
                 .build();
 
         NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = buildAnalyzerFromRules(lshConfig);
@@ -213,6 +229,113 @@ public class NoRepeatedCodeAnalyzerTest {
         int totalNumberOfReports = reports.stream()
                 .mapToInt(rep -> rep.getCodeAnalysis().size())
                 .sum();
-        assertEquals(12, totalNumberOfReports);
+        assertEquals(6, totalNumberOfReports);
+
+        List<String> expectedRangeAndMessageReports = List.of(
+                "CodeRange: 2 - 9, Message: Similar code was detected in file MathOperations.java/sumDivision, consider abstracting it or reusing functions.",
+                "CodeRange: 9 - 14, Message: Similar code was detected in file SimpleMathOperations.java/sum, consider abstracting it or reusing functions.",
+                "CodeRange: 2 - 9, Message: Similar code was detected in file MathOperations.java/sumMultiplication, consider abstracting it or reusing functions.",
+                "CodeRange: 2 - 7, Message: Similar code was detected in file SimpleMathOperations.java/sum, consider abstracting it or reusing functions.",
+                "CodeRange: 2 - 7, Message: Similar code was detected in file MathOperations.java/sumDivision, consider abstracting it or reusing functions.",
+                "CodeRange: 9 - 14, Message: Similar code was detected in file MathOperations.java/sumMultiplication, consider abstracting it or reusing functions."
+        );
+
+        int numberOfReportsFound = 0;
+        for (CodeSmellAnalysisByClass report : reports) {
+            numberOfReportsFound += getNumberOfReportsFound(report, expectedRangeAndMessageReports);
+        }
+
+        assertEquals(numberOfReportsFound, expectedRangeAndMessageReports.size());
+    }
+
+    @Test
+    public void testRepeatedCodeInMultipleClassesWithLargeMethods() {
+        List<String> code = List.of(
+                """
+                         public class UserManagement {
+                             public String getUserFullName(String firstName, String lastName) {
+                                 StringBuilder fullName = new StringBuilder();
+                                 if (firstName != null && lastName != null) {
+                                     fullName.append(firstName.trim()).append(" ").append(lastName.trim());
+                                 } else {
+                                     fullName.append("Unknown User");
+                                 }
+                                 return fullName.toString();
+                             }
+                        
+                             public String getUserInitials(String firstName, String lastName) {
+                                 String initials = "";
+                                 if (firstName != null && lastName != null) {
+                                     initials = firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
+                                 }
+                                 return initials;
+                             }
+                        
+                             public boolean isUserAdult(int age) {
+                                 return age >= 18;
+                             }
+                         }
+                        """,
+                """
+                        public class AdminManagement {
+                        
+                            public String createAdminFullName(String givenName, String familyName) {
+                                StringBuilder fullName = new StringBuilder();
+                                if (givenName != null && familyName != null) {
+                                    fullName.append(givenName.trim()).append(" ").append(familyName.trim());
+                                } else {
+                                    fullName.append("No found Admin");
+                                    System.out.println("The admin name was not found");
+                                }
+                        
+                                return fullName.toString();
+                            }
+                        
+                            public String generateAdminCode(String givenName, String familyName) {
+                                String code = "NA";
+                                if (givenName != null && familyName != null) {
+                                    code = givenName.substring(0, 1).toUpperCase() + familyName.substring(0, 2).toUpperCase();
+                                    System.out.println(code);
+                                }
+                        
+                                if (givenName.length() > 5) {
+                                    System.out.println("The admin code is valid");
+                                }
+                        
+                                return code;
+                            }
+                        }
+                        """
+        );
+
+        List<ClassInformation<JavaParser.StatementContext>> classes = parseClassesFromPlainTest(code);
+
+        LshConfiguration lshConfig = LshConfiguration.builder()
+                .shinglesFrequency(3)
+                .minHashConfiguration(MinHashConfiguration
+                        .builder()
+                        .seed(7)
+                        .numberOfHashFunctions(15)
+                        .prime(16777619)
+                        .build())
+                .numberOfBands(5)
+                .similarityThreshold(0.4)
+                .build();
+
+        NoRepeatedCodeAnalyzer repeatedCodeAnalyzer = buildAnalyzerFromRules(lshConfig);
+
+        List<CodeSmellAnalysisByClass> reports = new ArrayList<>();
+
+        for (ClassInformation<JavaParser.StatementContext> classInfo : classes) {
+            CodeSmellAnalysisByClass classReport = new CodeSmellAnalysisByClass("ClassPath.java");
+            repeatedCodeAnalyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
+            repeatedCodeAnalyzer.analyze(classInfo);
+            reports.add(classReport);
+        }
+
+        int totalNumberOfReports = reports.stream()
+                .mapToInt(rep -> rep.getCodeAnalysis().size())
+                .sum();
+        assertEquals(6, totalNumberOfReports);
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LexerFileProcessorTest {
+class LexerFileProcessorTest {
     private List<Token> getTokensFromFile(String input) throws IOException {
         IFileProcessor<CommonTokenStream> processor = new LexerFileProcessor();
 

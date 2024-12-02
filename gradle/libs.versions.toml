@@ -5,6 +5,8 @@ springDocVersion = "2.6.0"
 antlr = "4.13.2"
 sonarqube = "5.1.0.4882"
 slf4j = "2.0.9"
+logback = "1.5.6"
+lombok = "1.18.30"
 
 [plugins]
 springboot-web = { id = "org.springframework.boot", version.ref = "springboot" }
@@ -21,3 +23,6 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }

@@ -17,16 +17,21 @@ java {
 repositories {
 	mavenCentral()
 }
-
+	
 dependencies {
 	implementation(libs.springboot.starter.web)
 	implementation(libs.springdoc.openapi)
 	implementation(libs.slf4j.api)
-	implementation(libs.slf4j.simple)
+	implementation(libs.antlr.runtime)
 	developmentOnly(libs.springboot.devtools)
-	testImplementation(libs.springboot.starter.test)
-	testRuntimeOnly(libs.junit.launcher)
+	compileOnly(libs.lombok)
+	annotationProcessor(libs.lombok)
 	antlr(libs.antlr)
+	testImplementation(libs.logback)
+	testImplementation(libs.springboot.starter.test)
+	testCompileOnly(libs.lombok)
+	testAnnotationProcessor(libs.lombok)
+	testRuntimeOnly(libs.junit.launcher)
 }
 
 tasks.withType<Test> {

@@ -3,6 +3,7 @@ package edu.usb.argos.astprocessor.analyzer.codeSmells;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeIdentity;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.IEntitySignatureBuilder;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.INormalizer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IPlainTextHasher;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IShingleGenerator;
@@ -16,6 +17,7 @@ import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.J
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.LshSelector;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.MinHashingHandler;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.TokenShingleGenerator;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.entitySingnatureBuilders.MethodSignatureBuilder;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.reader.application.services.FileReaderByText;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
@@ -89,7 +91,9 @@ public class NoRepeatedCodeAnalyzerTest {
         LshSelector<CodeIdentity> candidateSelector = new LshSelector<>(lshConfiguration, similarityCalculator);
         CodeAnalysisReportHandlerByClass reportHandlerByClass = new CodeAnalysisReportHandlerByClass();
 
-        return new NoRepeatedCodeAnalyzer(codeMinHash, shingleGenerator, methodNormalizer, candidateSelector, reportHandlerByClass);
+        IEntitySignatureBuilder<CodeIdentity, List<Integer>, ClassInformation<JavaParser.StatementContext>> entitySignatureBuilder = new MethodSignatureBuilder(codeMinHash, shingleGenerator, methodNormalizer);
+
+        return new NoRepeatedCodeAnalyzer(candidateSelector, reportHandlerByClass, entitySignatureBuilder);
     }
 
     private static int getNumberOfReportsFound(CodeSmellAnalysisByClass codeSmellAnalysisByClass, List<String> expectedRangeAndMessageReports) {

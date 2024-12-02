@@ -1,0 +1,32 @@
+services:
+  argos_cly_app_stage:
+    container_name: argos_cly_app_stage
+    image: argos-cly-app-stage
+    build:
+      context: .
+      dockerfile: Dockerfile.stage
+    ports:
+      - "8087:8087"
+    depends_on:
+      - argos_cly_postgres_stage
+    profiles:
+      - stage
+
+  argos_cly_postgres_stage:
+    container_name: argos_cly_postgres_stage
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${STAGE_DB_NAME}
+      POSTGRES_USER: ${STAGE_DB_USERNAME}
+      POSTGRES_PASSWORD: ${STAGE_DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_stage_data:/var/lib/postgresql/data
+    profiles:
+      - stage
+    env_file:
+      - .env
+
+volumes:
+  postgres_stage_data: { }

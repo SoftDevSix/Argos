@@ -6,7 +6,7 @@ import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException
 import edu.usb.argos.astprocessor.reader.domain.exceptions.ParserException;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileValidationStrategy;
-import edu.usb.argos.astprocessor.reader.infraestructure.validation.PathValidationStrategy;
+import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.CharStream;
@@ -21,16 +21,9 @@ import java.util.Optional;
 
 @Generated
 @Slf4j
+@AllArgsConstructor
 public class FileReaderByPath implements IFileAnalyzer<Path, ParserRuleContext> {
     private final IFileValidationStrategy<Path> validationStrategy;
-
-    public FileReaderByPath() {
-        this.validationStrategy = new PathValidationStrategy();
-    }
-
-    public FileReaderByPath(IFileValidationStrategy<Path> validationStrategy) {
-        this.validationStrategy = validationStrategy;
-    }
 
     @Override
     public Optional<ParserRuleContext> readFile(Path codePath) throws FileAnalyzerException {

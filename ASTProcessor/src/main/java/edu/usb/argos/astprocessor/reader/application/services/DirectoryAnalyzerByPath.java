@@ -6,14 +6,12 @@ import edu.usb.argos.astprocessor.reader.infraestructure.utils.SourceTreeAnalyze
 import edu.usb.argos.astprocessor.reader.domain.exceptions.FileAnalyzerException;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @AllArgsConstructor
 public class DirectoryAnalyzerByPath<A> implements IDirectoryAnalyzer<Path, A> {
 

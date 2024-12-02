@@ -12,9 +12,7 @@ import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @AllArgsConstructor
 public class DirectoryAnalyzerByText<A> implements IDirectoryAnalyzer<String[], A> {

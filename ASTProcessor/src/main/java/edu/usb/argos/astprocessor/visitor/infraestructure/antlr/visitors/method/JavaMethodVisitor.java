@@ -8,6 +8,7 @@ import edu.usb.argos.astprocessor.visitor.core.interfaces.services.IAnnotationEx
 import edu.usb.argos.astprocessor.visitor.core.interfaces.services.IModifierExtractor;
 import edu.usb.argos.astprocessor.visitor.core.interfaces.services.IParameterExtractor;
 import lombok.EqualsAndHashCode;
+import lombok.Generated;
 import lombok.Value;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @EqualsAndHashCode(callSuper = true)
 @Value
+@Generated
 public class JavaMethodVisitor extends JavaParserBaseVisitor<MethodInformation<JavaParser.StatementContext>> {
     IModifierExtractor<JavaParser.ClassBodyDeclarationContext> modifierService;
     IParameterExtractor<JavaParser.FormalParameterContext, JavaParser.LastFormalParameterContext> parameterService;

@@ -2,6 +2,7 @@ package edu.usb.argos.astprocessor.visitor.core.services.method;
 
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.interfaces.services.IModifierExtractor;
+import lombok.Generated;
 import lombok.Value;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Value
+@Generated
 public class ModifierService implements IModifierExtractor<JavaParser.ClassBodyDeclarationContext> {
     private static final String ANNOTATION_PREFIX = "@";
 

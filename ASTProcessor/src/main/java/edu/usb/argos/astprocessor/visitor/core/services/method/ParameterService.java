@@ -3,6 +3,7 @@ package edu.usb.argos.astprocessor.visitor.core.services.method;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.method.ParameterInformation;
 import edu.usb.argos.astprocessor.visitor.core.interfaces.services.IParameterExtractor;
+import lombok.Generated;
 import lombok.Value;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Value
+@Generated
 public class ParameterService implements
         IParameterExtractor<JavaParser.FormalParameterContext, JavaParser.LastFormalParameterContext> {
 

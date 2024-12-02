@@ -7,6 +7,7 @@ import edu.usb.argos.astprocessor.reader.domain.exceptions.ParserException;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileValidationStrategy;
 import edu.usb.argos.astprocessor.reader.infraestructure.validation.PathValidationStrategy;
+import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+@Generated
 @Slf4j
 public class FileReaderByPath implements IFileAnalyzer<Path, ParserRuleContext> {
     private final IFileValidationStrategy<Path> validationStrategy;

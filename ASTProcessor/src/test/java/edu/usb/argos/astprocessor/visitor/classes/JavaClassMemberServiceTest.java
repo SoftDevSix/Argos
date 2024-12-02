@@ -15,11 +15,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -229,5 +230,25 @@ class JavaClassMemberServiceTest {
         List<MethodInformation<JavaParser.StatementContext>> methods = memberService.getClassMethods(ctx);
 
         assertTrue(methods.isEmpty());
+    }
+
+    @Test
+    void testIsMethodDeclaration() throws Exception {
+
+        Method isMethodDeclarationMethod = JavaClassMemberService.class
+                .getDeclaredMethod("isMethodDeclaration", JavaParser.ClassBodyDeclarationContext.class);
+        isMethodDeclarationMethod.setAccessible(true);
+
+        JavaParser.ClassBodyDeclarationContext bodyDecl = mock(JavaParser.ClassBodyDeclarationContext.class);
+
+        when(bodyDecl.memberDeclaration()).thenReturn(null);
+        boolean result = (boolean) isMethodDeclarationMethod.invoke(memberService, bodyDecl);
+        assertFalse(result);
+
+        JavaParser.MemberDeclarationContext memberDecl = mock(JavaParser.MemberDeclarationContext.class);
+        when(bodyDecl.memberDeclaration()).thenReturn(memberDecl);
+        when(memberDecl.methodDeclaration()).thenReturn(mock(JavaParser.MethodDeclarationContext.class));
+        result = (boolean) isMethodDeclarationMethod.invoke(memberService, bodyDecl);
+        assertTrue(result);
     }
 }

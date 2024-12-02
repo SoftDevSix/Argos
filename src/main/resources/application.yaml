@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: argos-code-analyzer
+
+  profiles:
+    active: dev

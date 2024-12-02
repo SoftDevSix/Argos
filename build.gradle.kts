@@ -1,11 +1,9 @@
-
-
 plugins {
 	application
+	jacoco
 	id("org.springframework.boot") version "3.3.4"
 	id("io.spring.dependency-management") version "1.1.6"
 	id("org.sonarqube") version "5.1.0.4882"
-	jacoco
 }
 
 group = "com.softdevsix"
@@ -25,8 +23,8 @@ val lombokVersion = "1.18.28"
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.postgresql:postgresql")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
+	runtimeOnly("org.postgresql:postgresql")
 	compileOnly ("org.projectlombok:lombok")
 	compileOnly("org.projectlombok:lombok:$lombokVersion")
 	annotationProcessor ("org.projectlombok:lombok")

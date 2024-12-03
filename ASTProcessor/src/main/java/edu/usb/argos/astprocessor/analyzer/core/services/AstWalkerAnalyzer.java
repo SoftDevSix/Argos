@@ -8,17 +8,19 @@ import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAna
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.ClassInformation;
+import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
+import lombok.Getter;
 
 public class AstWalkerAnalyzer {
+
+    @Getter
     List<CodeSmellAnalysisByClass> reports;
     HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap;
 
-    
     public AstWalkerAnalyzer(HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap) {
         this.analyzerMap = analyzerMap;
         this.reports = new ArrayList<>();
     }
-
 
     public void walkAnalyzers(List<ClassInformation<JavaParser.StatementContext>> classes) {
         for (ClassInformation<JavaParser.StatementContext> classInfo : classes) {
@@ -32,9 +34,25 @@ public class AstWalkerAnalyzer {
                 for (ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> analyzer : analyzers) {
                     analyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
                     analyzer.analyze(classInfo);
-                    reports.add(classReport);
                 }
             }
+
+            for (MethodInformation<JavaParser.StatementContext> method : classInfo.getMembers().getMethods()) {
+                List<ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>>> analyzers = new ArrayList<>();
+                if (analyzerMap.containsKey(method.getClass())) {
+                    analyzers = analyzerMap.get(method.getClass())
+                            .stream()
+                            .map(m -> (ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>>) m)
+                            .toList();
+                }
+                for (ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>> analyzer : analyzers) {
+                    analyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
+                    analyzer.analyze(method);
+                }
+
+            }
+
+            reports.add(classReport);
         }
     }
 }

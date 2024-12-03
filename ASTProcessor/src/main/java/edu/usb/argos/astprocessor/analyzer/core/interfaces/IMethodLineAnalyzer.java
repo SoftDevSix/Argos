@@ -9,3 +9,4 @@ public interface IMethodLineAnalyzer<S> {
 
     int getMethodEndLine(MethodInformation<S> method);
 }
+

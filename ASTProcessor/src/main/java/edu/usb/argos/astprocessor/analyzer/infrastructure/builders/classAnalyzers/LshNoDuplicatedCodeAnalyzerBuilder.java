@@ -8,9 +8,10 @@ import edu.usb.argos.astprocessor.analyzer.core.interfaces.INormalizer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IPlainTextHasher;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IShingleGenerator;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ISimilarityCalculator;
-import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.IClassAnalyzerBuilder;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.INoDuplicateCodeAnalyzerBuilder;
 import edu.usb.argos.astprocessor.analyzer.core.services.NoRepeatedCodeAnalyzer;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.LshConfiguration;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.dtos.rules.CodeSmellsRules;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.normalizers.AntlrMethodNormalizer;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.SHATextHasher;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.JaccardSimilarityCalculator;
@@ -27,13 +28,12 @@ import java.util.List;
 
 @Builder
 @AllArgsConstructor
-public class LshNoDuplicatedCodeAnalyzerBuilder implements IClassAnalyzerBuilder<JavaParser.StatementContext> {
+public class LshNoDuplicatedCodeAnalyzerBuilder implements INoDuplicateCodeAnalyzerBuilder<JavaParser.StatementContext> {
 
     private final LshConfiguration lshConfiguration;
-    private final CodeAnalysisReportHandlerByClass reportHandlerByClass;
 
     @Override
-    public ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> buildAnalyzer() {
+    public ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> buildAnalyzer(CodeSmellsRules codeSmellsRules, CodeAnalysisReportHandlerByClass reportHandlerByClass) {
         return NoRepeatedCodeAnalyzer.builder()
                 .selector(buildLshSelector(lshConfiguration))
                 .entitySignatureBuilder(buildEntitySignatureBuilder(lshConfiguration))

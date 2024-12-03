@@ -3,25 +3,21 @@ package edu.usb.argos.astprocessor.analyzer.infrastructure.builders.methodAnalyz
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IMethodLineAnalyzer;
-import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.IMethodAnalyzerBuilder;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.IExcessiveParametersAnalyzerBuilder;
 import edu.usb.argos.astprocessor.analyzer.core.services.ExcessiveParametersAnalyzer;
+import edu.usb.argos.astprocessor.analyzer.infrastructure.dtos.rules.CodeSmellsRules;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.MethodLineAnalyzer;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 
-@Builder
-@AllArgsConstructor
-public class AntlrExcessiveParametersAnalyzerBuilder implements IMethodAnalyzerBuilder<JavaParser.StatementContext> {
-
-    private final int maxParameters;
-    private final CodeAnalysisReportHandlerByClass reportHandlerByClass;
+public class AntlrExcessiveParametersAnalyzerBuilder implements IExcessiveParametersAnalyzerBuilder<JavaParser.StatementContext> {
 
     @Override
-    public ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>> buildAnalyzer() {
+    public ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>> buildAnalyzer(
+            CodeSmellsRules codeSmellsRules,
+            CodeAnalysisReportHandlerByClass reportHandlerByClass) {
         return ExcessiveParametersAnalyzer.<JavaParser.StatementContext>builder()
-                .MAX_PARAMETERS(maxParameters)
+                .MAX_PARAMETERS(codeSmellsRules.getMaxParameters())
                 .methodLineAnalyzer(buildMethodLineAnalyzer())
                 .reportHandlerByClass(reportHandlerByClass)
                 .build();

@@ -1,23 +1,12 @@
 package edu.usb.argos.astprocessor.analyzer.core.services;
 
-import java.util.List;
-import java.util.Optional;
-
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.ExcessiveParametersMethodAnalyzer;
-import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
-import edu.usb.argos.astprocessor.visitor.core.entities.method.ParameterInformation;
-import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IMethodLineAnalyzer;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
-
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Token;
 
 @Builder
 @AllArgsConstructor

@@ -1,9 +1,10 @@
 package edu.usb.argos.astprocessor.analyzer.codeSmells;
 
-import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
-import edu.usb.argos.astprocessor.analyzer.core.interfaces.IMethodLineAnalyzer;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.IExcessiveParametersAnalyzerBuilder;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.IMethodTooLongAnalyzerBuilder;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.INoDuplicateCodeAnalyzerBuilder;
 import edu.usb.argos.astprocessor.analyzer.core.services.AstWalkerAnalyzer;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.builders.CodeSmellsBuilder;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.builders.classAnalyzers.LshNoDuplicatedCodeAnalyzerBuilder;
@@ -12,7 +13,6 @@ import edu.usb.argos.astprocessor.analyzer.infrastructure.builders.methodAnalyze
 import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.LshConfiguration;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.MinHashConfiguration;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.dtos.rules.CodeSmellsRules;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.MethodLineAnalyzer;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.reader.application.services.FileReaderByText;
 import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
@@ -34,17 +34,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AstWalkerAnalyzerTest {
+
     private CodeAnalysisReportHandlerByClass reportHandlerByClass;
     private static IFileAnalyzer<String, ParserRuleContext> reader;
     private static JavaClassVisitor classVisitor;
+    private static List<String> code;
     private AstWalkerAnalyzer astWalker;
 
     @BeforeAll
@@ -64,68 +66,11 @@ public class AstWalkerAnalyzerTest {
         IClassMemberService<ParserRuleContext, JavaParser.StatementContext> memberService = new JavaClassMemberService(methodVisitor, attributeVisitor, constructorVisitor);
 
         classVisitor = new JavaClassVisitor(identityService, structureService, memberService);
-    }
 
-    @BeforeEach
-    public void setupEachTest() {
-        reportHandlerByClass = new CodeAnalysisReportHandlerByClass();
-    }
-
-    private ClassInformation<JavaParser.StatementContext> parseClassFromPlainText(String code) {
-        Optional<ParserRuleContext> classContext = reader.readFile(code);
-        assertTrue(classContext.isPresent());
-
-        return classVisitor.visitClass(classContext.get());
-    }
-
-    private List<ClassInformation<JavaParser.StatementContext>> parseClassesFromPlainTest(List<String> code) {
-        return code.stream()
-                .map(this::parseClassFromPlainText)
-                .toList();
-    }
-
-    private AntlrMethodTooLongAnalyzerBuilder buildMethodTooAnalyzerLongFromRules(CodeSmellsRules codeSmellsRules) {
-        IMethodLineAnalyzer<JavaParser.StatementContext> methodLineAnalyzer = new MethodLineAnalyzer();
-
-        return AntlrMethodTooLongAnalyzerBuilder.builder()
-                .maxMethodLength(codeSmellsRules.getMaxMethodLength())
-                .methodLineAnalyzer(methodLineAnalyzer)
-                .reportHandlerByClass(reportHandlerByClass)
-                .build();
-    }
-
-    private AntlrExcessiveParametersAnalyzerBuilder buildAntlrExcessiveParametersAnalyzerBuilder(CodeSmellsRules codeSmellsRules) {
-        return AntlrExcessiveParametersAnalyzerBuilder.builder()
-                .maxParameters(codeSmellsRules.getMaxParameters())
-                .reportHandlerByClass(reportHandlerByClass)
-                .build();
-    }
-
-    private LshNoDuplicatedCodeAnalyzerBuilder buildDuplicatedAnalyzer() {
-        LshConfiguration configuration = LshConfiguration.builder()
-                .shinglesFrequency(3)
-                .minHashConfiguration(MinHashConfiguration
-                        .builder()
-                        .seed(7)
-                        .numberOfHashFunctions(15)
-                        .prime(16777619)
-                        .build())
-                .numberOfBands(5)
-                .similarityThreshold(0.4)
-                .build();
-
-        return LshNoDuplicatedCodeAnalyzerBuilder.builder()
-                .lshConfiguration(configuration)
-                .reportHandlerByClass(reportHandlerByClass)
-                .build();
-    }
-
-    @Test
-    public void testAnalyzeForAstWalker() {
-        List<String> code = List.of(
+        code = List.of(
                 """
                         public class SimpleMathOperations {
-                            public int sum(int a, int b) {
+                            public int sum(int a) {
                                 if (a < 0 || b < 0) {
                                     throw new IllegalArgumentException("Values must be non-negative");
                                 }
@@ -153,28 +98,138 @@ public class AstWalkerAnalyzerTest {
                         }
                         """
         );
+    }
 
-        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
-                .id(12)
-                .excessiveParameters(true)
-                .magicNumbers(false)
-                .methodTooLong(true)
-                .noDuplicatedCode(false)
-                .maxMethodLength(3)
-                .maxParameters(2)
+    @BeforeEach
+    public void setupEachTest() {
+        reportHandlerByClass = new CodeAnalysisReportHandlerByClass();
+    }
+
+    private ClassInformation<JavaParser.StatementContext> parseClassFromPlainText(String code) {
+        Optional<ParserRuleContext> classContext = reader.readFile(code);
+        assertTrue(classContext.isPresent());
+
+        return classVisitor.visitClass(classContext.get());
+    }
+
+    private List<ClassInformation<JavaParser.StatementContext>> parseClassesFromPlainTest(List<String> code) {
+        return code.stream()
+                .map(this::parseClassFromPlainText)
+                .toList();
+    }
+
+    private IMethodTooLongAnalyzerBuilder<JavaParser.StatementContext> buildMethodTooAnalyzerLongFromRules() {
+        return new AntlrMethodTooLongAnalyzerBuilder();
+    }
+
+    private IExcessiveParametersAnalyzerBuilder<JavaParser.StatementContext> buildAntlrExcessiveParametersAnalyzerBuilder() {
+        return new AntlrExcessiveParametersAnalyzerBuilder();
+    }
+
+    private INoDuplicateCodeAnalyzerBuilder<JavaParser.StatementContext> buildDuplicatedAnalyzer() {
+        LshConfiguration configuration = LshConfiguration.builder()
+                .shinglesFrequency(3)
+                .minHashConfiguration(MinHashConfiguration
+                        .builder()
+                        .seed(7)
+                        .numberOfHashFunctions(15)
+                        .prime(16777619)
+                        .build())
+                .numberOfBands(5)
+                .similarityThreshold(0.4)
                 .build();
 
-        CodeSmellsBuilder codeSmellsBuilder = CodeSmellsBuilder.builder()
+        return new LshNoDuplicatedCodeAnalyzerBuilder(configuration);
+    }
+
+    private CodeSmellsBuilder<JavaParser.StatementContext> buildCodeSmellBuilderFromRules(CodeSmellsRules codeSmellsRules) {
+        return CodeSmellsBuilder.<JavaParser.StatementContext>builder()
                 .codeSmellsRules(codeSmellsRules)
                 .noDuplicatedCodeAnalyzerBuilder(buildDuplicatedAnalyzer())
-                .methodTooLongAnalyzerBuilder(buildMethodTooAnalyzerLongFromRules(codeSmellsRules))
-                .parametersAnalyzerBuilder(buildAntlrExcessiveParametersAnalyzerBuilder(codeSmellsRules))
+                .methodTooLongAnalyzerBuilder(buildMethodTooAnalyzerLongFromRules())
+                .parametersAnalyzerBuilder(buildAntlrExcessiveParametersAnalyzerBuilder())
+                .reportHandlerByClass(reportHandlerByClass)
+                .build();
+    }
+
+    @Test
+    public void testAnalyzeForAstWalkerWithOnlyExcessiveParametersAnalyzer() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .excessiveParameters(true)
+                .noDuplicatedCode(false)
+                .methodTooLong(false)
+                .maxParameters(1)
                 .build();
 
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = buildCodeSmellBuilderFromRules(codeSmellsRules);
         List<ClassInformation<JavaParser.StatementContext>> classes = parseClassesFromPlainTest(code);
         HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
 
         astWalker = new AstWalkerAnalyzer(analyzerMap);
         astWalker.walkAnalyzers(classes);
+
+        int expectedTotalOfReports = 2;
+        assertEquals(expectedTotalOfReports, astWalker.getReports().stream().mapToInt(r -> r.getCodeAnalysis().size()).sum());
+    }
+
+    @Test
+    public void testAnalyzeForAstWalkerWithOnlyMethodTooLongAnalyzer() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .excessiveParameters(false)
+                .noDuplicatedCode(false)
+                .methodTooLong(true)
+                .maxMethodLength(3)
+                .build();
+
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = buildCodeSmellBuilderFromRules(codeSmellsRules);
+        List<ClassInformation<JavaParser.StatementContext>> classes = parseClassesFromPlainTest(code);
+        HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
+
+        astWalker = new AstWalkerAnalyzer(analyzerMap);
+        astWalker.walkAnalyzers(classes);
+
+        int expectedTotalOfReports = 3;
+        assertEquals(expectedTotalOfReports, astWalker.getReports().stream().mapToInt(r -> r.getCodeAnalysis().size()).sum());
+    }
+
+    @Test
+    public void testAnalyzeForAstWalkerWithOnlyNoDuplicatedCodeAnalyzer() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .excessiveParameters(false)
+                .noDuplicatedCode(true)
+                .methodTooLong(false)
+                .build();
+
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = buildCodeSmellBuilderFromRules(codeSmellsRules);
+        List<ClassInformation<JavaParser.StatementContext>> classes = parseClassesFromPlainTest(code);
+        HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
+
+        astWalker = new AstWalkerAnalyzer(analyzerMap);
+        astWalker.walkAnalyzers(classes);
+
+        int expectedTotalOfReports = 6;
+        assertEquals(expectedTotalOfReports, astWalker.getReports().stream().mapToInt(r -> r.getCodeAnalysis().size()).sum());
+    }
+
+    @Test
+    public void testAnalyzeForAstWalkerWithAllAnalyzers() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .excessiveParameters(true)
+                .methodTooLong(true)
+                .noDuplicatedCode(true)
+                .maxMethodLength(3)
+                .maxParameters(1)
+                .build();
+
+
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = buildCodeSmellBuilderFromRules(codeSmellsRules);
+        List<ClassInformation<JavaParser.StatementContext>> classes = parseClassesFromPlainTest(code);
+        HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
+
+        astWalker = new AstWalkerAnalyzer(analyzerMap);
+        astWalker.walkAnalyzers(classes);
+
+        int expectedTotalOfReports = 11;
+        assertEquals(expectedTotalOfReports, astWalker.getReports().stream().mapToInt(r -> r.getCodeAnalysis().size()).sum());
     }
 }

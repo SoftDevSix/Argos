@@ -1,9 +1,13 @@
 package edu.usb.argos.astprocessor.analyzer.builders;
 
-import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
-import edu.usb.argos.astprocessor.analyzer.core.interfaces.IMethodLineAnalyzer;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.IExcessiveParametersAnalyzerBuilder;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.IMethodTooLongAnalyzerBuilder;
+import edu.usb.argos.astprocessor.analyzer.core.interfaces.builders.INoDuplicateCodeAnalyzerBuilder;
+import edu.usb.argos.astprocessor.analyzer.core.services.ExcessiveParametersAnalyzer;
+import edu.usb.argos.astprocessor.analyzer.core.services.MethodTooLongAnalyzer;
+import edu.usb.argos.astprocessor.analyzer.core.services.NoRepeatedCodeAnalyzer;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.builders.CodeSmellsBuilder;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.builders.classAnalyzers.LshNoDuplicatedCodeAnalyzerBuilder;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.builders.methodAnalyzers.AntlrExcessiveParametersAnalyzerBuilder;
@@ -11,96 +15,39 @@ import edu.usb.argos.astprocessor.analyzer.infrastructure.builders.methodAnalyze
 import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.LshConfiguration;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.config.algorithms.MinHashConfiguration;
 import edu.usb.argos.astprocessor.analyzer.infrastructure.dtos.rules.CodeSmellsRules;
-import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.MethodLineAnalyzer;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
-import edu.usb.argos.astprocessor.reader.application.services.FileReaderByText;
-import edu.usb.argos.astprocessor.reader.domain.interfaces.IFileAnalyzer;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.ClassInformation;
-import edu.usb.argos.astprocessor.visitor.core.interfaces.services.classes.IClassMemberService;
-import edu.usb.argos.astprocessor.visitor.core.services.classes.JavaClassIdentityService;
-import edu.usb.argos.astprocessor.visitor.core.services.classes.JavaClassMemberService;
-import edu.usb.argos.astprocessor.visitor.core.services.classes.JavaClassStructureService;
-import edu.usb.argos.astprocessor.visitor.core.services.method.AnnotationService;
-import edu.usb.argos.astprocessor.visitor.core.services.method.ModifierService;
-import edu.usb.argos.astprocessor.visitor.core.services.method.ParameterService;
-import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.classes.JavaClassVisitor;
-import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.classes.JavaConstructorVisitor;
-import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.AttributeHandler;
-import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaAttributeVisitor;
-import edu.usb.argos.astprocessor.visitor.infraestructure.antlr.visitors.method.JavaMethodVisitor;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.junit.jupiter.api.BeforeAll;
+import edu.usb.argos.astprocessor.visitor.core.entities.method.MethodInformation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CodeSmellAnalyzerBuilderTest {
 
     private CodeAnalysisReportHandlerByClass reportHandlerByClass;
-    private static IFileAnalyzer<String, ParserRuleContext> reader;
-    private static JavaClassVisitor classVisitor;
-
-    @BeforeAll
-    public static void setupAll() {
-        reader = new FileReaderByText();
-        JavaMethodVisitor methodVisitor = new JavaMethodVisitor(
-                new ModifierService(),
-                new ParameterService(),
-                new AnnotationService()
-        );
-        AttributeHandler attributeHandler = new AttributeHandler();
-        JavaAttributeVisitor attributeVisitor = new JavaAttributeVisitor(attributeHandler);
-        JavaConstructorVisitor constructorVisitor = new JavaConstructorVisitor();
-
-        JavaClassIdentityService identityService = new JavaClassIdentityService();
-        JavaClassStructureService structureService = new JavaClassStructureService();
-        IClassMemberService<ParserRuleContext, JavaParser.StatementContext> memberService = new JavaClassMemberService(methodVisitor, attributeVisitor, constructorVisitor);
-
-        classVisitor = new JavaClassVisitor(identityService, structureService, memberService);
-    }
 
     @BeforeEach
     public void setupEachTest() {
         reportHandlerByClass = new CodeAnalysisReportHandlerByClass();
     }
 
-    private ClassInformation<JavaParser.StatementContext> parseClassFromPlainText(String code) {
-        Optional<ParserRuleContext> classContext = reader.readFile(code);
-        assertTrue(classContext.isPresent());
-
-        return classVisitor.visitClass(classContext.get());
+    private IMethodTooLongAnalyzerBuilder<JavaParser.StatementContext> buildMethodTooAnalyzerLongFromRules() {
+        return new AntlrMethodTooLongAnalyzerBuilder();
     }
 
-    private List<ClassInformation<JavaParser.StatementContext>> parseClassesFromPlainTest(List<String> code) {
-        return code.stream()
-                .map(this::parseClassFromPlainText)
-                .toList();
+    private IExcessiveParametersAnalyzerBuilder<JavaParser.StatementContext> buildAntlrExcessiveParametersAnalyzerBuilder() {
+        return new AntlrExcessiveParametersAnalyzerBuilder();
     }
 
-    private AntlrMethodTooLongAnalyzerBuilder buildMethodTooAnalyzerLongFromRules(CodeSmellsRules codeSmellsRules) {
-        IMethodLineAnalyzer<JavaParser.StatementContext> methodLineAnalyzer = new MethodLineAnalyzer();
-
-        return AntlrMethodTooLongAnalyzerBuilder.builder()
-                .maxMethodLength(codeSmellsRules.getMaxMethodLength())
-                .methodLineAnalyzer(methodLineAnalyzer)
-                .reportHandlerByClass(reportHandlerByClass)
-                .build();
-    }
-
-    private AntlrExcessiveParametersAnalyzerBuilder buildAntlrExcessiveParametersAnalyzerBuilder(CodeSmellsRules codeSmellsRules) {
-        return AntlrExcessiveParametersAnalyzerBuilder.builder()
-                .maxParameters(codeSmellsRules.getMaxParameters())
-                .reportHandlerByClass(reportHandlerByClass)
-                .build();
-    }
-
-    private LshNoDuplicatedCodeAnalyzerBuilder buildDuplicatedAnalyzer() {
+    private INoDuplicateCodeAnalyzerBuilder<JavaParser.StatementContext> buildDuplicatedAnalyzer() {
         LshConfiguration configuration = LshConfiguration.builder()
                 .shinglesFrequency(3)
                 .minHashConfiguration(MinHashConfiguration
@@ -113,81 +60,103 @@ public class CodeSmellAnalyzerBuilderTest {
                 .similarityThreshold(0.4)
                 .build();
 
-        return LshNoDuplicatedCodeAnalyzerBuilder.builder()
-                .lshConfiguration(configuration)
-                .reportHandlerByClass(reportHandlerByClass)
-                .build();
+        return new LshNoDuplicatedCodeAnalyzerBuilder(configuration);
     }
 
     @Test
-    public void test() {
-        List<String> code = List.of(
-                """
-                        public class SimpleMathOperations {
-                            public int sum(int a, int b) {
-                                if (a < 0 || b < 0) {
-                                    throw new IllegalArgumentException("Values must be non-negative");
-                                }
-                                int result = a + b;
-                                System.out.println("Sum result: " + result);
-                                return result;
-                            }
-                        }
-                        """,
-                """
-                        public class MathOperations {
-                            public int sumMultiplication(int a, int b) {
-                                int sumResult = a + b;
-                                int result = sumResult * 3;
-                                System.out.println("SumMultiplication result: " + result);
-                                return result;
-                            }
-                        
-                            public int sumDivision(int a, int b) {
-                                int sumResult = a + b;
-                                int result = (int) Math.ceil(sumResult / 2.0);
-                                System.out.println("SumDivision result: " + result);
-                                return result;
-                            }
-                        }
-                        """
+    public void testOnlyMethodTooLongAnalyzerBuilt() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .methodTooLong(true)
+                .build();
+
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = new CodeSmellsBuilder<>(
+                codeSmellsRules,
+                reportHandlerByClass,
+                buildMethodTooAnalyzerLongFromRules(),
+                buildAntlrExcessiveParametersAnalyzerBuilder(),
+                buildDuplicatedAnalyzer()
         );
 
-        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
-                .id(12)
-                .excessiveParameters(true)
-                .magicNumbers(false)
-                .methodTooLong(true)
-                .noDuplicatedCode(false)
-                .maxMethodLength(3)
-                .maxParameters(2)
-                .build();
-
-        CodeSmellsBuilder codeSmellsBuilder = CodeSmellsBuilder.builder()
-                .codeSmellsRules(codeSmellsRules)
-                .noDuplicatedCodeAnalyzerBuilder(buildDuplicatedAnalyzer())
-                .methodTooLongAnalyzerBuilder(buildMethodTooAnalyzerLongFromRules(codeSmellsRules))
-                .parametersAnalyzerBuilder(buildAntlrExcessiveParametersAnalyzerBuilder(codeSmellsRules))
-                .build();
-
-        List<ClassInformation<JavaParser.StatementContext>> classes = parseClassesFromPlainTest(code);
         HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
-        List<CodeSmellAnalysisByClass> reports = new ArrayList<>();
+        Optional<List<ICodeSmellNodeAnalyzer<?>>> analyzer = Optional.ofNullable(analyzerMap.get(MethodInformation.class));
+        assertTrue(analyzer.isPresent());
+        assertFalse(analyzer.get().isEmpty());
 
-        for (ClassInformation<JavaParser.StatementContext> classInfo : classes) {
-            CodeSmellAnalysisByClass classReport = new CodeSmellAnalysisByClass("ClassPath.java");
+        ICodeSmellNodeAnalyzer<?> methodAnalyzer = analyzer.get().get(0);
+        assertInstanceOf(MethodTooLongAnalyzer.class, methodAnalyzer);
+    }
 
-            if (analyzerMap.containsKey(classInfo.getClass())) {
-                List<ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>>> analyzers = analyzerMap.get(classInfo.getClass())
-                        .stream()
-                        .map(m -> (ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>>) m)
-                        .toList();
-                for (ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> analyzer : analyzers) {
-                    analyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
-                    analyzer.analyze(classInfo);
-                    reports.add(classReport);
-                }
-            }
-        }
+    @Test
+    public void testOnlyExcessiveParametersAnalyzerBuilt() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .excessiveParameters(true)
+                .build();
+
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = new CodeSmellsBuilder<>(
+                codeSmellsRules,
+                reportHandlerByClass,
+                buildMethodTooAnalyzerLongFromRules(),
+                buildAntlrExcessiveParametersAnalyzerBuilder(),
+                buildDuplicatedAnalyzer()
+        );
+
+        HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
+        Optional<List<ICodeSmellNodeAnalyzer<?>>> analyzer = Optional.ofNullable(analyzerMap.get(MethodInformation.class));
+        assertTrue(analyzer.isPresent());
+        assertFalse(analyzer.get().isEmpty());
+
+        ICodeSmellNodeAnalyzer<?> methodAnalyzer = analyzer.get().get(0);
+        assertInstanceOf(ExcessiveParametersAnalyzer.class, methodAnalyzer);
+    }
+
+    @Test
+    public void testOnlyNoDuplicatedCodeAnalyzerBuilt() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .noDuplicatedCode(true)
+                .build();
+
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = new CodeSmellsBuilder<>(
+                codeSmellsRules,
+                reportHandlerByClass,
+                buildMethodTooAnalyzerLongFromRules(),
+                buildAntlrExcessiveParametersAnalyzerBuilder(),
+                buildDuplicatedAnalyzer()
+        );
+
+        HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
+        Optional<List<ICodeSmellNodeAnalyzer<?>>> analyzer = Optional.ofNullable(analyzerMap.get(ClassInformation.class));
+        assertTrue(analyzer.isPresent());
+        assertFalse(analyzer.get().isEmpty());
+
+        ICodeSmellNodeAnalyzer<?> methodAnalyzer = analyzer.get().get(0);
+        assertInstanceOf(NoRepeatedCodeAnalyzer.class, methodAnalyzer);
+    }
+
+    @Test
+    public void testWithAllCodeSmellsAnalyzers() {
+        CodeSmellsRules codeSmellsRules = CodeSmellsRules.builder()
+                .excessiveParameters(true)
+                .methodTooLong(true)
+                .noDuplicatedCode(true)
+                .build();
+
+        CodeSmellsBuilder<JavaParser.StatementContext> codeSmellsBuilder = new CodeSmellsBuilder<>(
+                codeSmellsRules,
+                reportHandlerByClass,
+                buildMethodTooAnalyzerLongFromRules(),
+                buildAntlrExcessiveParametersAnalyzerBuilder(),
+                buildDuplicatedAnalyzer()
+        );
+
+        HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap = codeSmellsBuilder.getAnalyzers();
+
+        int expectedTypesOfAnalyzers = 2;
+        assertEquals(expectedTypesOfAnalyzers, analyzerMap.size());
+
+        int expectedTotalOfAnalyzers = 3;
+        assertEquals(expectedTotalOfAnalyzers, analyzerMap.values()
+                .stream()
+                .mapToInt(List::size)
+                .sum());
     }
 }

@@ -168,7 +168,7 @@ public class ExcessiveParametersAnalyzerTest {
     }
 
     @Test
-    public void testAnalyzeForTwoMethodExcessiveParameters_WithThreeMethods() {
+    public void testAnalyzeForTwoMethodExcessiveParametersWithThreeMethods() {
         String code = """
                 public class TestClass {
                     public void methodWithOneParameter(int number) {

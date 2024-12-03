@@ -72,7 +72,6 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
         reportDuplicate(firstMethod, secondMethod);
         reportDuplicate(secondMethod, firstMethod);
 
-        System.out.println("Duplicated: " + firstMethod.getEntity().getIdentifier() + " - " + secondMethod.getEntity().getIdentifier());
         methodsAdded.add(unorderedPair);
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DetectorStrategyContextTest {
+class HardcodedDetectionContextTest {
     @Test
     void testExecuteDetectHardcodedValues() {
         List<HardcodedDetection> detectedValues = new ArrayList<>();
@@ -23,7 +23,7 @@ class DetectorStrategyContextTest {
 
         JavaParser.ClassBodyDeclarationContext classBodyContext =
                 new JavaParser.ClassBodyDeclarationContext(null, 0);
-        DetectorStrategyContext context = new DetectorStrategyContext(detectedValues);
+        HardcodedDetectionContext context = new HardcodedDetectionContext(detectedValues);
         context.execute(strategy, classBodyContext);
 
         assertEquals(1, detectedValues.size());

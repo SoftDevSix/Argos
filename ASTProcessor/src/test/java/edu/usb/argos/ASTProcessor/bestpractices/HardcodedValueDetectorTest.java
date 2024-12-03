@@ -48,12 +48,13 @@ public class HardcodedValueDetectorTest {
         HardcodedValueDetector detector = new HardcodedValueDetector(classCtx);
         detector.detectHardcodedValues();
 
-//        assertEquals(4, detector.getHardcodedValues().size());
-        System.out.println(detector.getHardcodedValues());
+        assertEquals(11, detector.getHardcodedValues().size());
 
-//        assertTrue(detector.getHardcodedValues().contains("100"));
-//        assertTrue(detector.getHardcodedValues().contains("40"));
-//        assertTrue(detector.getHardcodedValues().contains("\"Hardcoded String Constructor\""));
-//        assertTrue(detector.getHardcodedValues().contains("\"Hardcoded Message\""));
+        assertTrue(detector.getHardcodedValues().contains(new HardcodedDetection(16, "100")));
+        assertTrue(detector.getHardcodedValues().contains(new HardcodedDetection(9, "40")));
+        assertTrue(detector.getHardcodedValues().contains(
+                new HardcodedDetection(10, "\"Hardcoded String Constructor\"")));
+        assertTrue(detector.getHardcodedValues().contains(
+                new HardcodedDetection(18, "\"Hardcoded Message\"")));
     }
 }

@@ -14,8 +14,8 @@ import lombok.Getter;
 public class AstWalkerAnalyzer {
 
     @Getter
-    List<CodeSmellAnalysisByClass> reports;
-    HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap;
+    private final List<CodeSmellAnalysisByClass> reports;
+    private final HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap;
 
     public AstWalkerAnalyzer(HashMap<Class<?>, List<ICodeSmellNodeAnalyzer<?>>> analyzerMap) {
         this.analyzerMap = analyzerMap;
@@ -26,33 +26,29 @@ public class AstWalkerAnalyzer {
         for (ClassInformation<JavaParser.StatementContext> classInfo : classes) {
             CodeSmellAnalysisByClass classReport = new CodeSmellAnalysisByClass("ClassPath.java");
 
-            if (analyzerMap.containsKey(classInfo.getClass())) {
-                List<ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>>> analyzers = analyzerMap.get(classInfo.getClass())
-                        .stream()
-                        .map(m -> (ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>>) m)
-                        .toList();
-                for (ICodeSmellNodeAnalyzer<ClassInformation<JavaParser.StatementContext>> analyzer : analyzers) {
-                    analyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
-                    analyzer.analyze(classInfo);
-                }
-            }
+            processNode(classInfo, classReport);
 
             for (MethodInformation<JavaParser.StatementContext> method : classInfo.getMembers().getMethods()) {
-                List<ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>>> analyzers = new ArrayList<>();
-                if (analyzerMap.containsKey(method.getClass())) {
-                    analyzers = analyzerMap.get(method.getClass())
-                            .stream()
-                            .map(m -> (ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>>) m)
-                            .toList();
-                }
-                for (ICodeSmellNodeAnalyzer<MethodInformation<JavaParser.StatementContext>> analyzer : analyzers) {
-                    analyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
-                    analyzer.analyze(method);
-                }
-
+                processNode(method, classReport);
             }
 
             reports.add(classReport);
         }
+    }
+
+    private <T> void processNode(T node, CodeSmellAnalysisByClass classReport) {
+        List<ICodeSmellNodeAnalyzer<T>> analyzers = getAnalyzersForNode(node);
+        for (ICodeSmellNodeAnalyzer<T> analyzer : analyzers) {
+            analyzer.getReportHandlerByClass().setCodeSmellAnalysisByClass(classReport);
+            analyzer.analyze(node);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> List<ICodeSmellNodeAnalyzer<T>> getAnalyzersForNode(T node) {
+        return analyzerMap.getOrDefault(node.getClass(), List.of())
+                .stream()
+                .map(analyzer -> (ICodeSmellNodeAnalyzer<T>) analyzer)
+                .toList();
     }
 }

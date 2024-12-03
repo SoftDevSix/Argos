@@ -70,7 +70,7 @@ public class AstWalkerAnalyzerTest {
         code = List.of(
                 """
                         public class SimpleMathOperations {
-                            public int sum(int a) {
+                            public int sum(int a, int b) {
                                 if (a < 0 || b < 0) {
                                     throw new IllegalArgumentException("Values must be non-negative");
                                 }
@@ -168,7 +168,7 @@ public class AstWalkerAnalyzerTest {
         astWalker = new AstWalkerAnalyzer(analyzerMap);
         astWalker.walkAnalyzers(classes);
 
-        int expectedTotalOfReports = 2;
+        int expectedTotalOfReports = 3;
         assertEquals(expectedTotalOfReports, astWalker.getReports().stream().mapToInt(r -> r.getCodeAnalysis().size()).sum());
     }
 
@@ -229,7 +229,7 @@ public class AstWalkerAnalyzerTest {
         astWalker = new AstWalkerAnalyzer(analyzerMap);
         astWalker.walkAnalyzers(classes);
 
-        int expectedTotalOfReports = 11;
+        int expectedTotalOfReports = 12;
         assertEquals(expectedTotalOfReports, astWalker.getReports().stream().mapToInt(r -> r.getCodeAnalysis().size()).sum());
     }
 }

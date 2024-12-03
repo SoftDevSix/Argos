@@ -4,10 +4,12 @@ import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysis
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeAnalysisReportType;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Getter
+@Component
 public class CodeAnalysisReportHandlerByClass {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

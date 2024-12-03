@@ -1,2 +1,7 @@
+pluginManagement {
+    includeBuild("build-logic")
+}
+
 rootProject.name = "Argos"
-include(":ASTProcessor")
+include("app", "code-analyzer")
+

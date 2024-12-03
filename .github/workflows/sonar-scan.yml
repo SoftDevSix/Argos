@@ -27,12 +27,9 @@ jobs:
       - name: Test
         run: ./gradlew test --no-daemon
 
-      - name: Generate coverage reports
-        run: ./gradlew jacocoTestReport --no-daemon
-
       - name: SonarQube Scan
         env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
             SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
-        run: ./gradlew sonar --no-daemon
+        run: ./gradlew codeCoverageReport sonar --no-daemon

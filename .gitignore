@@ -38,3 +38,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Antlr ###
+code-analyzer/src/main/java/**/antlr/

@@ -3,8 +3,9 @@ package edu.usb.argos.ASTProcessor.staticanalysis.bestpractices;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.AttributeDetectionStrategy;
 import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.ConstructorDetectionStrategy;
-import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.DetectorStrategyContext;
 import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.MethodDetectionStrategy;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.HardcodedDetectionContext;
+
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class HardcodedValueDetector {
     }
 
     public void detectHardcodedValues() {
-        DetectorStrategyContext strategyContext = new DetectorStrategyContext(hardcodedValues);
+        HardcodedDetectionContext strategyContext = new HardcodedDetectionContext(hardcodedValues);
 
         for (JavaParser.ClassBodyDeclarationContext member : classContext.classBody().classBodyDeclaration()) {
             strategyContext.execute(new AttributeDetectionStrategy(), member);

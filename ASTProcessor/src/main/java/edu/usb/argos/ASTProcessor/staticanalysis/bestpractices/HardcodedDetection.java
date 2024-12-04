@@ -1,13 +1,11 @@
 package edu.usb.argos.ASTProcessor.staticanalysis.bestpractices;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Value;
 
-@Getter
+@Value
 @Builder
-@ToString
 public class HardcodedDetection {
-    private int lineNumber;
-    private String hardcodedValue;
+    int lineNumber;
+    String hardcodedValue;
 }

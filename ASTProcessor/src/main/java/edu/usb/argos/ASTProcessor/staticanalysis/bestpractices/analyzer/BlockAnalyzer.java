@@ -9,7 +9,7 @@ import java.util.List;
 
 public class BlockAnalyzer {
     private final HardcodedValueMatcher matcher;
-    private static BlockAnalyzer instance;
+    private final String ARGUMENTS_SPLIT_REGEX = "\\s*,\\s*";
 
     public BlockAnalyzer(){
         matcher = HardcodedValueMatcher.getInstance();
@@ -39,8 +39,8 @@ public class BlockAnalyzer {
             if (declarator.variableInitializer() != null) {
                 String variableValue = declarator.variableInitializer().getText();
                 if (matcher.isHardcoded(variableValue)) {
-                    HardcodedDetection detection = HardcodedDetection.builder().hardcodedValue(variableValue)
-                            .lineNumber(declarator.getStart().getLine()).build();
+                    HardcodedDetection detection =
+                            buildHardcodedDetection(variableValue, declarator.getStart().getLine());
                     detectedValues.add(detection);
                 }
             }
@@ -63,12 +63,11 @@ public class BlockAnalyzer {
         if(expressionContext.methodCall() != null && !expressionContext.methodCall() .arguments().isEmpty()){
             String methodArgumentValue =
                     expressionContext.methodCall().arguments().getChild(1).getText();
-                String[] arguments = methodArgumentValue.split("\\s*,\\s*");
+                String[] arguments = methodArgumentValue.split(ARGUMENTS_SPLIT_REGEX);
 
                 for (String argument : arguments) {
                     if (matcher.isHardcoded(argument)) {
-                        HardcodedDetection detection = HardcodedDetection.builder().hardcodedValue(argument)
-                                .lineNumber(line).build();
+                        HardcodedDetection detection = buildHardcodedDetection(argument, line);
                         detectedValues.add(detection);
                     }
                 }
@@ -81,12 +80,16 @@ public class BlockAnalyzer {
             if(assignmentTree != null){
                 String assignmentValue = assignmentTree.getText();
                 if(matcher.isHardcoded(assignmentValue)){
-                    HardcodedDetection detection = HardcodedDetection.builder().hardcodedValue(assignmentValue)
-                            .lineNumber(stmt.getStart().getLine()).build();
+                    HardcodedDetection detection = buildHardcodedDetection(assignmentValue, stmt.getStart().getLine());
                     detectedValues.add(detection);
                 }
             }
         }
+    }
+
+    private HardcodedDetection buildHardcodedDetection(String assignmentValue, int lineNumber) {
+        return HardcodedDetection.builder().hardcodedValue(assignmentValue)
+                .lineNumber(lineNumber).build();
     }
 }
 

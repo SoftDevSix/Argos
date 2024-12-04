@@ -14,7 +14,7 @@ public class HardcodedValueMatcher {
         this.pattern = Pattern.compile(HARD_CODED_REGEX);
     }
 
-    public static synchronized HardcodedValueMatcher getInstance() {
+    public static HardcodedValueMatcher getInstance() {
         if (instance == null) {
             instance = new HardcodedValueMatcher();
         }

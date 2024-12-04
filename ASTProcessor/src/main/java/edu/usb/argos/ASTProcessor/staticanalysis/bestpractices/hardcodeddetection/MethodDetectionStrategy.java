@@ -5,11 +5,13 @@ import edu.usb.argos.ASTProcessor.antlr.JavaParser;
 import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedDetection;
 import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedValueMatcher;
 import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.analyzer.BlockAnalyzer;
+import lombok.Value;
 
 import java.util.List;
 
+@Value
 public class MethodDetectionStrategy implements IDetectionStrategy {
-    private final BlockAnalyzer analyzer;
+    BlockAnalyzer analyzer;
 
     public MethodDetectionStrategy(){
         analyzer = new BlockAnalyzer();

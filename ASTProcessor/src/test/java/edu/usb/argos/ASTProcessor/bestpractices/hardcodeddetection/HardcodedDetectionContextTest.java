@@ -1,7 +1,9 @@
 package edu.usb.argos.ASTProcessor.bestpractices.hardcodeddetection;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.bestpractices.HardcodedDetection;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedDetection;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.HardcodedDetectionContext;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.IDetectionStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DetectorStrategyContextTest {
+class HardcodedDetectionContextTest {
     @Test
     void testExecuteDetectHardcodedValues() {
         List<HardcodedDetection> detectedValues = new ArrayList<>();
@@ -23,7 +25,7 @@ class DetectorStrategyContextTest {
 
         JavaParser.ClassBodyDeclarationContext classBodyContext =
                 new JavaParser.ClassBodyDeclarationContext(null, 0);
-        DetectorStrategyContext context = new DetectorStrategyContext(detectedValues);
+        HardcodedDetectionContext context = new HardcodedDetectionContext(detectedValues);
         context.execute(strategy, classBodyContext);
 
         assertEquals(1, detectedValues.size());

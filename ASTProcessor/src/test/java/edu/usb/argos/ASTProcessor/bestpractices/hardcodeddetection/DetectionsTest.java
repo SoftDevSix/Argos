@@ -2,8 +2,12 @@ package edu.usb.argos.ASTProcessor.bestpractices.hardcodeddetection;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.bestpractices.HardcodedDetection;
-import edu.usb.argos.ASTProcessor.bestpractices.HardcodedValueMatcher;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedDetection;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedValueMatcher;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.AttributeDetectionStrategy;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.ConstructorDetectionStrategy;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.IDetectionStrategy;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.hardcodeddetection.MethodDetectionStrategy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

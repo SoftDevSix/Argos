@@ -10,6 +10,7 @@ import edu.usb.argos.astprocessor.analyzer.core.interfaces.IEntitySignatureBuild
 import edu.usb.argos.astprocessor.analyzer.infrastructure.utils.algorithms.lsh.LshSelector;
 import edu.usb.argos.astprocessor.antlr.JavaParser;
 import edu.usb.argos.astprocessor.visitor.core.entities.classes.ClassInformation;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class NoRepeatedCodeAnalyzer implements ICodeSmellNodeAnalyzer<ClassInfor
     private final LshSelector<CodeIdentity> candidateSelector;
     private final IEntitySignatureBuilder<CodeIdentity, List<Integer>, ClassInformation<JavaParser.StatementContext>> entitySignatureBuilder;
 
+    @Builder
     public NoRepeatedCodeAnalyzer(
             LshSelector<CodeIdentity> selector,
             CodeAnalysisReportHandlerByClass reportHandlerByClass,

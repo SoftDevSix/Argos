@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityLocation;
-import edu.usb.argos.ASTProcessor.complexity.core.entities.ComplexityResult;
+import edu.usb.argos.ASTProcessor.complexity.core.entities.ClassComplexityResult;
+import edu.usb.argos.ASTProcessor.complexity.core.entities.MethodComplexityInfo;
 import edu.usb.argos.ASTProcessor.complexity.core.enums.ComplexityLevel;
 import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.CodeElementAdapter;
 import edu.usb.argos.ASTProcessor.complexity.core.interfaces.analyzers.CyclomaticComplexityAnalyzer;
@@ -16,21 +16,25 @@ import lombok.Value;
 
 @Value
 @Builder
-public class ClassCyclomaticComplexityAnalyzer implements CyclomaticComplexityAnalyzer<JavaParser.StatementContext, ComplexityResult> {
-    private MethodCyclomaticComplexityAnalyzer methodAnalyzer;
-    private ConstructorCyclomaticComplexityAnalyzer constructorAnalyzer;
+public class ClassCyclomaticComplexityAnalyzer
+        implements CyclomaticComplexityAnalyzer<JavaParser.StatementContext, ClassComplexityResult> {
+    private List<MethodCyclomaticComplexityAnalyzer> methodAnalyzers;
+    private List<ConstructorCyclomaticComplexityAnalyzer> constructorAnalyzers;
     private ComplexityRulesManager rulesManager;
     private CodeElementAdapter<JavaParser.StatementContext> target;
 
     @Override
-    public ComplexityResult analyze() {
-        int score = calculateComplexityScore();
-        return ComplexityResult.builder()
-                .elementName(target.getName())
-                .complexityScore(score)
-                .complexityLevel(determineComplexityLevel(score))
-                .isWithinLimits(isWithinComplexityLimits(score))
-                .complexityLocations(calculateComplexityLocations())
+    public ClassComplexityResult analyze() {
+        int totalScore = calculateComplexityScore();
+        ComplexityLevel overallLevel = determineComplexityLevel(totalScore);
+
+        return ClassComplexityResult.builder()
+                .className(target.getName())
+                .totalComplexityScore(totalScore)
+                .overallComplexityLevel(overallLevel)
+                .isWithinLimits(isWithinComplexityLimits(totalScore))
+                .methodResults(calculateMethodResults())
+                .constructorResults(calculateConstructorResults())
                 .build();
     }
 
@@ -42,41 +46,67 @@ public class ClassCyclomaticComplexityAnalyzer implements CyclomaticComplexityAn
     @Override
     public int calculateComplexityScore() {
         int totalComplexity = 1;
-        if(methodAnalyzer != null) {
-            ComplexityResult methodResult = methodAnalyzer.analyze();
-            totalComplexity += methodResult.getComplexityScore();
+
+        if (methodAnalyzers != null) {
+            for (MethodCyclomaticComplexityAnalyzer methodAnalyzer : methodAnalyzers) {
+                totalComplexity += methodAnalyzer.analyze().getComplexityScore();
+            }
         }
 
-        if(constructorAnalyzer != null) {
-            ComplexityResult constructorResult = constructorAnalyzer.analyze();
-            totalComplexity += constructorResult.getComplexityScore();
+        if (constructorAnalyzers != null) {
+            for (ConstructorCyclomaticComplexityAnalyzer constructorAnalyzer : constructorAnalyzers) {
+                totalComplexity += constructorAnalyzer.analyze().getComplexityScore();
+            }
         }
 
         return totalComplexity;
     }
+
     @Override
     public ComplexityLevel determineComplexityLevel(int score) {
         return rulesManager.determineLevel(score);
     }
+
     @Override
     public boolean isWithinComplexityLimits(int score) {
         return !rulesManager.isComplexityLimitEnabled() || score <= rulesManager.getMaxComplexity();
     }
 
-    private List<ComplexityLocation> calculateComplexityLocations() {
-        List<ComplexityLocation> locations = new ArrayList<>();
+    private List<MethodComplexityInfo> calculateMethodResults() {
+        List<MethodComplexityInfo> methodResults = new ArrayList<>();
 
-        if(methodAnalyzer != null) {
-            ComplexityResult methodResult = methodAnalyzer.analyze();
-            locations.addAll(methodResult.getComplexityLocations());
+        if (methodAnalyzers != null) {
+            for (MethodCyclomaticComplexityAnalyzer methodAnalyzer : methodAnalyzers) {
+                var methodAnalysis = methodAnalyzer.analyze();
+                methodResults.add(MethodComplexityInfo.builder()
+                        .methodName(methodAnalyzer.getTarget().getName())
+                        .complexityScore(methodAnalysis.getComplexityScore())
+                        .complexityLevel(methodAnalysis.getComplexityLevel())
+                        .isWithinLimits(methodAnalysis.isWithinLimits())
+                        .complexityLocations(new ArrayList<>(methodAnalysis.getComplexityLocations()))
+                        .build());
+            }
         }
 
-        if(constructorAnalyzer != null) {
-            ComplexityResult constructorResult = constructorAnalyzer.analyze();
-            locations.addAll(constructorResult.getComplexityLocations());
-        }
-
-        return locations;
+        return methodResults;
     }
 
+    private List<MethodComplexityInfo> calculateConstructorResults() {
+        List<MethodComplexityInfo> constructorResults = new ArrayList<>();
+
+        if (constructorAnalyzers != null) {
+            for (ConstructorCyclomaticComplexityAnalyzer constructorAnalyzer : constructorAnalyzers) {
+                var constructorAnalysis = constructorAnalyzer.analyze();
+                constructorResults.add(MethodComplexityInfo.builder()
+                        .methodName(constructorAnalyzer.getTarget().getName())
+                        .complexityScore(constructorAnalysis.getComplexityScore())
+                        .complexityLevel(constructorAnalysis.getComplexityLevel())
+                        .isWithinLimits(constructorAnalysis.isWithinLimits())
+                        .complexityLocations(new ArrayList<>(constructorAnalysis.getComplexityLocations()))
+                        .build());
+            }
+        }
+
+        return constructorResults;
+    }
 }

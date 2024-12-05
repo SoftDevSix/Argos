@@ -24,7 +24,8 @@ public class AstWalkerAnalyzer {
 
     public void walkAnalyzers(List<ClassInformation<JavaParser.StatementContext>> classes) {
         for (ClassInformation<JavaParser.StatementContext> classInfo : classes) {
-            CodeSmellAnalysisByClass classReport = new CodeSmellAnalysisByClass("ClassPath.java");
+            String classIdentity = buildClassIdentity(classInfo);
+            CodeSmellAnalysisByClass classReport = new CodeSmellAnalysisByClass(classIdentity);
 
             processNode(classInfo, classReport);
 
@@ -50,5 +51,13 @@ public class AstWalkerAnalyzer {
                 .stream()
                 .map(analyzer -> (ICodeSmellNodeAnalyzer<T>) analyzer)
                 .toList();
+    }
+
+    private String buildClassIdentity(ClassInformation<JavaParser.StatementContext> classInfo) {
+        StringBuilder classIdentity = new StringBuilder();
+        classInfo.getIdentity().getPackageName().ifPresent(packageName -> classIdentity.append(packageName).append("/"));
+        classInfo.getIdentity().getName().ifPresent(className -> classIdentity.append(className).append(".java"));
+
+        return classIdentity.toString();
     }
 }

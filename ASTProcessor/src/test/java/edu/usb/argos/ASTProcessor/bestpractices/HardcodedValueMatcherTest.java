@@ -1,5 +1,6 @@
 package edu.usb.argos.ASTProcessor.bestpractices;
 
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedValueMatcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

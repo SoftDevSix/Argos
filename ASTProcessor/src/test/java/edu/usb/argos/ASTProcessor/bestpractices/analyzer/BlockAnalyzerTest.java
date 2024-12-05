@@ -2,7 +2,8 @@ package edu.usb.argos.ASTProcessor.bestpractices.analyzer;
 
 import edu.usb.argos.ASTProcessor.antlr.JavaLexer;
 import edu.usb.argos.ASTProcessor.antlr.JavaParser;
-import edu.usb.argos.ASTProcessor.bestpractices.HardcodedDetection;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.HardcodedDetection;
+import edu.usb.argos.ASTProcessor.staticanalysis.bestpractices.analyzer.BlockAnalyzer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

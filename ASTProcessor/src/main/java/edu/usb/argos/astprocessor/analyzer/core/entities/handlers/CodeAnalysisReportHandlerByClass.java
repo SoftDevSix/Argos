@@ -23,6 +23,10 @@ public class CodeAnalysisReportHandlerByClass {
         this.codeSmellAnalysisByClass = Optional.empty();
     }
 
+    public static CodeAnalysisReportHandlerByClass of(CodeSmellAnalysisByClass codeSmellAnalysisByClass) {
+        return new CodeAnalysisReportHandlerByClass(codeSmellAnalysisByClass);
+    }
+
     public void setCodeSmellAnalysisByClass(CodeSmellAnalysisByClass codeSmellAnalysisByClass) {
         this.codeSmellAnalysisByClass = Optional.ofNullable(codeSmellAnalysisByClass);
     }

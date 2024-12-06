@@ -7,7 +7,8 @@ import lombok.Value;
 @Value
 @Builder
 @ToString
-public class CodeIdentity {
+public class CodeIdentity<O> {
     String identifier;
     CodeRange codeRange;
+    O origin;
 }

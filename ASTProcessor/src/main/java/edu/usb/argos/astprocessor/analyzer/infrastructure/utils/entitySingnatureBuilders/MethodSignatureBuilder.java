@@ -2,6 +2,7 @@ package edu.usb.argos.astprocessor.analyzer.infrastructure.utils.entitySingnatur
 
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeIdentity;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeRange;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.EntityWithSignature;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IEntitySignatureBuilder;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.INormalizer;
@@ -15,13 +16,14 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.List;
 import java.util.Optional;
 
-public class MethodSignatureBuilder implements IEntitySignatureBuilder<CodeIdentity, List<Integer>, ClassInformation<JavaParser.StatementContext>> {
+public class MethodSignatureBuilder implements IEntitySignatureBuilder<CodeIdentity<CodeSmellAnalysisByClass>, List<Integer>, ClassInformation<JavaParser.StatementContext>> {
 
     private final MinHashingHandler minHashingHandler;
     private final IShingleGenerator<String> shingleGenerator;
     private final INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer;
 
     private ClassInformation<JavaParser.StatementContext> currentClass;
+    private CodeSmellAnalysisByClass currentAnalysisByClass;
 
     public MethodSignatureBuilder(MinHashingHandler minHashingHandler, IShingleGenerator<String> shingleGenerator, INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer) {
         this.minHashingHandler = minHashingHandler;
@@ -30,8 +32,9 @@ public class MethodSignatureBuilder implements IEntitySignatureBuilder<CodeIdent
     }
 
     @Override
-    public List<EntityWithSignature<CodeIdentity, List<Integer>>> buildMultipleFromResource(ClassInformation<JavaParser.StatementContext> classNode) {
+    public List<EntityWithSignature<CodeIdentity<CodeSmellAnalysisByClass>, List<Integer>>> buildMultipleFromResource(ClassInformation<JavaParser.StatementContext> classNode, CodeSmellAnalysisByClass analysisByClassOrigin) {
         currentClass = classNode;
+        currentAnalysisByClass = analysisByClassOrigin;
 
         return classNode.getMembers()
                 .getMethods()
@@ -41,22 +44,22 @@ public class MethodSignatureBuilder implements IEntitySignatureBuilder<CodeIdent
                 .toList();
     }
 
-    private Optional<EntityWithSignature<CodeIdentity, List<Integer>>> extractSignatureForMethod(MethodInformation<JavaParser.StatementContext> method) {
+    private Optional<EntityWithSignature<CodeIdentity<CodeSmellAnalysisByClass>, List<Integer>>> extractSignatureForMethod(MethodInformation<JavaParser.StatementContext> method) {
         return method.getStatements().stream()
                 .findFirst()
                 .flatMap(this::findEnclosingMethod)
                 .map(methodNode -> buildSingleFromNodes(methodNode, method));
     }
 
-    private EntityWithSignature<CodeIdentity, List<Integer>> buildSingleFromNodes(
+    private EntityWithSignature<CodeIdentity<CodeSmellAnalysisByClass>, List<Integer>> buildSingleFromNodes(
             JavaParser.MethodDeclarationContext methodNode,
             MethodInformation<JavaParser.StatementContext> method) {
 
         List<String> normalizedTokens = methodNormalizer.normalize(methodNode);
         List<Integer> signature = computeSignature(normalizedTokens);
-        CodeIdentity codeIdentity = buildCodeIdentity(currentClass, methodNode, method);
+        CodeIdentity<CodeSmellAnalysisByClass> codeIdentity = buildCodeIdentity(currentClass, methodNode, method);
 
-        return EntityWithSignature.<CodeIdentity, List<Integer>>builder()
+        return EntityWithSignature.<CodeIdentity<CodeSmellAnalysisByClass>, List<Integer>>builder()
                 .signature(signature)
                 .entity(codeIdentity)
                 .build();
@@ -67,15 +70,16 @@ public class MethodSignatureBuilder implements IEntitySignatureBuilder<CodeIdent
         return minHashingHandler.computeMinHash(shingleGenerator.flatSingles(shingles));
     }
 
-    private CodeIdentity buildCodeIdentity(ClassInformation<JavaParser.StatementContext> classNode,
+    private CodeIdentity<CodeSmellAnalysisByClass> buildCodeIdentity(ClassInformation<JavaParser.StatementContext> classNode,
                                            JavaParser.MethodDeclarationContext methodNode,
                                            MethodInformation<JavaParser.StatementContext> method) {
         String methodPath = buildMethodPath(classNode, method.getName());
         CodeRange codeRange = new CodeRange(methodNode.getStart().getLine(), methodNode.getStop().getLine());
 
-        return CodeIdentity.builder()
+        return CodeIdentity.<CodeSmellAnalysisByClass>builder()
                 .identifier(methodPath)
                 .codeRange(codeRange)
+                .origin(currentAnalysisByClass)
                 .build();
     }
 

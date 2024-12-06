@@ -1,9 +1,10 @@
 package edu.usb.argos.astprocessor.analyzer.core.interfaces;
 
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.EntityWithSignature;
 
 import java.util.List;
 
 public interface IEntitySignatureBuilder<T, S, R> {
-    List<EntityWithSignature<T, S>> buildMultipleFromResource(R resource);
+    List<EntityWithSignature<T, S>> buildMultipleFromResource(R resource, CodeSmellAnalysisByClass analysisByClassOrigin);
 }

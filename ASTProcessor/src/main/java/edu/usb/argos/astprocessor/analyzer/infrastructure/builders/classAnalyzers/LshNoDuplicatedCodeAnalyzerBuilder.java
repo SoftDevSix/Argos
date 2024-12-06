@@ -1,6 +1,7 @@
 package edu.usb.argos.astprocessor.analyzer.infrastructure.builders.classAnalyzers;
 
 import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeIdentity;
+import edu.usb.argos.astprocessor.analyzer.core.entities.codeSmells.CodeSmellAnalysisByClass;
 import edu.usb.argos.astprocessor.analyzer.core.entities.handlers.CodeAnalysisReportHandlerByClass;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.ICodeSmellNodeAnalyzer;
 import edu.usb.argos.astprocessor.analyzer.core.interfaces.IEntitySignatureBuilder;
@@ -41,12 +42,12 @@ public class LshNoDuplicatedCodeAnalyzerBuilder implements INoDuplicateCodeAnaly
                 .build();
     }
 
-    private LshSelector<CodeIdentity> buildLshSelector(LshConfiguration lshConfiguration) {
+    private LshSelector<CodeIdentity<CodeSmellAnalysisByClass>> buildLshSelector(LshConfiguration lshConfiguration) {
         ISimilarityCalculator<List<Integer>> similarityCalculator = new JaccardSimilarityCalculator(lshConfiguration.getMinHashConfiguration());
         return new LshSelector<>(lshConfiguration, similarityCalculator);
     }
 
-    private IEntitySignatureBuilder<CodeIdentity, List<Integer>, ClassInformation<JavaParser.StatementContext>> buildEntitySignatureBuilder(LshConfiguration lshConfiguration) {
+    private IEntitySignatureBuilder<CodeIdentity<CodeSmellAnalysisByClass>, List<Integer>, ClassInformation<JavaParser.StatementContext>> buildEntitySignatureBuilder(LshConfiguration lshConfiguration) {
         IPlainTextHasher textHasher = new SHATextHasher();
         MinHashingHandler codeMinHash = new MinHashingHandler(lshConfiguration.getMinHashConfiguration(), textHasher);
         IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfiguration.getShinglesFrequency());

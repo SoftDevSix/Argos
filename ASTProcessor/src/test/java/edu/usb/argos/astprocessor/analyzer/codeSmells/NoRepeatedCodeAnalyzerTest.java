@@ -88,10 +88,10 @@ public class NoRepeatedCodeAnalyzerTest {
         IShingleGenerator<String> shingleGenerator = new TokenShingleGenerator(lshConfiguration.getShinglesFrequency());
         INormalizer<JavaParser.MethodDeclarationContext> methodNormalizer = new AntlrMethodNormalizer();
         ISimilarityCalculator<List<Integer>> similarityCalculator = new JaccardSimilarityCalculator(lshConfiguration.getMinHashConfiguration());
-        LshSelector<CodeIdentity> candidateSelector = new LshSelector<>(lshConfiguration, similarityCalculator);
+        LshSelector<CodeIdentity<CodeSmellAnalysisByClass>> candidateSelector = new LshSelector<>(lshConfiguration, similarityCalculator);
         CodeAnalysisReportHandlerByClass reportHandlerByClass = new CodeAnalysisReportHandlerByClass();
 
-        IEntitySignatureBuilder<CodeIdentity, List<Integer>, ClassInformation<JavaParser.StatementContext>> entitySignatureBuilder = new MethodSignatureBuilder(codeMinHash, shingleGenerator, methodNormalizer);
+        IEntitySignatureBuilder<CodeIdentity<CodeSmellAnalysisByClass>, List<Integer>, ClassInformation<JavaParser.StatementContext>> entitySignatureBuilder = new MethodSignatureBuilder(codeMinHash, shingleGenerator, methodNormalizer);
 
         return new NoRepeatedCodeAnalyzer(candidateSelector, reportHandlerByClass, entitySignatureBuilder);
     }
